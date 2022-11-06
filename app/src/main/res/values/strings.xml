@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Picture_Button</string>
+    <string name="button_label_show_picture">Show Picture</string>
+</resources>
