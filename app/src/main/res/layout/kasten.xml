@@ -23,7 +23,7 @@
             android:orientation="horizontal">
 
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="3"
@@ -33,26 +33,23 @@
                     android:id="@+id/a1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_above="@id/a4"/>
+                    android:layout_weight="3" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="5dp"
                     android:background="#000000"
-                    android:layout_above="@+id/a4"
                     android:orientation="horizontal" />
 
                 <Button
                     android:id="@+id/a4"
                     android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:layout_centerInParent="true" />
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="5dp"
-                    android:layout_above="@+id/a7"
                     android:background="#000000"
                     android:orientation="horizontal" />
 
@@ -60,11 +57,9 @@
                     android:id="@+id/a7"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/a4"
-                    android:layout_alignParentBottom="true" />
+                    android:layout_weight="3" />
 
-            </RelativeLayout>
-
+            </LinearLayout>
             <View
                 android:layout_width="5dp"
                 android:layout_height="match_parent"
