@@ -4,53 +4,76 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:orientation="horizontal">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/left_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".33" />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/right_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".66" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/top_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintGuide_percent=".33" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottom_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".66" />
 
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+
+
+        <LinearLayout
+            android:id="@+id/left_column"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            app:layout_constraintLeft_toLeftOf="parent"
             android:orientation="vertical">
+
 
             <Button
                 android:id="@+id/a1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_above="@id/a4"
-                android:layout_alignParentTop="true"
+
                 android:insetTop="0dp"
-                android:insetBottom="0dp" />
+                android:insetBottom="0dp"
+
+                />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:layout_above="@+id/a4"
+                android:layout_height="2dp"
                 android:background="#000000"
                 android:orientation="horizontal" />
 
             <Button
                 android:id="@+id/a4"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_centerInParent="true"
+                android:layout_height="wrap_content"
+
                 android:insetTop="0dp"
-                android:insetBottom="0dp" />
+                android:insetBottom="0dp"
+                />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:layout_above="@+id/a7"
+                android:layout_height="2dp"
                 android:background="#000000"
                 android:orientation="horizontal" />
 
@@ -58,54 +81,57 @@
                 android:id="@+id/a7"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/a4"
-                android:layout_alignParentBottom="true"
+
                 android:insetTop="0dp"
                 android:insetBottom="0dp" />
 
-        </RelativeLayout>
+        </LinearLayout>
+
 
         <View
-            android:layout_width="5dp"
+            android:layout_width="2dp"
             android:layout_height="match_parent"
             android:background="#000000"
-            android:orientation="vertical" />
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf=""/>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/middle_column"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+
+            app:layout_constraintLeft_toLeftOf="@id/left_guideline"
+            app:layout_constraintRight_toRightOf="@id/right_guideline"
+
             android:orientation="vertical">
 
             <Button
                 android:id="@+id/a2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_above="@id/a5"
-                android:layout_alignParentTop="true"
+                android:layout_weight="3"
                 android:insetTop="0dp"
                 android:insetBottom="0dp" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:layout_above="@+id/a5"
+                android:layout_height="2dp"
                 android:background="#000000"
                 android:orientation="horizontal" />
 
             <Button
-
                 android:id="@+id/a5"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_centerInParent="true"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
                 android:insetTop="0dp"
                 android:insetBottom="0dp" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:layout_above="@+id/a8"
+                android:layout_height="2dp"
                 android:background="#000000"
                 android:orientation="horizontal" />
 
@@ -113,47 +139,53 @@
                 android:id="@+id/a8"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/a5"
-                android:layout_alignParentBottom="true" />
+                android:layout_weight="3"
+                android:insetTop="0dp"
+                android:insetBottom="0dp" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <View
-            android:layout_width="5dp"
+            android:layout_width="2dp"
             android:layout_height="match_parent"
             android:background="#000000"
-            android:orientation="vertical" />
+            android:orientation="vertical"
+            app:layout_constraintRight_toLeftOf="@id/right_column"
+           />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/right_column"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            app:layout_constraintRight_toRightOf="parent"
+
             android:orientation="vertical">
 
             <Button
                 android:id="@+id/a3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_above="@id/a6"
-                android:layout_alignParentTop="true" />
+                android:layout_weight="3"
+                android:insetTop="0dp"
+                android:insetBottom="0dp" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:layout_above="@+id/a6"
+                android:layout_height="2dp"
                 android:background="#000000"
                 android:orientation="horizontal" />
 
             <Button
                 android:id="@+id/a6"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_centerInParent="true" />
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:insetTop="0dp"
+                android:insetBottom="0dp" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:layout_above="@+id/a9"
+                android:layout_height="2dp"
                 android:background="#000000"
                 android:orientation="horizontal" />
 
@@ -161,11 +193,12 @@
                 android:id="@+id/a9"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/a6"
-                android:layout_alignParentBottom="true" />
+                android:layout_weight="3"
+                android:insetTop="0dp"
+                android:insetBottom="0dp" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
-    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
