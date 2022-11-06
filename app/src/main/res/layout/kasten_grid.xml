@@ -11,40 +11,17 @@
         android:rowCount="3">
 
         <Button
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"></Button>
+            style="@style/grid_button"
 
-        <Button
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"></Button>
-
-        <Button
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"></Button>
-
-        <Button
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"></Button>
-
-        <Button
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"></Button>
-
-        <Button
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"></Button>
-
-        <Button
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"></Button>
-
-        <Button
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"></Button>
-
-        <Button
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"></Button>
+            />
+        <Button style="@style/grid_button" />
+        <Button style="@style/grid_button" />
+        <Button style="@style/grid_button" />
+        <Button style="@style/grid_button" />
+        <Button style="@style/grid_button" />
+        <Button style="@style/grid_button" />
+        <Button style="@style/grid_button" />
+        <Button style="@style/grid_button" />
 
 
     </GridLayout>
