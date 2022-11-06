@@ -89,14 +89,7 @@
         </LinearLayout>
 
 
-        <View
-            android:layout_width="2dp"
-            android:layout_height="match_parent"
-            android:background="#000000"
-            android:orientation="vertical"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf=""/>
+
 
         <LinearLayout
             android:id="@+id/middle_column"

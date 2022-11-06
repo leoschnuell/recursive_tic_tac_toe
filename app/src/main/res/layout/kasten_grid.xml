@@ -7,22 +7,46 @@
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/black"
         android:columnCount="3"
         android:rowCount="3">
 
         <Button
-            style="@style/grid_button"
+            android:id="@+id/b1"
+            style="@style/grid_button" />
 
-            />
-        <Button style="@style/grid_button" />
-        <Button style="@style/grid_button" />
-        <Button style="@style/grid_button" />
-        <Button style="@style/grid_button" />
-        <Button style="@style/grid_button" />
-        <Button style="@style/grid_button" />
-        <Button style="@style/grid_button" />
-        <Button style="@style/grid_button" />
+        <Button
+            android:id="@+id/b2"
+            style="@style/grid_button" />
 
+        <Button
+            android:id="@+id/b3"
+            style="@style/grid_button" />
+
+        <Button
+            android:id="@+id/b4"
+            style="@style/grid_button" />
+
+        <Button
+            android:id="@+id/b5"
+            style="@style/grid_button" />
+
+        <Button
+            android:id="@+id/b6"
+            style="@style/grid_button" />
+
+        <Button
+            android:id="@+id/b7"
+            style="@style/grid_button" />
+
+        <Button
+            android:id="@+id/b8"
+            style="@style/grid_button" />
+
+        <Button
+            android:id="@+id/b9"
+            style="@style/grid_button" />
 
     </GridLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
