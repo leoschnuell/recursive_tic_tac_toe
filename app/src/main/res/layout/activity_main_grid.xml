@@ -11,9 +11,9 @@
         android:columnCount="3"
         android:rowCount="3">
 
-        <include layout="@layout/kasten_grid"></include>
+        <include layout="@layout/kasten_grid" />
 
-         <include layout="@layout/kasten_grid"></include>
+        <include layout="@layout/kasten_grid" />
 
          <include layout="@layout/kasten_grid"></include>
 

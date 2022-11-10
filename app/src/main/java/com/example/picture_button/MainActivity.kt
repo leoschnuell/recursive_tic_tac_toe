@@ -3,21 +3,17 @@ package com.example.picture_button
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
 import android.widget.GridLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.view.setPadding
-import kotlin.reflect.typeOf
 
 
 class MainActivity : AppCompatActivity() , View.OnClickListener  {
-    val idTObutton: MutableMap<Int, View> = mutableMapOf<Int,View>()
+   // val idTObutton: MutableMap<Int, View> = mutableMapOf<Int,View>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val startTime = System.currentTimeMillis()
         setContentView(R.layout.grid_test_test)
 
 
@@ -30,12 +26,15 @@ class MainActivity : AppCompatActivity() , View.OnClickListener  {
             for (j in 0 until kasten.childCount) {
                 val kästschen = kasten.getChildAt(j)
                 kästschen.setBackgroundColor(Color.BLACK)
+                kästschen.tag = (i+1)*10 +j+1
 
 
                 kästschen.setOnClickListener(this)
-                idTObutton[(i+1)*10 +j+1] =kästschen;
+               // idTObutton[(i+1)*10 +j+1] =kästschen
             }
         }
+        val difference = System.currentTimeMillis() - startTime
+        println(difference)
 
         //val a1 = findViewById<Button>(R.id.a1)
         //a1.setBackgroundColor(0)
@@ -69,6 +68,12 @@ class MainActivity : AppCompatActivity() , View.OnClickListener  {
     }
 
     override fun onClick(p0: View?) {
-        println(p0)
+        if (p0 != null) {
+            println(p0.tag)
+        }
+
     }
+
+
+
 }
