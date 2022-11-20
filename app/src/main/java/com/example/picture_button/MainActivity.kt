@@ -2,6 +2,8 @@ package com.example.picture_button
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -66,6 +68,10 @@ class MainActivity : AppCompatActivity() , View.OnClickListener  {
         a1.setBackgroundColor(0)
         test.setBackgroundColor(1)
 */
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        return true;
     }
 
     override fun onClick(p0: View?) {
