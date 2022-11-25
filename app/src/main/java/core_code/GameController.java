@@ -73,8 +73,6 @@ public class GameController {
             }
             System.out.print(")");
         }
-
-
     }
 
     public Player gameLoop(Player p1, Player p2) {
