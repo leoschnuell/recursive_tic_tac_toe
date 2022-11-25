@@ -2,6 +2,8 @@ package com.example.picture_button
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.widget.GridLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -86,6 +88,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 */
 
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        return true;
     }
 
     override fun onClick(p0: View?) {
