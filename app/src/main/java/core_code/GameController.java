@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class GameController {
 
+
     private static int[] gamebord = new int[100];
     private static final Map<Integer, int[]> neighbours = new HashMap<>();
     private static final Map<Integer, int[]> thirdCase = new HashMap<>();
