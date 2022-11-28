@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Picture_Button"
         tools:targetApi="28">
         <activity
-            android:name=".MainActivity"
+            android:name=".MainMenu"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
