@@ -16,7 +16,6 @@ class MainActivity : AppCompatActivity() , View.OnClickListener  {
         val startTime = System.currentTimeMillis()
         setContentView(R.layout.grid_test_test)
 
-
         val root = findViewById<GridLayout>(R.id.root)
 
         for (i in 0 until root.childCount) {
