@@ -23,7 +23,8 @@ public class Human implements Player {
 
     @Override
     public int move(int lastMove) {
-        return mainActivity.get_vaild_input();
+        return 55;
+        //return mainActivity.get_vaild_input();
 
 /*        //gameController.display();
         int i;
