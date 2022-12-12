@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_homeFragment_to_AIFragment"
             app:destination="@id/AIFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_board"
+            app:destination="@id/board" />
     </fragment>
     <fragment
         android:id="@+id/AIFragment"
@@ -23,4 +26,9 @@
             android:id="@+id/action_AIFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/board"
+        android:name="com.example.picture_button.Board"
+        android:label="fragment_board"
+        tools:layout="@layout/fragment_board" />
 </navigation>

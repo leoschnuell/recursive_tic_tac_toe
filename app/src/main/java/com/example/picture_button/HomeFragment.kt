@@ -1,6 +1,5 @@
 package com.example.picture_button
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -23,8 +22,7 @@ class HomeFragment : Fragment() {
         }
         val button2 = view.findViewById<Button>(R.id.home_button_2)
         button2.setOnClickListener {
-            val intent = Intent(this@HomeFragment.requireContext(), MainActivity::class.java)
-            startActivity(intent)
+            findNavController().navigate(R.id.action_homeFragment_to_board)
         }
         return view
 
