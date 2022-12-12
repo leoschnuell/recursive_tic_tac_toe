@@ -1,22 +1,31 @@
 package core_code;
+import android.os.AsyncTask;
+
+import com.example.picture_button.Board;
 import com.example.picture_button.MainActivity;
 
 import java.util.Scanner;
 
-public class Human implements Player {
+public class Human extends AsyncTask<Integer, String, Integer> implements Player {
     GameController gameController;
     boolean is_beginning = false;
-    private MainActivity mainActivity;
+    private Board board;
 
 
     public Human() {
         gameController = GameController.getGameControler();
-        gameController.getBoard(); // git ein int[100] als game bord zurück
-        gameController.display(); // zeigt das game in der konsole an
+
     }
 
-    public void setMainActivity(MainActivity mainActivity) {
-        this.mainActivity = mainActivity;
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
+    @Override
+    protected Integer doInBackground(Integer... integers) {
+
+
+        return null;
     }
 
     Scanner scanner = new Scanner(System.in);

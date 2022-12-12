@@ -12,6 +12,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.navigation.fragment.findNavController
 
 class Board : Fragment() , View.OnClickListener  {
+
+
         override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
@@ -36,7 +38,6 @@ class Board : Fragment() , View.OnClickListener  {
                     // idTObutton[(i+1)*10 +j+1] =kästschen
                 }
             }
-
             return view
         }
 
@@ -46,7 +47,6 @@ class Board : Fragment() , View.OnClickListener  {
             println(p0.tag)
             p0.setBackgroundColor(Color.BLUE)
         }
-
     }
 
 }
