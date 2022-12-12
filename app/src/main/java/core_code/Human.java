@@ -1,9 +1,13 @@
 package core_code;
+import com.example.picture_button.MainActivity;
+
 import java.util.Scanner;
 
 public class Human implements Player {
     GameController gameController;
     boolean is_beginning = false;
+    private MainActivity mainActivity;
+
 
     public Human() {
         gameController = GameController.getGameControler();
@@ -11,17 +15,23 @@ public class Human implements Player {
         gameController.display(); // zeigt das game in der konsole an
     }
 
+    public void setMainActivity(MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
+    }
+
     Scanner scanner = new Scanner(System.in);
 
     @Override
     public int move(int lastMove) {
-        gameController.display();
+        return mainActivity.get_vaild_input();
+
+/*        //gameController.display();
         int i;
         do {
             System.out.println("chose a move (that's valid limited checks)");
             i = scanner.nextInt();
         } while (!(i > 10 && i < 100 && i % 10 != 0));
-        return i;
+        return i;*/
     }
     @Override
     public void is_beginning(boolean b) {

@@ -11,9 +11,10 @@ public class GameController {
     private static final Map<Integer, int[]> thirdCase = new HashMap<>();
     private ArrayList<Integer> moveList = new ArrayList<>();
     private int moveCounter;
-    private int lastMove;
+    public int lastMove;
     private static GameController gameController = new GameController();
-
+    private boolean first_player_turn = true;
+    private int move;
 
     GameController() {
         for (int i = 0; i < 100; i++) {
@@ -53,11 +54,15 @@ public class GameController {
         return neighbours;
     }
 
+    public void add_move(int move) {
+        moveList.add(move);
+        moveCounter ++;
+    }
 
-    public static void main(String[] args) {
+    public Player game_setup( Player p1, Player p2) {
         //ini game
-        Player p1 = new leo_alg();  //interal int = 3
-        Player p2 = new UnitTester();  //interal int = 5
+        //Player p1 = new leo_alg();  //interal int = 3
+        //Player p2 = new UnitTester();  //interal int = 5
         p1.is_beginning(true);
         p2.is_beginning(false);
         Player win = gameController.gameLoop(p1, p2);
@@ -73,16 +78,13 @@ public class GameController {
             }
             System.out.print(")");
         }
+        return win;
     }
 
     public Player gameLoop(Player p1, Player p2) {
         // returns the winner
-        boolean first_player_turn = true;
-        int move;
-
 
         while (true) {
-
             if (first_player_turn) {
                 move = p1.move(lastMove);
                 System.out.println("S1: " + move);
@@ -140,7 +142,7 @@ public class GameController {
     }
 
 
-    private boolean checkMove(int playerMove) {
+    public boolean checkMove(int playerMove) {
         if (lastMove == 1) // first move of the game
             return true;
         int soll_kasten = (lastMove % 10);
@@ -180,7 +182,7 @@ public class GameController {
         }
     }
 
-    private int checkWin(int playerMove) {// returns true if the game has ended
+    public int checkWin(int playerMove) {// returns true if the game has ended
         // otherwise updates the flags
 
         int res = checkKasten(playerMove / 10);
