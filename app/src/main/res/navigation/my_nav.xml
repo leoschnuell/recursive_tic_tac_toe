@@ -25,10 +25,25 @@
         <action
             android:id="@+id/action_AIFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_AIFragment_to_board"
+            app:destination="@id/board" />
+        <argument
+            android:name="many_ai"
+            android:defaultValue="1" />
     </fragment>
     <fragment
         android:id="@+id/board"
         android:name="com.example.picture_button.Board"
         android:label="fragment_board"
-        tools:layout="@layout/fragment_board" />
+        tools:layout="@layout/fragment_board" >
+        <argument
+            android:name="Player_1"
+            app:argType="string"
+            android:defaultValue="Human" />
+        <argument
+            android:name="Player_2"
+            app:argType="string"
+            android:defaultValue="Human" />
+    </fragment>
 </navigation>

@@ -24,7 +24,12 @@ class HomeFragment : Fragment() {
         button2.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_board)
         }
+        val button3 = view.findViewById<Button>(R.id.home_button_3)
+        button3.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_AIFragment, Bundle().apply {
+                putInt("many_ai", 2)
+            })
+        }
         return view
-
     }
 }

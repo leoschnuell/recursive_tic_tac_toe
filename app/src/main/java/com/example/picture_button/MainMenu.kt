@@ -20,8 +20,8 @@ class MainMenu : AppCompatActivity() , View.OnClickListener  {
         btn0.setOnClickListener{
             val intent = Intent(this,MainActivity::class.java)
             val b = Bundle()
-            b.putString("p1", "Human" );
-            b.putString("p2", "Human" );
+            b.putString("p1", "Human");
+            b.putString("p2", "Human");
             intent.putExtras(b) //Put your id to your next Intent
             startActivity(intent)
         }

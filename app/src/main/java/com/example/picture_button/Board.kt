@@ -41,6 +41,11 @@ class Board : Fragment() , View.OnClickListener  {
             return view
         }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        requireArguments().getString("Player_2")
+        requireArguments().getString("Player_1")
+    }
 
     override fun onClick(p0: View?) {
         if (p0 != null) {
