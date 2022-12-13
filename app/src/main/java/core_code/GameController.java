@@ -6,7 +6,7 @@ import java.util.Map;
 public class GameController {
 
 
-    private static int[] gamebord = new int[100];
+    public static int[] gamebord = new int[100];
     private static final Map<Integer, int[]> neighbours = new HashMap<>();
     private static final Map<Integer, int[]> thirdCase = new HashMap<>();
     private ArrayList<Integer> moveList = new ArrayList<>();
@@ -116,6 +116,7 @@ public class GameController {
     This funktions prints the game in a grid like this
     11 12 13 21 22 23 31 32 33
     */
+    @Deprecated
     public void display() {
         for (int j = 1; j < 4; j++) {
             for (int i = 10; i < 40; i += 10) {

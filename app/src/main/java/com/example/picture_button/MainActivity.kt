@@ -9,7 +9,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 
 
 class MainActivity : AppCompatActivity() , View.OnClickListener  {
-   // val idTObutton: MutableMap<Int, View> = mutableMapOf<Int,View>()
+   // val idToButton: MutableMap<Int, View> = mutableMapOf<Int,View>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

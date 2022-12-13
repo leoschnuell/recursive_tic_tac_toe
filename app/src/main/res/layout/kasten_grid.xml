@@ -7,10 +7,12 @@
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#FFFFFF"
         android:columnCount="3"
-        android:rowCount="3"
+        android:padding="4dip"
 
-        >
+
+        android:rowCount="3">
 
         <Button style="@style/grid_button" />
 
