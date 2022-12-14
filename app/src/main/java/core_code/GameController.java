@@ -177,15 +177,21 @@ public class GameController {
                         }
                     }
                 }
-                return !es_gibt_einen; // wenn es keine freie axie gibt return es true das der spieler überall hingehen dar
-                // ansonsten falls da der spieler nicht inerhalb gescheckt hate
+                if (es_gibt_einen) {//es_git einenen freihen axen nachbarn aber er wurde nicht gewählt
+                    return false;
+                }else{
+                    // wenn es keine freie axie gibt darf der spieler überall hingehen wo ein kasten nicht voll ist
+                    return gamebord[ist_kasten*10] ==0;
+                }
             }
         }
     }
-
-    public int checkWin(int playerMove) {// returns true if the game has ended
-        // otherwise updates the flags
-
+//Returns values -3,-5 , 0 - 9
+    //0 = nothing was won
+    // -3 first player won the game
+    // -5 second player won the game
+    // 1..9 kasten was won
+    public int checkWin(int playerMove) {
         int res = checkKasten(playerMove / 10);
         if (res > 0) {
             System.out.println("kasten gewonnen:"+ (playerMove/10)*10);
@@ -204,11 +210,11 @@ public class GameController {
 
             for (int i = 0; i < 8; i++) {
                 if (result[i] == 9)
-                    return 3;
+                    return -3;
                 else if (result[i] == 15)
-                    return 5;
+                    return -5;
             }
-            return 0;
+            return playerMove / 10;
         }
         return 0;
     }

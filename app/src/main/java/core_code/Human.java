@@ -87,7 +87,7 @@ public class Human implements Player {
             }
         });
 
-        board.setButton();
+
         return a[0];
 
         //return mainActivity.get_vaild_input();

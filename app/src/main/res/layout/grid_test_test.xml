@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_margin="10dp"
-        android:background="#DC3030"
         android:columnCount="3"
 
         android:rowCount="3"
