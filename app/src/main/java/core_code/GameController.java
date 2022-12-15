@@ -149,11 +149,12 @@ public class GameController {
         int soll_kasten = (lastMove % 10);
         int ist_kasten = playerMove / 10;
         if (!(playerMove > 10 && playerMove < 100 && playerMove % 10 != 0))
-            return false;//unmögliche zahlen ausschliesen
+            return false;//unmögliche zahlen ausschließen
         if (gamebord[playerMove] != 0)
-            return false;// is das gewählt kästchen unbesetzt
+            return false;// das gewählte kästchen ist belegt
         if (gamebord[soll_kasten * 10] == 0) {// 1 fall: der gewähle kasten ist offen
             return (soll_kasten == ist_kasten);//prüft ob der kasten gleich dem letzten kästchen ist
+
 
         } else {//2 fall: gewählert kasten ist voll
             boolean es_gibt_einen = false;//eine flag
