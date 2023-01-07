@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import core_code.GameController
@@ -125,9 +127,15 @@ class Board : Fragment(), View.OnClickListener {
                 when (val res = gameController.checkWin(move)) {
                     -3 -> {
                         println("First Player has won")
+                        var Winning_text_view=view?.findViewById<TextView>(R.id.text_winner)
+                        Winning_text_view?.setText("Blue Won")
+                        Winning_text_view?.visibility = View.VISIBLE
                     }
                     -5 -> {
                         println("Second Player has won")
+                        var Winning_text_view=view?.findViewById<TextView>(R.id.text_winner)
+                        Winning_text_view?.setText("Red Won")
+                        Winning_text_view?.visibility = View.VISIBLE
                     }
                     in 1..9 -> {
                         setFlag(res * 10, player)
