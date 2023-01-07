@@ -1,19 +1,23 @@
 package com.example.picture_button
 
 import android.graphics.Color
-import android.opengl.Visibility
 import android.os.AsyncTask
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
-import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import core_code.GameController
 import core_code.Human
-import java.util.concurrent.Executor
+import core_code.Player
+import kotlinx.coroutines.delay
+import java.util.concurrent.*
+import kotlin.system.measureTimeMillis
+import kotlin.time.measureTime
 
 
 class Board : Fragment(), View.OnClickListener {
@@ -24,55 +28,16 @@ class Board : Fragment(), View.OnClickListener {
     val idToButton: MutableMap<Int, View> = mutableMapOf<Int, View>()
     private lateinit var executor: Executor
 
+    private val exec = Executors.newSingleThreadExecutor()
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
+        println("onCreate")
         val view = inflater.inflate(R.layout.grid_test_test, container, false)
-
-
         val root = view.findViewById<GridLayout>(R.id.root)
-
-        /*      Executor executor = new Executor() {
-            @Override
-            public void execute(Runnable runnable) {
-                runnable.run();
-            }
-        };
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                board.setLastButId(-1);
-                while (board.getLastButId()==-1) {}
-                a[0] = board.getLastButId();
-            }
-        });
-*/
-        /*
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-
-                board.setLastButId(-1);
-                while (board.getLastButId()==-1) {
-                    System.out.println("stuck in loop");
-
-                }
-                a[0] = board.getLastButId();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        return a[0];
-                    }
-                });
-            }
-        });
-*/
-
         AsyncTask.execute {
             for (i in 0 until root.childCount) {
                 val kasten: GridLayout =
@@ -95,6 +60,12 @@ class Board : Fragment(), View.OnClickListener {
         return view
     }
 
+    fun play(player: Player): Future<Int?>? {
+        return exec.submit<Int>(Callable {
+                player.move(gameController.lastMove)
+        })
+    }
+
     override fun onStart() {
         super.onStart()
         println("onStart")
@@ -105,7 +76,27 @@ class Board : Fragment(), View.OnClickListener {
         val p2 = Human()
         p2.setBoard(this)
 
+        val playing = play(p1) ?: throw NullPointerException("Sander ist schuld")
+
+        val mainHandler = Handler(Looper.getMainLooper())
+
+        mainHandler.post(object : Runnable {
+            override fun run() {
+                if (playing.isDone) {
+                    val move = playing.get()
+                    gameController.checkMove(move!!)
+                    setFlag(playing.get()!!, true)
+
+
+                }
+                mainHandler.postDelayed(this, 10)
+            }
+        })
     }
+    fun gameStep(){
+
+    }
+
 
     fun setFlag(i: Int, player: Boolean) {
         if (player) {
@@ -123,7 +114,7 @@ class Board : Fragment(), View.OnClickListener {
                 println(p0.tag)
                 if (player) {
                     p0.setBackgroundColor(Color.BLUE)
-                    idToButton[gameController.lastMove]?.setBackgroundColor( Color.rgb(245, 78, 78))
+                    idToButton[gameController.lastMove]?.setBackgroundColor(Color.rgb(245, 78, 78))
                 } else {
                     p0.setBackgroundColor(Color.RED)
                     idToButton[gameController.lastMove]?.setBackgroundColor(Color.rgb(78, 98, 245))
@@ -139,7 +130,7 @@ class Board : Fragment(), View.OnClickListener {
                         println("Second Player has won")
                     }
                     in 1..9 -> {
-                        setFlag(res*10,player)
+                        setFlag(res * 10, player)
                     }
                 }
 

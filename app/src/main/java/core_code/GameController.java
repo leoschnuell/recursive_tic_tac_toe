@@ -2,6 +2,9 @@ package core_code;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class GameController {
 
@@ -15,6 +18,18 @@ public class GameController {
     private static GameController gameController = new GameController();
     private boolean first_player_turn = true;
     private int move;
+
+    private static ExecutorService executor =
+            Executors.newSingleThreadExecutor();
+
+    public static Future<Integer> parse(String input) {
+        return executor.submit(() -> {
+            Thread.sleep(1000);
+            return Integer.parseInt(input);
+        });
+    }
+
+
 
     GameController() {
         for (int i = 0; i < 100; i++) {
@@ -219,8 +234,6 @@ public class GameController {
         }
         return 0;
     }
-
-    private int checkKasten(int k) {// k = kasten // returns true if kasten is won
     /*
     123
     456
@@ -231,8 +244,12 @@ public class GameController {
     159
     357
  */
+    // returns Player int if kasten is won
+    private int checkKasten(int k) {
+        // k =kasten welcher aktualisiert wird
         k *= 10;
         int[] result = new int[8];
+        //gb(id) -> gamebord[id]
         result[0] = gb(k + 1) + gb(k + 2) + gb(k + 3);
         result[1] = gb(k + 4) + gb(k + 5) + gb(k + 6);
         result[2] = gb(k + 7) + gb(k + 8) + gb(k + 9);
