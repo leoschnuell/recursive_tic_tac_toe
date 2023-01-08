@@ -1,6 +1,13 @@
 package core_code;
 
+import com.example.picture_button.Board;
+
 public class UnitTester implements Player {
+
+    @Override
+    public void setBoard(Board board) {
+
+    }
 
     int[] testlist = {51, 19, 18, 17, 96};
     //int[] testlist= {12,23,34,45,56,67,78,89,99,97,76,65,54,43,32,21,11,11};

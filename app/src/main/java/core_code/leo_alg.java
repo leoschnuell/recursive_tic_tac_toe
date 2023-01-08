@@ -1,6 +1,12 @@
 package core_code;
 
+import com.example.picture_button.Board;
+
 public class leo_alg implements Player {
+    @Override
+    public void setBoard(Board board) {
+
+    }
 
     GameController gameController;
     private  int[] gamebord;

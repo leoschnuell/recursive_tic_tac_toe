@@ -9,17 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import core_code.GameController
 import core_code.Human
 import core_code.Player
-import kotlinx.coroutines.delay
+import core_code.leo_alg
 import java.util.concurrent.*
-import kotlin.system.measureTimeMillis
-import kotlin.time.measureTime
 
 
 class Board : Fragment(), View.OnClickListener {
@@ -62,45 +59,61 @@ class Board : Fragment(), View.OnClickListener {
         return view
     }
 
-    fun play(player: Player): Future<Int?>? {
+    fun activate(player: Player): Future<Int?>? {
         return exec.submit<Int>(Callable {
-                player.move(gameController.lastMove)
+            player.move(gameController.lastMove)
         })
     }
 
     override fun onStart() {
         super.onStart()
-        println("onStart")
         val gameController = GameController.getGameControler()
+        gameController.reset()
 
-        val p1 = Human()
-        p1.setBoard(this)
-        val p2 = Human()
-        p2.setBoard(this)
+        //TODO:get p1 and p2 via menu
+        val player1 = Human()
+        player1.setBoard(this)
+        player1.is_beginning(true)
+        val player2 = leo_alg()
+        player2.setBoard(this)
+        player2.is_beginning(false)
+        updateBoardHiliting()
 
-        val playing = play(p1) ?: throw NullPointerException("Sander ist schuld")
+        var activePlayer = activate(player1) ?: throw NullPointerException("Sander fault: Starting game withe the first player faield")
 
         val mainHandler = Handler(Looper.getMainLooper())
 
         mainHandler.post(object : Runnable {
             override fun run() {
-                if (playing.isDone) {
-                    val move = playing.get()
-                    gameController.checkMove(move!!)
-                    setFlag(playing.get()!!, true)
+                if (activePlayer.isDone) {
+                    val move = activePlayer.get()?:throw NullPointerException("Sander fault: move ist NaN")
 
+                    if (!gameController.checkMove(move)) {
+                        endOfGame()
+                        return
+                    }
+                    update_kästchen(move)
+                    gameController.add_move(move, player)
+                    updateBoardHiliting()
 
+                    if (checkWin(move)) {
+                        update_kasten((move / 10) * 10)
+                        return
+                    }
+                    player = !player
+                    activePlayer = (if (player) {
+                        activate(player1)
+                    } else {
+                        activate(player2)
+                    })!!
                 }
                 mainHandler.postDelayed(this, 10)
             }
         })
     }
-    fun gameStep(){
-
-    }
 
 
-    fun setFlag(i: Int, player: Boolean) {
+    fun update_kasten(i: Int) {
         if (player) {
             idToButton[i]?.setBackgroundColor(Color.rgb(14, 14, 171))
         } else {
@@ -108,61 +121,75 @@ class Board : Fragment(), View.OnClickListener {
         }
     }
 
-    override fun onClick(p0: View?) {
-        if (p0 != null) {
-            val move = p0.tag as Int
-            if (gameController.checkMove(move)) {
+    fun update_kästchen(move: Int) {
+        if (player) {
+            idToButton[move]?.setBackgroundColor(Color.BLUE)
+            idToButton[gameController.lastMove]?.setBackgroundColor(Color.rgb(245, 78, 78))
+        } else {
+            idToButton[move]?.setBackgroundColor(Color.RED)
+            idToButton[gameController.lastMove]?.setBackgroundColor(Color.rgb(78, 98, 245))
+        }
 
-                println(p0.tag)
-                if (player) {
-                    p0.setBackgroundColor(Color.BLUE)
-                    idToButton[gameController.lastMove]?.setBackgroundColor(Color.rgb(245, 78, 78))
-                } else {
-                    p0.setBackgroundColor(Color.RED)
-                    idToButton[gameController.lastMove]?.setBackgroundColor(Color.rgb(78, 98, 245))
-                }
+    }
 
 
-                GameController.gamebord[move] = if (player) 3 else 5
-                when (val res = gameController.checkWin(move)) {
-                    -3 -> {
-                        println("First Player has won")
-                        var Winning_text_view=view?.findViewById<TextView>(R.id.text_winner)
-                        Winning_text_view?.setText("Blue Won")
-                        Winning_text_view?.visibility = View.VISIBLE
-                    }
-                    -5 -> {
-                        println("Second Player has won")
-                        var Winning_text_view=view?.findViewById<TextView>(R.id.text_winner)
-                        Winning_text_view?.setText("Red Won")
-                        Winning_text_view?.visibility = View.VISIBLE
-                    }
-                    in 1..9 -> {
-                        setFlag(res * 10, player)
-                    }
-                }
+    fun checkWin(move: Int): Boolean {
+        when (val res = gameController.checkWin(move)) {
+            -3 -> {
+                showEndScreen("Blue won")
+                return true;
+            }
+            -5 -> {
+                showEndScreen("Red won")
+                return true;
 
-                gameController.lastMove = move
-                player = !player;
-                for (i in 0 until 9) {
-                    for (j in 0 until 9) {
-                        val id = ((i + 1) * 10 + j + 1)
-                        if (GameController.gamebord[id] == 0) {
-                            if (gameController.checkMove(id)) {
+            }
+            in 1..9 -> {
+                update_kasten(res * 10)
+            }
+        }
+        return false;
 
-                                idToButton[id]?.setBackgroundColor(Color.GRAY)
-                            } else {
+    }
 
-                                idToButton[id]?.setBackgroundColor(Color.BLACK)
 
-                            }
-                        }
+    override fun onClick(p0: View) {
+        val move = p0.tag as Int
+        lastButId = move
+    }
+
+    fun updateBoardHiliting() {
+        for (i in 0 until 9) {
+            for (j in 0 until 9) {
+                val id = ((i + 1) * 10 + j + 1)
+                if (GameController.gamebord[id] == 0) {
+                    if (gameController.checkMove(id)) {
+
+                        idToButton[id]?.setBackgroundColor(Color.GRAY)
+                    } else {
+
+                        idToButton[id]?.setBackgroundColor(Color.BLACK)
                     }
                 }
             }
-
-            //  lastButId = p0.tag as Int;
         }
     }
+
+
+    fun endOfGame() {
+        if (player) {
+            showEndScreen("Blau gewinnt")
+        } else {
+            showEndScreen("Red gewinnt")
+        }
+    }
+
+    fun showEndScreen(winText: String) {
+        var Winning_text_view = view?.findViewById<TextView>(R.id.text_winner)
+        Winning_text_view?.setText(winText)
+        Winning_text_view?.visibility = View.VISIBLE
+    }
 }
+
+
 

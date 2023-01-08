@@ -1,4 +1,5 @@
 package core_code;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,13 +31,9 @@ public class GameController {
     }
 
 
-
-    GameController() {
-        for (int i = 0; i < 100; i++) {
-            gamebord[i] = 0;
-        }
-        lastMove = 1;// 1 = beginning of game
-
+    private GameController() {
+        //Setting up constansts
+        //TODO: make thie be actualy constans
         neighbours.put(1, new int[]{2, 4});
         neighbours.put(2, new int[]{1, 3, 5});
         neighbours.put(3, new int[]{2, 6});
@@ -57,7 +54,15 @@ public class GameController {
         thirdCase.put(8, new int[]{2});
         thirdCase.put(9, new int[]{3, 7});
 
+        reset();
         gameController = this;
+
+    }
+    public void reset() {
+        for (int i = 0; i < 100; i++) {
+            gamebord[i] = 0;
+        }
+        lastMove = 1;// 1 = beginning of game
 
     }
 
@@ -69,12 +74,17 @@ public class GameController {
         return neighbours;
     }
 
-    public void add_move(int move) {
+    public void add_move(int move, boolean player) {
+        gamebord[move] = player ? 3 : 5;
+        lastMove = move;
         moveList.add(move);
-        moveCounter ++;
+        moveCounter++;
     }
 
-    public Player game_setup( Player p1, Player p2) {
+
+
+    @Deprecated
+    public Player game_setup(Player p1, Player p2) {
         //ini game
         //Player p1 = new leo_alg();  //interal int = 3
         //Player p2 = new UnitTester();  //interal int = 5
@@ -96,6 +106,7 @@ public class GameController {
         return win;
     }
 
+    @Deprecated
     public Player gameLoop(Player p1, Player p2) {
         // returns the winner
 
@@ -135,7 +146,7 @@ public class GameController {
     public void display() {
         for (int j = 1; j < 4; j++) {
             for (int i = 10; i < 40; i += 10) {
-                System.out.print((gamebord[i*j] == 0 ? "_" : gamebord[i*j] == 3 ? "X" : "O") + (i != 30 ? "|" : ""));
+                System.out.print((gamebord[i * j] == 0 ? "_" : gamebord[i * j] == 3 ? "X" : "O") + (i != 30 ? "|" : ""));
             }
             System.out.println();
         }
@@ -195,14 +206,15 @@ public class GameController {
                 }
                 if (es_gibt_einen) {//es_git einenen freihen axen nachbarn aber er wurde nicht gewählt
                     return false;
-                }else{
+                } else {
                     // wenn es keine freie axie gibt darf der spieler überall hingehen wo ein kasten nicht voll ist
-                    return gamebord[ist_kasten*10] ==0;
+                    return gamebord[ist_kasten * 10] == 0;
                 }
             }
         }
     }
-//Returns values -3,-5 , 0 - 9
+
+    //Returns values -3,-5 , 0 - 9
     //0 = nothing was won
     // -3 first player won the game
     // -5 second player won the game
@@ -210,7 +222,7 @@ public class GameController {
     public int checkWin(int playerMove) {
         int res = checkKasten(playerMove / 10);
         if (res > 0) {
-            System.out.println("kasten gewonnen:"+ (playerMove/10)*10);
+            System.out.println("kasten gewonnen:" + (playerMove / 10) * 10);
             gamebord[(playerMove / 10) * 10] = res;
             // check flags of other kasten
             int[] result = new int[8];
@@ -234,6 +246,7 @@ public class GameController {
         }
         return 0;
     }
+
     /*
     123
     456
@@ -261,8 +274,7 @@ public class GameController {
         for (int i = 0; i < 8; i++) {
             if (result[i] == 9) {
                 return 3;
-            }
-            else if (result[i] == 15) {
+            } else if (result[i] == 15) {
                 return 5;
             }
         }
