@@ -14,8 +14,8 @@
             android:id="@+id/action_homeFragment_to_AIFragment"
             app:destination="@id/AIFragment" />
         <action
-            android:id="@+id/action_homeFragment_to_board"
-            app:destination="@id/board" />
+            android:id="@+id/action_homeFragment_to_player_vs_player"
+            app:destination="@id/player_vs_player" />
     </fragment>
     <fragment
         android:id="@+id/AIFragment"
@@ -31,4 +31,21 @@
         android:name="com.example.picture_button.Board"
         android:label="fragment_board"
         tools:layout="@layout/fragment_board" />
+    <fragment
+        android:id="@+id/player_vs_player"
+        android:name="com.example.picture_button.player_vs_player"
+        android:label="fragment_player_vs_player"
+        tools:layout="@layout/fragment_player_vs_player" >
+        <action
+            android:id="@+id/action_player_vs_player_to_board"
+            app:destination="@id/board" />
+        <action
+            android:id="@+id/action_player_vs_player_to_showPlayer"
+            app:destination="@id/showPlayer" />
+    </fragment>
+    <fragment
+        android:id="@+id/showPlayer"
+        android:name="com.example.picture_button.ShowPlayer"
+        android:label="fragment_show_player2"
+        tools:layout="@layout/fragment_show_player2" />
 </navigation>
