@@ -1,27 +1,49 @@
 package core_code;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
+
+import androidx.arch.core.executor.TaskExecutor;
+
+import com.example.picture_button.Board;
+
+
+import java.sql.SQLOutput;
 import java.util.Scanner;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 public class Human implements Player {
     GameController gameController;
     boolean is_beginning = false;
+    private Board board;
+
 
     public Human() {
         gameController = GameController.getGameControler();
-        gameController.getBoard(); // git ein int[100] als game bord zurück
-        gameController.display(); // zeigt das game in der konsole an
+
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
     }
 
     Scanner scanner = new Scanner(System.in);
 
     @Override
     public int move(int lastMove) {
-        gameController.display();
-        int i;
+        board.setLastButId(-1);
         do {
-            System.out.println("chose a move (that's valid limited checks)");
-            i = scanner.nextInt();
-        } while (!(i > 10 && i < 100 && i % 10 != 0));
-        return i;
+
+        while (board.getLastButId() ==-1)
+        {
+
+        }
+        }while (!gameController.checkMove(board.getLastButId()));
+
+        return board.getLastButId();
     }
     @Override
     public void is_beginning(boolean b) {

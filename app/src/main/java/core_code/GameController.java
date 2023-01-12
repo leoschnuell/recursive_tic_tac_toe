@@ -1,25 +1,39 @@
 package core_code;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class GameController {
 
-    private static int[] gamebord = new int[100];
+
+    public static int[] gamebord = new int[100];
     private static final Map<Integer, int[]> neighbours = new HashMap<>();
     private static final Map<Integer, int[]> thirdCase = new HashMap<>();
     private ArrayList<Integer> moveList = new ArrayList<>();
     private int moveCounter;
-    private int lastMove;
+    public int lastMove;
     private static GameController gameController = new GameController();
+    private boolean first_player_turn = true;
+    private int move;
+
+    private static ExecutorService executor =
+            Executors.newSingleThreadExecutor();
+
+    public static Future<Integer> parse(String input) {
+        return executor.submit(() -> {
+            Thread.sleep(1000);
+            return Integer.parseInt(input);
+        });
+    }
 
 
-    GameController() {
-        for (int i = 0; i < 100; i++) {
-            gamebord[i] = 0;
-        }
-        lastMove = 1;// 1 = beginning of game
-
+    private GameController() {
+        //Setting up constansts
+        //TODO: make thie be actualy constans
         neighbours.put(1, new int[]{2, 4});
         neighbours.put(2, new int[]{1, 3, 5});
         neighbours.put(3, new int[]{2, 6});
@@ -40,7 +54,15 @@ public class GameController {
         thirdCase.put(8, new int[]{2});
         thirdCase.put(9, new int[]{3, 7});
 
+        reset();
         gameController = this;
+
+    }
+    public void reset() {
+        for (int i = 0; i < 100; i++) {
+            gamebord[i] = 0;
+        }
+        lastMove = 1;// 1 = beginning of game
 
     }
 
@@ -52,11 +74,20 @@ public class GameController {
         return neighbours;
     }
 
+    public void add_move(int move, boolean player) {
+        gamebord[move] = player ? 3 : 5;
+        lastMove = move;
+        moveList.add(move);
+        moveCounter++;
+    }
 
-    public static void main(String[] args) {
+
+
+    @Deprecated
+    public Player game_setup(Player p1, Player p2) {
         //ini game
-        Player p1 = new leo_alg();  //interal int = 3
-        Player p2 = new UnitTester();  //interal int = 5
+        //Player p1 = new leo_alg();  //interal int = 3
+        //Player p2 = new UnitTester();  //interal int = 5
         p1.is_beginning(true);
         p2.is_beginning(false);
         Player win = gameController.gameLoop(p1, p2);
@@ -72,18 +103,14 @@ public class GameController {
             }
             System.out.print(")");
         }
-
-
+        return win;
     }
 
+    @Deprecated
     public Player gameLoop(Player p1, Player p2) {
         // returns the winner
-        boolean first_player_turn = true;
-        int move;
-
 
         while (true) {
-
             if (first_player_turn) {
                 move = p1.move(lastMove);
                 System.out.println("S1: " + move);
@@ -115,10 +142,11 @@ public class GameController {
     This funktions prints the game in a grid like this
     11 12 13 21 22 23 31 32 33
     */
+    @Deprecated
     public void display() {
         for (int j = 1; j < 4; j++) {
             for (int i = 10; i < 40; i += 10) {
-                System.out.print((gamebord[i*j] == 0 ? "_" : gamebord[i*j] == 3 ? "X" : "O") + (i != 30 ? "|" : ""));
+                System.out.print((gamebord[i * j] == 0 ? "_" : gamebord[i * j] == 3 ? "X" : "O") + (i != 30 ? "|" : ""));
             }
             System.out.println();
         }
@@ -141,17 +169,18 @@ public class GameController {
     }
 
 
-    private boolean checkMove(int playerMove) {
+    public boolean checkMove(int playerMove) {
         if (lastMove == 1) // first move of the game
             return true;
         int soll_kasten = (lastMove % 10);
         int ist_kasten = playerMove / 10;
         if (!(playerMove > 10 && playerMove < 100 && playerMove % 10 != 0))
-            return false;//unmögliche zahlen ausschliesen
+            return false;//unmögliche zahlen ausschließen
         if (gamebord[playerMove] != 0)
-            return false;// is das gewählt kästchen unbesetzt
+            return false;// das gewählte kästchen ist belegt
         if (gamebord[soll_kasten * 10] == 0) {// 1 fall: der gewähle kasten ist offen
             return (soll_kasten == ist_kasten);//prüft ob der kasten gleich dem letzten kästchen ist
+
 
         } else {//2 fall: gewählert kasten ist voll
             boolean es_gibt_einen = false;//eine flag
@@ -175,18 +204,25 @@ public class GameController {
                         }
                     }
                 }
-                return !es_gibt_einen; // wenn es keine freie axie gibt return es true das der spieler überall hingehen dar
-                // ansonsten falls da der spieler nicht inerhalb gescheckt hate
+                if (es_gibt_einen) {//es_git einenen freihen axen nachbarn aber er wurde nicht gewählt
+                    return false;
+                } else {
+                    // wenn es keine freie axie gibt darf der spieler überall hingehen wo ein kasten nicht voll ist
+                    return gamebord[ist_kasten * 10] == 0;
+                }
             }
         }
     }
 
-    private int checkWin(int playerMove) {// returns true if the game has ended
-        // otherwise updates the flags
-
+    //Returns values -3,-5 , 0 - 9
+    //0 = nothing was won
+    // -3 first player won the game
+    // -5 second player won the game
+    // 1..9 kasten was won
+    public int checkWin(int playerMove) {
         int res = checkKasten(playerMove / 10);
         if (res > 0) {
-            System.out.println("kasten gewonnen:"+ (playerMove/10)*10);
+            System.out.println("kasten gewonnen:" + (playerMove / 10) * 10);
             gamebord[(playerMove / 10) * 10] = res;
             // check flags of other kasten
             int[] result = new int[8];
@@ -202,16 +238,15 @@ public class GameController {
 
             for (int i = 0; i < 8; i++) {
                 if (result[i] == 9)
-                    return 3;
+                    return -3;
                 else if (result[i] == 15)
-                    return 5;
+                    return -5;
             }
-            return 0;
+            return playerMove / 10;
         }
         return 0;
     }
 
-    private int checkKasten(int k) {// k = kasten // returns true if kasten is won
     /*
     123
     456
@@ -222,8 +257,12 @@ public class GameController {
     159
     357
  */
+    // returns Player int if kasten is won
+    private int checkKasten(int k) {
+        // k =kasten welcher aktualisiert wird
         k *= 10;
         int[] result = new int[8];
+        //gb(id) -> gamebord[id]
         result[0] = gb(k + 1) + gb(k + 2) + gb(k + 3);
         result[1] = gb(k + 4) + gb(k + 5) + gb(k + 6);
         result[2] = gb(k + 7) + gb(k + 8) + gb(k + 9);
@@ -235,8 +274,7 @@ public class GameController {
         for (int i = 0; i < 8; i++) {
             if (result[i] == 9) {
                 return 3;
-            }
-            else if (result[i] == 15) {
+            } else if (result[i] == 15) {
                 return 5;
             }
         }

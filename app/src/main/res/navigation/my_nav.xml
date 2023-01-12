@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_nav"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.picture_button.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_AIFragment"
+            app:destination="@id/AIFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_player_vs_player"
+            app:destination="@id/player_vs_player" />
+    </fragment>
+    <fragment
+        android:id="@+id/AIFragment"
+        android:name="com.example.picture_button.AIFragment"
+        android:label="fragment_a_i"
+        tools:layout="@layout/fragment_a_i" >
+        <action
+            android:id="@+id/action_AIFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/board"
+        android:name="com.example.picture_button.Board"
+        android:label="fragment_board"
+        tools:layout="@layout/fragment_board" />
+    <fragment
+        android:id="@+id/player_vs_player"
+        android:name="com.example.picture_button.player_vs_player"
+        android:label="fragment_player_vs_player"
+        tools:layout="@layout/fragment_player_vs_player" >
+        <action
+            android:id="@+id/action_player_vs_player_to_board"
+            app:destination="@id/board" />
+        <action
+            android:id="@+id/action_player_vs_player_to_showPlayer"
+            app:destination="@id/showPlayer" />
+    </fragment>
+    <fragment
+        android:id="@+id/showPlayer"
+        android:name="com.example.picture_button.ShowPlayer"
+        android:label="fragment_show_player2"
+        tools:layout="@layout/fragment_show_player2" />
+</navigation>
