@@ -6,7 +6,7 @@ import android.os.Looper;
 import androidx.arch.core.executor.TaskExecutor;
 
 import com.example.picture_button.Board;
-import com.example.picture_button.MainActivity;
+
 
 import java.sql.SQLOutput;
 import java.util.Scanner;

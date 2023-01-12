@@ -74,7 +74,7 @@ class Board : Fragment(), View.OnClickListener {
         val player1 = Human()
         player1.setBoard(this)
         player1.is_beginning(true)
-        val player2 = leo_alg()
+        val player2 = Human()
         player2.setBoard(this)
         player2.is_beginning(false)
         updateBoardHiliting()
