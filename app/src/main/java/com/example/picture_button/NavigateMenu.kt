@@ -21,6 +21,7 @@ class NavigateMenu : AppCompatActivity() {
         val navHomeFragment = supportFragmentManager
             .findFragmentById(R.id.fragment) as NavHostFragment
         navController =navHomeFragment.navController
+
     }
 
 
