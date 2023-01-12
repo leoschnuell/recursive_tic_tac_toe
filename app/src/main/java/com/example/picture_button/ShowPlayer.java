@@ -12,13 +12,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -48,27 +44,53 @@ public class ShowPlayer extends Fragment {
             public void onClick(View v)
             {
                 System.out.println("heul");
+                BackgroundTask b = new BackgroundTask();
+                b.execute(ip.getText().toString(), message.getText().toString());
             }
         });
+        Thread myThread = new Thread(new MyServer());
+        myThread.start();
         return view;
     }
 
-    /*@Override
-    public void onStart() {
-        super.onStart();
-        Socket socket = null;
-        try {
-            ServerSocket serverSocket = new ServerSocket(6868);//java.net class that provides a system-independent implementation of the server side of a client/server socket connection
-            socket = serverSocket.accept();
-            InputStream input = socket.getInputStream();//an abstract class of Byte Stream that describe stream input and it is used for reading and it could be a file, image, audio, video, webpage
-            BufferedReader reader = new BufferedReader(new InputStreamReader(input));// Java class to reads the text from an Input stream (like a file) by buffering characters that seamlessly reads characters, arrays or lines.
-            String line = reader.readLine();
-            System.out.println(line);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*////
+    class MyServer implements Runnable
+    {
+        //listen for the inncoming messages
+        ServerSocket ss;
+        Socket mysocket;
+        DataInputStream dis;
+        String message;
+        Handler handler = new Handler();
+        @Override
+        public void run(){
+            try {
 
+                ss= new ServerSocket(9700);
+                handler.post(new Runnable() { // Operationen im Ui Thread
+                    @Override
+                    public void run() {
+                        Toast.makeText(getActivity(), "Waiting for Client", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                while (true) //Problematisch Vielleicht
+                {
+                    mysocket= ss.accept();
+                    dis = new DataInputStream(mysocket.getInputStream());
+
+                    message = dis.readUTF();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(),"message received from client:"+message, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+            catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
     class BackgroundTask extends AsyncTask<String,Void,String> {
         Socket s;
         DataOutputStream dos;
@@ -87,8 +109,6 @@ public class ShowPlayer extends Fragment {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
             return null;
         }
 
