@@ -26,6 +26,9 @@ class Board : Fragment(), View.OnClickListener {
     val gameController = GameController.getGameControler()
     val idToButton: MutableMap<Int, View> = mutableMapOf<Int, View>()
     private lateinit var executor: Executor
+    enum class playerType{
+       KI,HUMAN,REMOTE,KI_LIZ,KI_LEO,KI_SANDER
+    }
 
     private val exec = Executors.newSingleThreadExecutor()
 
@@ -70,11 +73,12 @@ class Board : Fragment(), View.OnClickListener {
         val gameController = GameController.getGameControler()
         gameController.reset()
 
-        //TODO:get p1 and p2 via menu
-        val player1 = Human()
+        var receivedPlayer1 = arguments?.getSerializable("player1")
+        var receivedPlayer2 = arguments?.getSerializable("player2")
+        val player1 = playerDeclaration(receivedPlayer1 as playerType)
         player1.setBoard(this)
         player1.is_beginning(true)
-        val player2 = Human()
+        val player2 = playerDeclaration(receivedPlayer2 as playerType)
         player2.setBoard(this)
         player2.is_beginning(false)
         updateBoardHiliting()
@@ -188,6 +192,21 @@ class Board : Fragment(), View.OnClickListener {
         var Winning_text_view = view?.findViewById<TextView>(R.id.text_winner)
         Winning_text_view?.setText(winText)
         Winning_text_view?.visibility = View.VISIBLE
+    }
+
+    fun playerDeclaration(playerType: playerType): Player {
+        return when(playerType){
+            Board.playerType.HUMAN ->{
+                Human()
+            }
+            Board.playerType.KI_LEO ->{
+                 leo_alg()
+            }
+            else->{
+                println("ist noch nicht implementiert")
+                Human()
+            }
+        }
     }
 }
 
