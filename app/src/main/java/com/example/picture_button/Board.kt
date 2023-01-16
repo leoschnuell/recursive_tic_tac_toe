@@ -75,6 +75,9 @@ class Board : Fragment(), View.OnClickListener {
 
         var receivedPlayer1 = arguments?.getSerializable("player1")
         var receivedPlayer2 = arguments?.getSerializable("player2")
+        if (receivedPlayer1 == null || receivedPlayer2 == null){
+             throw NullPointerException("Designtime issue: Board received no Player-types")
+        }
         val player1 = playerDeclaration(receivedPlayer1 as playerType)
         player1.setBoard(this)
         player1.is_beginning(true)
