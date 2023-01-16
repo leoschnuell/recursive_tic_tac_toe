@@ -73,8 +73,8 @@ class Board : Fragment(), View.OnClickListener {
         val gameController = GameController.getGameControler()
         gameController.reset()
 
-        var receivedPlayer1 = arguments?.getSerializable("player1")
-        var receivedPlayer2 = arguments?.getSerializable("player2")
+        val receivedPlayer1 = arguments?.getSerializable("player1")
+        val receivedPlayer2 = arguments?.getSerializable("player2")
         if (receivedPlayer1 == null || receivedPlayer2 == null){
              throw NullPointerException("Designtime issue: Board received no Player-types")
         }
@@ -101,12 +101,12 @@ class Board : Fragment(), View.OnClickListener {
                     }
                     update_kästchen(move)
                     gameController.add_move(move, player)
-                    updateBoardHiliting()
 
                     if (checkWin(move)) {
                         update_kasten((move / 10) * 10)
                         return
                     }
+                    updateBoardHiliting()
                     player = !player
                     activePlayer = (if (player) {
                         activate(player1)
