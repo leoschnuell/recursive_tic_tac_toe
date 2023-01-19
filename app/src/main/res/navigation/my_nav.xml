@@ -25,12 +25,22 @@
         <action
             android:id="@+id/action_AIFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_AIFragment_to_board"
+            app:destination="@id/board" />
     </fragment>
     <fragment
         android:id="@+id/board"
         android:name="com.example.picture_button.Board"
         android:label="fragment_board"
-        tools:layout="@layout/fragment_board" />
+        tools:layout="@layout/fragment_board" >
+        <argument
+            android:name="Player1"
+            app:argType="com.example.picture_button.Board$playerType" />
+        <argument
+            android:name="Player2"
+            app:argType="com.example.picture_button.Board$playerType" />
+    </fragment>
     <fragment
         android:id="@+id/player_vs_player"
         android:name="com.example.picture_button.player_vs_player"

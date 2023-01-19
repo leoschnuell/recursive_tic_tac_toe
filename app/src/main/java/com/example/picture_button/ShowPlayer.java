@@ -4,6 +4,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+
 
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -46,6 +48,10 @@ public class ShowPlayer extends Fragment {
                 System.out.println("heul");
                 BackgroundTask b = new BackgroundTask();
                 b.execute(ip.getText().toString(), message.getText().toString());
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("player1", Board.playerType.HUMAN);
+                bundle.putSerializable("player2", Board.playerType.REMOTE);
+
             }
         });
         Thread myThread = new Thread(new MyServer());

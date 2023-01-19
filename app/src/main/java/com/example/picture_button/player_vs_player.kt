@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 
 class player_vs_player : Fragment() {
@@ -19,7 +20,9 @@ class player_vs_player : Fragment() {
         val view = inflater.inflate(R.layout.fragment_player_vs_player, container, false)
         val button = view.findViewById<Button>(R.id.same_mobile_btn)
         button.setOnClickListener {
-            findNavController().navigate(R.id.action_player_vs_player_to_board)
+            val bundle = bundleOf("player1" to Board.playerType.HUMAN
+                ,"player2" to Board.playerType.HUMAN)
+            findNavController().navigate(R.id.action_player_vs_player_to_board,bundle)
         }
         val button2 = view.findViewById<Button>(R.id.choose_player_btn)
         button2.setOnClickListener {
