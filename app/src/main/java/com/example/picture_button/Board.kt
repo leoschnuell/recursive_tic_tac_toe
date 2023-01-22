@@ -14,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import core_code.GameController
 import core_code.Human
+import core_code.Liz_alg
 import core_code.Player
 import core_code.leo_alg
 import java.util.concurrent.*
@@ -204,6 +205,9 @@ class Board : Fragment(), View.OnClickListener {
             }
             Board.playerType.KI_LEO ->{
                  leo_alg()
+            }
+            Board.playerType.KI_LIZ ->{
+                Liz_alg()
             }
             else->{
                 println("ist noch nicht implementiert")
