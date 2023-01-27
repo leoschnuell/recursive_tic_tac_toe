@@ -10,50 +10,61 @@ public class Liz_alg implements Player {
 
     GameController gameControler;
     private  int[] gameboard;
+    int whoWins = 0;
     int counter;
-    private int[] less_two_field = new int[9];
-    private  int[] free_field = new int[9];
-    private int[] enemie_safe = new int[9];
-    private int[] possi_field = new int[9];
-    private int new_field;
+    int isPlayer;
+    int isNotPlayer;
+    private int[] lessTwoField = new int[9];  //
+    private  int[] freeField = new int[9]; //freie Felder in einem Kasten
+    private int[] enemySafe = new int[9];
+    private int[] possiField = new int[9];
+    private int newField;
     public Liz_alg() {
         gameControler = GameController.getGameControler();
         gameboard = gameControler.getBoard();
+       if(gameControler.getP1() == "Liz_alg"){
+           isPlayer =  3;
+           isNotPlayer = 5;
+        }
+        else {
+        isNotPlayer = 3;
+        isPlayer = 5;
+        }
     }
     @Override
     public int move(int lastMove) {
         counter = 0;
         gameboard = gameControler.getBoard();
-        new_field = lastMove % 10;
-        if(check_win(new_field))
+        newField = lastMove % 10; //Bestimmung des nächsten Kastens
+        if(checkWin(newField)) //Falls der bestimmte Kasten gewonnen ist. Rausfinden, welche Kasten als nächstes Belegt werden sollen
         {
-            for(int i = 0; i <= 8; i++) {
+            for(int i = 0; i <= 8; i++) {//Zurücksetzen der gecheckten und möglichen Felder
                 isChecked[i] = false;
-                possi_field[i] = 0;
+                possiField[i] = 0;
             }
-            choose_field(new_field);
-            new_field = select_field();
+            chooseField(newField); //rausfinden, welche Kasten in Frage für den Move kommen
+            newField = selectField(); //neuen Kasten bestimmen
         }
 
         int x = 0;
         int p = 0;
         for(int i = 0; i < 9; i++){
-            free_field[i] = 0;
-            enemie_safe[i] = 0;
-            less_two_field[i] = 0;
+            freeField[i] = 0;
+            enemySafe[i] = 0;
+            lessTwoField[i] = 0;
         }
         for(int i = 1; i < 10; i++){
-            if(gameboard[new_field*10+i] == 0){ //welche Felder potetiell benutztwerden können
-                free_field[x] = i;
+            if(gameboard[newField*10+i] == 0){ //Welche Felder potentiell benutzt werden können
+                freeField[x] = i;
                 x++;
             }
         }
         x = 0;
         int y = 0;
         int b = 0;
-        while(free_field[y] != 0) {
-            if (just_one_or_less_enemie(free_field[y])) {
-                less_two_field[b] = free_field[y];
+        while(freeField[y] != 0) {
+            if (justOneOrLessEnemy(freeField[y])) {
+                lessTwoField[b] = freeField[y];
                 if(b > 8 ) {
                     b++;
                 }
@@ -63,417 +74,826 @@ public class Liz_alg implements Player {
            }
            y++;
         }
-        if(less_two_field[1] == 0 && less_two_field[0]%10 != 5){
-            return (new_field)*10 +less_two_field[0];
+        if(lessTwoField[1] == 0 && lessTwoField[0]%10 != 5){
+            return (newField)*10 +lessTwoField[0];
         }
-        else if(less_two_field[2] == 0 && less_two_field[1] != 0){
-            if(less_two_field[0] % 10 == 5){
-                return (new_field)*10 +less_two_field[1];
+        else if(lessTwoField[2] == 0 && lessTwoField[1] != 0){
+            if(lessTwoField[0] % 10 == 5){
+                return (newField)*10 +lessTwoField[1];
             }
-            if(less_two_field[1] % 10 == 5){
-                return (new_field)*10 + less_two_field[0];
+            if(lessTwoField[1] % 10 == 5){
+                return (newField)*10 + lessTwoField[0];
             }
         }
-        else if(less_two_field[0] != 0 && less_two_field[1] != 0 ){
+        else if(lessTwoField[0] != 0 && lessTwoField[1] != 0 ){
             Random rand = new Random();
-            int h = less_two_field[rand.nextInt(b+1)];
+            int h = lessTwoField[rand.nextInt(b+1)];
             while( h == 0){
-                h = less_two_field[rand.nextInt(b+1)];
+                h = lessTwoField[rand.nextInt(b+1)];
             }
-            return (new_field)*10 + h;
+            return (newField)*10 + h;
         }
 
-        while(free_field[p] != 0  && p < 812){
-                if(!almost_three_in_a_row(free_field[p])) {// welche freien Felder benutzt werden könen die es dem egner nicht ermöglichen nim nächsten Zu eine Rheie vollzubekommen
-                    enemie_safe[x] = free_field[p];
+        while(freeField[p] != 0  && p < 812){
+                if(!almostThreeInARow(freeField[p],isNotPlayer)) {// welche freien Felder benutzt werden könen die es dem Gegner nicht ermöglichen nim nächsten Zu eine Rheie vollzubekommen
+                    enemySafe[x] = freeField[p];
                 x++;
             }
             p++;
         }
-        if(enemie_safe[2]  == 0){
-            if(enemie_safe[0]%10 == 5)
+        if(enemySafe[2]  == 0){
+            if(enemySafe[0]%10 == 5) //nochmal anschauen
             {
-                enemie_safe[0] = enemie_safe[1];
-                enemie_safe[1] = 0;
+                enemySafe[0] = enemySafe[1];
+                enemySafe[1] = 0;
             }
-            if(enemie_safe[1]%10 == 5){
-                enemie_safe[1] = 0;
+            if(enemySafe[1]%10 == 5){
+                enemySafe[1] = 0;
             }
         }
-        if(enemie_safe[1] ==  0){
-            return new_field* 10 +enemie_safe[0];
+        if(enemySafe[1] ==  0){
+            return newField* 10 +enemySafe[0];
         }
         else{
             Random rand = new Random();
-            return new_field* 10 + enemie_safe[rand.nextInt(b+1)];
+            return newField* 10 + enemySafe[rand.nextInt(b+1)];
         }
     }
 
-    private int select_field() {
+    private int selectField() {
+        int y = 0;
+        if (possiField[1] == 0) {
+            return possiField[0];
+        }
+        while(possiField[y] != 0) {
+            if (possiField[y] == 1) {
+                if (checkWin(2) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(3) && whoWins == isPlayer) {
+                        if (almostThreeInARow(1, isPlayer)) { // ai kann gewinnen
+                            return 1;
+                        }
+                    }
+                }
+                if (checkWin(5) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(9) && whoWins == isPlayer) {
+                        if (almostThreeInARow(1, isPlayer)) {
+                            return 1;
+                        }
+                    }
+                }
+                if (checkWin(4) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(7) && whoWins == isPlayer) {
+                        if (almostThreeInARow(1, isPlayer)) {
+                            return 1;
+                        }
+                    }
+                }
+                if (checkWin(2) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(3) && whoWins != isPlayer) {
+                        if (almostThreeInARow(1, isNotPlayer) && almostThreeInARow(1, isPlayer)) {
+                            return 1;
+                        }
+                    }
+                }
+                if (checkWin(5) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(9) && whoWins != isPlayer) {
+                        if (almostThreeInARow(1, isPlayer) || almostThreeInARow(1, isNotPlayer)) {
+                            return 1;
+                        }
+                    }
+                }
+                if (checkWin(4) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(7) && whoWins != isPlayer) {
+                        if (almostThreeInARow(1, isNotPlayer) || almostThreeInARow(1, isPlayer)) {
+                            return 1;
+                        }
+                    }
+                }
+            }
+            if (possiField[y] == 2) {
+                if (checkWin(1) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(3) && whoWins == isPlayer) {
+                        if (almostThreeInARow(2, isPlayer)) { // ai kann gewinnen
+                            return 2;
+                        }
+                    }
+                }
+                if (checkWin(5) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(8) && whoWins == isPlayer) {
+                        if (almostThreeInARow(1, isPlayer)) {
+                            return 2;
+                        }
+                    }
+                }
+                if (checkWin(5) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(8) && whoWins != isPlayer) {
+                        if (almostThreeInARow(2, isPlayer) || almostThreeInARow(2, isNotPlayer)) {
+                            return 2;
+                        }
+                    }
+                }
+                if (checkWin(1) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(3) && whoWins != isPlayer) {
+                        if (almostThreeInARow(2, isPlayer) || almostThreeInARow(2, isNotPlayer)) {
+                            return 1;
+                        }
+                    }
+                }
+            }
+            if (possiField[y] == 3) {
+                if (checkWin(2) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(1) && whoWins == isPlayer) {
+                        if (almostThreeInARow(3, isPlayer)) { // ai kann gewinnen
+                            return 3;
+                        }
+                    }
+                }
+                if (checkWin(5) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(7) && whoWins == isPlayer) {
+                        if (almostThreeInARow(3, isPlayer)) {
+                            return 3;
+                        }
+                    }
+                }
+                if (checkWin(6) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(9) && whoWins == isPlayer) {
+                        if (almostThreeInARow(6, isPlayer)) {
+                            return 3;
+                        }
+                    }
+                }
+                if (checkWin(2) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(1) && whoWins != isPlayer) {
+                        if (almostThreeInARow(2, isNotPlayer)) {
+                            return 3;
+                        }
+                    }
+                }
+                if (checkWin(5) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(7) && whoWins != isPlayer) {
+                        if (almostThreeInARow(1 , isPlayer) || almostThreeInARow(1, isNotPlayer)) {
+                            return 3;
+                        }
+                    }
+                }
+                if (checkWin(6) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(9) && whoWins != isPlayer) {
+                        if (almostThreeInARow(1, isPlayer) || almostThreeInARow(1, isNotPlayer)) {
+                            return 3;
+                        }
+                    }
+                }
+            }
+            if (possiField[y] == 4) {
+                if (checkWin(1) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(7) && whoWins == isPlayer) {
+                        if (almostThreeInARow(4, isPlayer)) { // ai kann gewinnen
+                            return 4;
+                        }
+                    }
+                }
+                if (checkWin(5) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(6) && whoWins == isPlayer) {
+                        if (almostThreeInARow(5, isPlayer)) {
+                            return 4;
+                        }
+                    }
+                }
+                if (checkWin(7) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(1) && whoWins != isPlayer) {
+                        if (almostThreeInARow(4, isPlayer)) {
+                            return 4;
+                        }
+                    }
+                }
+                if (checkWin(5) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(6) && whoWins != isPlayer) {
+                        if (almostThreeInARow(1, isPlayer) || almostThreeInARow(1, isNotPlayer)) {
+                            return 4;
+                        }
+                    }
+                }
+            }
+            if (possiField[y] == 5) {
+                if (checkWin(1) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(9) && whoWins == isPlayer) {
+                        if (almostThreeInARow(5, isPlayer)) { // ai kann gewinnen
+                            return 5;
+                        }
+                    }
+                }
+                if (checkWin(2) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(8) && whoWins == isPlayer) {
+                        if (almostThreeInARow(5, isPlayer)) {
+                            return 5;
+                        }
+                    }
+                }
+                if (checkWin(3) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(7) && whoWins == isPlayer) {
+                        if (almostThreeInARow(5, isPlayer)) {
+                            return 5;
+                        }
+                    }
+                }
+                if (checkWin(4) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(6) && whoWins == isPlayer) {
+                        if (almostThreeInARow(5, isPlayer)) {
+                            return 5;
+                        }
+                    }
+                }
+                if (checkWin(1) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(9) && whoWins != isPlayer) {
+                        if (almostThreeInARow(5, isPlayer) || almostThreeInARow(5, isNotPlayer)) {
+                            return 5;
+                        }
+                    }
+                }
+                if (checkWin(2) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(8) && whoWins != isPlayer) {
+                        if (almostThreeInARow(5, isPlayer) || almostThreeInARow(5, isNotPlayer)) {
+                            return 5;
+                        }
+                    }
+                }
+                if (checkWin(3) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(7) && whoWins != isPlayer) {
+                        if (almostThreeInARow(5, isPlayer) || almostThreeInARow(5, isNotPlayer)) {
+                            return 5;
+                        }
+                    }
+                }
+                if (checkWin(4) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(6) && whoWins != isPlayer) {
+                        if (almostThreeInARow(5, isPlayer) || almostThreeInARow(5, isNotPlayer)) {
+                            return 1;
+                        }
+                    }
+                }
+            }
+            if (possiField[y] == 6) {
+                if (checkWin(3) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(9) && whoWins == isPlayer) {
+                        if (almostThreeInARow(6, isPlayer)) { // ai kann gewinnen
+                            return 6;
+                        }
+                    }
+                }
+                if (checkWin(5) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(4) && whoWins == isPlayer) {
+                        if (almostThreeInARow(6, isPlayer)) {
+                            return 6;
+                        }
+                    }
+                }
+                if (checkWin(3) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(9) && whoWins != isPlayer) {
+                        if (almostThreeInARow(6, isPlayer) || almostThreeInARow(6, isNotPlayer)) {
+                            return 6;
+                        }
+                    }
+                }
+                if (checkWin(5) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(4) && whoWins != isPlayer) {
+                        if (almostThreeInARow(6, isPlayer) || almostThreeInARow(6, isNotPlayer)) {
+                            return 6;
+                        }
+                    }
+                }
+            }
+            if (possiField[y] == 7) {
+                if (checkWin(1) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(4) && whoWins == isPlayer) {
+                        if (almostThreeInARow(7, isPlayer)) { // ai kann gewinnen
+                            return 7;
+                        }
+                    }
+                }
+                if (checkWin(5) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(3) && whoWins == isPlayer) {
+                        if (almostThreeInARow(7, isPlayer)) {
+                            return 7;
+                        }
+                    }
+                }
+                if (checkWin(8) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(9) && whoWins == isPlayer) {
+                        if (almostThreeInARow(7, isPlayer)) {
+                            return 7;
+                        }
+                    }
+                }
+                if (checkWin(1) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(4) && whoWins != isPlayer) {
+                        if (almostThreeInARow(7, isPlayer) || almostThreeInARow(7, isNotPlayer)) {
+                            return 7;
+                        }
+                    }
+                }
+                if (checkWin(5) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(3) && whoWins != isPlayer) {
+                        if (almostThreeInARow(7, isPlayer) || almostThreeInARow(7, isNotPlayer)) {
+                            return 7;
+                        }
+                    }
+                }
+                if (checkWin(8) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(9) && whoWins != isPlayer) {
+                        if (almostThreeInARow(7, isPlayer) || almostThreeInARow(7, isNotPlayer)) {
+                            return 7;
+                        }
+                    }
+                }
+            }
+            if (possiField[y] == 8) {
+                if (checkWin(7) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(9) && whoWins == isPlayer) {
+                        if (almostThreeInARow(8, isPlayer)) { // ai kann gewinnen
+                            return 8;
+                        }
+                    }
+                }
+                if (checkWin(2) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(5) && whoWins == isPlayer) {
+                        if (almostThreeInARow(1, isPlayer)) {
+                            return 2;
+                        }
+                    }
+                }
+                if (checkWin(2) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(5) && whoWins != isPlayer) {
+                        if (almostThreeInARow(8, isPlayer) || almostThreeInARow(8, isNotPlayer)) {
+                            return 8;
+                        }
+                    }
+                }
+                if (checkWin(7) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(9) && whoWins != isPlayer) {
+                        if (almostThreeInARow(8, isPlayer) || almostThreeInARow(8, isNotPlayer)) {
+                            return 8;
+                        }
+                    }
+                }
+            }
+            if (possiField[y] == 9) {
+                if (checkWin(3) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(6) && whoWins == isPlayer) {
+                        if (almostThreeInARow(9, isPlayer)) { // ai kann gewinnen
+                            return 9;
+                        }
+                    }
+                }
+                if (checkWin(1) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(5) && whoWins == isPlayer) {
+                        if (almostThreeInARow(9, isPlayer)) {
+                            return 9;
+                        }
+                    }
+                }
+                if (checkWin(7) && whoWins == isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(8) && whoWins == isPlayer) {
+                        if (almostThreeInARow(9, isPlayer)) {
+                            return 9;
+                        }
+                    }
+                }
+                if (checkWin(3) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(6) && whoWins != isPlayer) {
+                        if (almostThreeInARow(9, isPlayer) || almostThreeInARow(9, isNotPlayer)) {
+                            return 9;
+                        }
+                    }
+                }
+                if (checkWin(1) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(5) && whoWins != isPlayer) {
+                        if (almostThreeInARow(9, isPlayer) || almostThreeInARow(9, isNotPlayer)) {
+                            return 9;
+                        }
+                    }
+                }
+                if (checkWin(7) && whoWins != isPlayer)//wer gewonnen hat und ob
+                {
+                    if (checkWin(8) && whoWins != isPlayer) {
+                        if (almostThreeInARow(9, isPlayer) || almostThreeInARow(9, isNotPlayer)) {
+                            return 9;
+                        }
+                    }
+                }
+            }
+            y++;
+        }
         int x= 0;
         Random rand = new Random();
-        while (possi_field[x] != 0){
+        while (possiField[x] != 0){
             x++;
         }
-        return possi_field[rand.nextInt(x)];
+        return possiField[rand.nextInt(x)];
     }
     boolean[] isChecked = new boolean[9];
-    private void choose_field(int check_field) {
-        for(int i = 0; i <= 8; i++){
+    private void chooseField(int checkField) {
+        for(int i = 0; i <= 8; i++){ //Überprüfen ob ein Kasten zweimal eingetragen ist
             for (int x= i; x<= 8; x++){
-               if(possi_field[i] == possi_field[x] && possi_field[i] != 0){
-                   possi_field[x]= 0;
+               if(possiField[i] == possiField[x] && possiField[i] != 0){//Wenn das der Fall ist wird das neust eingetragende der Doppelten entfernt
+                   possiField[x]= 0;                                       //und alle  hinteren eins aufgerutscht
                    int d = x;
                    counter--;
                    while(d < 8){
-                       possi_field[d] = possi_field[d+1];
+                       possiField[d] = possiField[d+1];
                        d++;
                    }
                }
             }
         }
 
-        if(check_field == 1 && !isChecked[0]){
+        if(checkField == 1 && !isChecked[0]){  //Überprüfen der nächst anliegenden Kasten
             isChecked[0] = true;
-            if(!check_win(2) && !isChecked[1]){
+            if(!checkWin(2) && !isChecked[1]){
                 isChecked[1] = true;
-                possi_field[counter] = 2;
+                possiField[counter] = 2;
                 counter++;
 
             }
             else {
                 isChecked[1] = true;
-                choose_field(2);
+                chooseField(2);
             }
-            if(!check_win(3) && !isChecked[2]){
+            if(!checkWin(3) && !isChecked[2]){
                 isChecked[2] = true;
-                possi_field[counter] = 3;
+                possiField[counter] = 3;
                 counter++;
             }
             else{
                 isChecked[2] = true;
-                choose_field(3);
+                chooseField(3);
             }
         }
-        else if(check_field == 2 && !isChecked[1]){
+        else if(checkField == 2 && !isChecked[1]){
             isChecked[1] = true;
-            if(!check_win(3) && !isChecked[2]){
+            if(!checkWin(3) && !isChecked[2]){
                 isChecked[2] = true;
-                possi_field[counter] = 3;
+                possiField[counter] = 3;
                 counter++;
             }
             else{
                 isChecked[2] = true;
-                choose_field(3);
+                chooseField(3);
             }
-            if(!check_win(1) && !isChecked[0]){
+            if(!checkWin(1) && !isChecked[0]){
                 isChecked[0] = true;
-                possi_field[counter] = 1;
+                possiField[counter] = 1;
                 counter++;
             }
             else{
                 isChecked[0] = true;
-                choose_field(1);
+                chooseField(1);
             }
-            if(!check_win(5) && !isChecked[4]){
+            if(!checkWin(5) && !isChecked[4]){
                 isChecked[4] = true;
-                possi_field[counter] = 5;
+                possiField[counter] = 5;
                 counter++;
             }
             else{
                 isChecked[4] = true;
-                choose_field(5);
+                chooseField(5);
             }
         }
-        else if(check_field == 3  && !isChecked[2]){
+        else if(checkField == 3  && !isChecked[2]){
             isChecked[2] = true;
-            if(!check_win(2) && !isChecked[1]){
+            if(!checkWin(2) && !isChecked[1]){
                 isChecked[1] = true;
-                possi_field[counter] = 3;
+                possiField[counter] = 3;
                 counter++;
             }
             else{
                 isChecked[1] = true;
-                choose_field(2);
+                chooseField(2);
             }
-            if(!check_win(6) && !isChecked[5]){
+            if(!checkWin(6) && !isChecked[5]){
                 isChecked[5] = true;
-                possi_field[counter] = 6;
+                possiField[counter] = 6;
                 counter++;
             }
             else{
                 isChecked[5] = true;
-                choose_field(6);
+                chooseField(6);
             }
         }
-        else if(check_field == 4  && !isChecked[3]){
+        else if(checkField == 4  && !isChecked[3]){
             isChecked[3] = true;
-            if(!check_win(1)){
+            if(!checkWin(1)){
                 isChecked[0] = true;
-                possi_field[counter] = 1;
+                possiField[counter] = 1;
                 counter++;
             }
             else{
                 isChecked[0] = true;
-                choose_field(1);
+                chooseField(1);
             }
-            if(!check_win(5) && !isChecked[4]){
+            if(!checkWin(5) && !isChecked[4]){
                 isChecked[4] = true;
-                possi_field[counter] = 5;
+                possiField[counter] = 5;
                 counter++;
             }
             else{
                 isChecked[4] = true;
-                choose_field(5);
+                chooseField(5);
             }
-            if(!check_win(7) && !isChecked[6]){
+            if(!checkWin(7) && !isChecked[6]){
                 isChecked[6] = true;
-                possi_field[counter] = 7;
+                possiField[counter] = 7;
                 counter++;
             }
             else{
                 isChecked[6] = true;
-                choose_field(7);
+                chooseField(7);
             }
         }
-        else if(check_field == 5  && !isChecked[4]){
+        else if(checkField == 5  && !isChecked[4]){
             isChecked[4] = true;
-            if(!check_win(2) && !isChecked[1]){
+            if(!checkWin(2) && !isChecked[1]){
                 isChecked[1] = true;
-                possi_field[counter] = 2;
+                possiField[counter] = 2;
                 counter++;
             }
             else{
                 isChecked[1] = true;
-                choose_field(2);
+                chooseField(2);
             }
-            if(!check_win(4) && !isChecked[3]){
+            if(!checkWin(4) && !isChecked[3]){
                 isChecked[3] = true;
-                possi_field[counter] = 4;
+                possiField[counter] = 4;
                 counter++;
             }
             else{
                 isChecked[3] = true;
-                choose_field(4);
+                chooseField(4);
             }
-            if(!check_win(6) && !isChecked[5]){
+            if(!checkWin(6) && !isChecked[5]){
                 isChecked[5] = true;
-                possi_field[counter] = 6;
+                possiField[counter] = 6;
                 counter++;
             }
             else{
                 isChecked[5] = true;
-                choose_field(6);
+                chooseField(6);
             }
-            if(!check_win(8) && !isChecked[8]){
+            if(!checkWin(8) && !isChecked[8]){
                 isChecked[8] = true;
-                possi_field[counter] = 8;
+                possiField[counter] = 8;
                 counter++;
             }
             else{
                 isChecked[8] = true;
-                choose_field(8);
+                chooseField(8);
             }
         }
-        else if(check_field == 6  && !isChecked[5]){
+        else if(checkField == 6  && !isChecked[5]){
             isChecked[5] = true;
-            if(!check_win(3) && !isChecked[2]){
+            if(!checkWin(3) && !isChecked[2]){
                 isChecked[2] = true;
-                possi_field[counter] = 6;
+                possiField[counter] = 6;
                 counter++;
             }
             else{
                 isChecked[2] = true;
-                choose_field(3);
+                chooseField(3);
             }
-            if(!check_win(5) && !isChecked[4]){
+            if(!checkWin(5) && !isChecked[4]){
                 isChecked[4] = true;
-                possi_field[counter] = 5;
+                possiField[counter] = 5;
                 counter++;
             }
             else{
                 isChecked[4] = true;
-                choose_field(5);
+                chooseField(5);
             }
-            if(!check_win(9) && !isChecked[8]){
+            if(!checkWin(9) && !isChecked[8]){
                 isChecked[8] = true;
-                possi_field[counter] = 9;
+                possiField[counter] = 9;
                 counter++;
             }
             else{
                 isChecked[8] = true;
-                choose_field(9);
+                chooseField(9);
             }
         }
-        else if(check_field == 7  && !isChecked[6]){
+        else if(checkField == 7  && !isChecked[6]){
             isChecked[6] = true;
-            if(!check_win(4) && !isChecked[3]){
+            if(!checkWin(4) && !isChecked[3]){
                 isChecked[3] = true;
-                possi_field[counter] = 4;
+                possiField[counter] = 4;
                 counter++;
             }
             else{
                 isChecked[3] = true;
-                choose_field(4);
+                chooseField(4);
             }
-            if(!check_win(8) && !isChecked[7]){
+            if(!checkWin(8) && !isChecked[7]){
                 isChecked[7] = true;
-                possi_field[counter] = 8;
+                possiField[counter] = 8;
                 counter++;
             }
             else{
                 isChecked[7] = true;
-                choose_field(8);
+                chooseField(8);
             }
         }
-        else if(check_field == 8  && !isChecked[7]){
+        else if(checkField == 8  && !isChecked[7]){
             isChecked[7] = true;
-            if(!check_win(5)){
+            if(!checkWin(5)){
                 isChecked[4] = true;
-                possi_field[counter] = 5;
+                possiField[counter] = 5;
                 counter++;
             }
             else{
                 isChecked[4] = true;
-                choose_field(5);
+                chooseField(5);
             }
-            if(!check_win(7) && !isChecked[6]) {
+            if(!checkWin(7) && !isChecked[6]) {
                 isChecked[6] = true;
-                possi_field[counter] = 7;
+                possiField[counter] = 7;
                 counter++;
             }
             else{
                 isChecked[6] = true;
-                choose_field(7);
+                chooseField(7);
             }
-            if(!check_win(9) && !isChecked[8]){
+            if(!checkWin(9) && !isChecked[8]){
                 isChecked[8] = true;
-                possi_field[counter] = 9;
+                possiField[counter] = 9;
                 counter++;
             }
             else{
                 isChecked[8] = true;
-                choose_field(9);
+                chooseField(9);
             }
         }
-        else if(check_field == 9 && !isChecked[8]) {
+        else if(checkField == 9 && !isChecked[8]) {
             isChecked[8] = true;
-            if (!check_win(6) && !isChecked[5]) {
+            if (!checkWin(6) && !isChecked[5]) {
                 isChecked[5] = true;
-                possi_field[counter] = 6;
+                possiField[counter] = 6;
                 counter++;
             } else {
                 isChecked[5] = true;
-                choose_field(6);
+                chooseField(6);
             }
-            if (!check_win(8) && !isChecked[7]) {
+            if (!checkWin(8) && !isChecked[7]) {
                 isChecked[7] = true;
-                possi_field[counter] = 8;
+                possiField[counter] = 8;
                 counter++;
             } else {
                 isChecked[7] = true;
-                choose_field(8);
+                chooseField(8);
             }
         }
     }
 
     List<Integer>enemie_layout = new ArrayList<Integer>();
-    public boolean almost_three_in_a_row(int enemie_field){
+    public boolean almostThreeInARow(int enemyField, int whichPlayer){
         int x = 0;
         for(int i = 1; i < 10; i++){
-            if(gameboard[enemie_field*10+i] == 3){
-                enemie_layout.add(enemie_field*10+i);
+            if(gameboard[enemyField*10+i] == whichPlayer){
+                enemie_layout.add(enemyField*10+i);
                 x++;
             }
         }
         if(enemie_layout.contains(1)){
-            if(enemie_layout.contains(2)  && gameboard[enemie_field*10 + 3] == 0){
+            if(enemie_layout.contains(2)  && gameboard[enemyField*10 + 3] == 0){
                 return true;
             }
-            if(enemie_layout.contains(3)  && gameboard[enemie_field*10 + 2] == 0){
+            if(enemie_layout.contains(3)  && gameboard[enemyField*10 + 2] == 0){
                 return true;
             }
-            if(enemie_layout.contains(5)  && gameboard[enemie_field + 9] == 0){
+            if(enemie_layout.contains(5)  && gameboard[enemyField + 9] == 0){
                 return true;
             }
-            if(enemie_layout.contains(9)  && gameboard[enemie_field + 5] == 0){
+            if(enemie_layout.contains(9)  && gameboard[enemyField + 5] == 0){
                 return true;
             }
-            if(enemie_layout.contains(4)  && gameboard[enemie_field + 7] == 0){
+            if(enemie_layout.contains(4)  && gameboard[enemyField + 7] == 0){
                 return true;
             }
-            if(enemie_layout.contains(7)  && gameboard[enemie_field + 5] == 0){
+            if(enemie_layout.contains(7)  && gameboard[enemyField + 5] == 0){
                 return true;
             }
         }
-        else if(enemie_layout.contains(2)  && gameboard[enemie_field*10 + 1] == 0 && enemie_layout.contains(3) ){
+        else if(enemie_layout.contains(2)  && gameboard[enemyField*10 + 1] == 0 && enemie_layout.contains(3) ){
             return true;
         }
-        else if(enemie_layout.contains(9)  && gameboard[enemie_field*10 + 1] == 0 && enemie_layout.contains(5) ){
+        else if(enemie_layout.contains(9)  && gameboard[enemyField*10 + 1] == 0 && enemie_layout.contains(5) ){
             return true;
         }
-        else if(enemie_layout.contains(4) && gameboard[enemie_field*10 + 1] == 0 && enemie_layout.contains(7) ){
+        else if(enemie_layout.contains(4) && gameboard[enemyField*10 + 1] == 0 && enemie_layout.contains(7) ){
             return true;
         }
         if(enemie_layout.contains(2) ){
-            if(enemie_layout.contains(5)  && gameboard[enemie_field*10 + 8] == 0){
+            if(enemie_layout.contains(5)  && gameboard[enemyField*10 + 8] == 0){
                 return true;
             }
-            if(enemie_layout.contains(8)  && gameboard[enemie_field*10 + 5] == 0){
+            if(enemie_layout.contains(8)  && gameboard[enemyField*10 + 5] == 0){
                 return true;
             }
         }
-        else if(enemie_layout.contains(8)  && gameboard[enemie_field*10 + 2] == 0 && enemie_layout.contains(5) ){
+        else if(enemie_layout.contains(8)  && gameboard[enemyField*10 + 2] == 0 && enemie_layout.contains(5) ){
             return true;
         }
         if(enemie_layout.contains(3) ){
-            if(enemie_layout.contains(6)  && gameboard[enemie_field*10 + 9] == 0){
+            if(enemie_layout.contains(6)  && gameboard[enemyField*10 + 9] == 0){
                 return true;
             }
-            if(enemie_layout.contains(9)  && gameboard[enemie_field*10 + 6] == 0){
+            if(enemie_layout.contains(9)  && gameboard[enemyField*10 + 6] == 0){
                 return true;
             }
-            if(enemie_layout.contains(5)  && gameboard[enemie_field*10 + 7] == 0){
+            if(enemie_layout.contains(5)  && gameboard[enemyField*10 + 7] == 0){
                 return true;
             }
-            if(enemie_layout.contains(7)  && gameboard[enemie_field*10 + 5] == 0){
+            if(enemie_layout.contains(7)  && gameboard[enemyField*10 + 5] == 0){
                 return true;
             }
         }
-        else if(enemie_layout.contains(5)  && gameboard[enemie_field*10 + 3] == 0 && enemie_layout.contains(7) ){
+        else if(enemie_layout.contains(5)  && gameboard[enemyField*10 + 3] == 0 && enemie_layout.contains(7) ){
             return true;
         }
-        else if(enemie_layout.contains(9)  && gameboard[enemie_field*10 + 3] == 0 && enemie_layout.contains(6) ){
+        else if(enemie_layout.contains(9)  && gameboard[enemyField*10 + 3] == 0 && enemie_layout.contains(6) ){
             return true;
         }
         if(enemie_layout.contains(4) ){
-            if(enemie_layout.contains(5)  && gameboard[enemie_field*10 + 6] == 0){
+            if(enemie_layout.contains(5)  && gameboard[enemyField*10 + 6] == 0){
                 return true;
             }
-            if(enemie_layout.contains(6)  && gameboard[enemie_field*10 + 5] == 0){
+            if(enemie_layout.contains(6)  && gameboard[enemyField*10 + 5] == 0){
                 return true;
             }
         }
-        else if(enemie_layout.contains(5)  && gameboard[enemie_field*10 + 4] == 0 && enemie_layout.contains(6) ){
+        else if(enemie_layout.contains(5)  && gameboard[enemyField*10 + 4] == 0 && enemie_layout.contains(6) ){
             return true;
         }
         if(enemie_layout.contains(7) ){
-            if(enemie_layout.contains(8)  && gameboard[enemie_field*10 + 9] == 0){
+            if(enemie_layout.contains(8)  && gameboard[enemyField*10 + 9] == 0){
                 return true;
             }
-            if(enemie_layout.contains(9)  && gameboard[enemie_field*10 + 8] == 0){
+            if(enemie_layout.contains(9)  && gameboard[enemyField*10 + 8] == 0){
                 return true;
             }
         }
-        else if(enemie_layout.contains(8)  && gameboard[enemie_field*10 + 7] == 0 && enemie_layout.contains(9) ){
+        else if(enemie_layout.contains(8)  && gameboard[enemyField*10 + 7] == 0 && enemie_layout.contains(9) ){
             return true;
         }
         return false;
     }
-    private boolean just_one_or_less_enemie(int inspect_field){
+    private boolean justOneOrLessEnemy(int inspectField){
         int count = 0;
         for(int i = 1; i < 10; i++){
-            if(gameboard[inspect_field*10+i] == 3)
+            if(gameboard[inspectField*10+i] == isNotPlayer)
             {
                 count++;
             }
@@ -485,7 +905,7 @@ public class Liz_alg implements Player {
 
     }
     @Override
-    public void is_beginning(boolean b) {
+    public void isBeginning(boolean b) {
     }
 
     @Override
@@ -494,77 +914,95 @@ public class Liz_alg implements Player {
     }
 
     @Override
-    public String has_won() {
+    public String hasWon() {
         return null;
     }
-    public boolean check_win(int field) {
+    public boolean checkWin(int field) {
         field = field *10;
         if (gameboard[field + 1] == 3) {
             if (gameboard[field + 2] == 3 && gameboard[field + 3] == 3) {
+                whoWins = 3;
                 return true;
             }
             if (gameboard[field + 4] == 3 && gameboard[field + 7] == 3) {
+                whoWins = 3;
                 return true;
             }
             if (gameboard[field + 5] == 3 && gameboard[field + 9] == 3) {
+                whoWins = 3;
                 return true;
             }
         } else if (gameboard[field + 2] == 3) {
             if (gameboard[field + 5] == 3 && gameboard[field + 8] == 3) {
+                whoWins = 3;
                 return true;
             }
         }
         if (gameboard[field + 3] == 3) {
             if (gameboard[field + 5] == 3 && gameboard[field + 7] == 3) {
+                whoWins = 3;
                 return true;
             }
             if (gameboard[field + 4] == 3 && gameboard[field + 7] == 3) {
+                whoWins = 3;
                 return true;
             }
             if (gameboard[field + 5] == 3 && gameboard[field + 9] == 3) {
+                whoWins = 3;
                 return true;
             }
         }
         if(gameboard[field + 4] == 3 && gameboard[field + 5] == 3 && gameboard[field + 6] == 3)
         {
+            whoWins = 3;
             return true;
         }
         if(gameboard[field + 7] == 3 && gameboard[field + 8] == 3 && gameboard[field + 9] == 3)
         {
+            whoWins = 3;
             return true;
         }
         if (gameboard[field + 1] == 5) {
             if (gameboard[field + 2] == 5 && gameboard[field + 3] == 5) {
+                whoWins = 5;
                 return true;
             }
             if (gameboard[field + 4] == 5 && gameboard[field + 7] == 5) {
+                whoWins = 5;
                 return true;
             }
             if (gameboard[field + 5] == 5 && gameboard[field + 9] == 5) {
+                whoWins = 5;
                 return true;
             }
         } else if (gameboard[field + 2] == 5) {
             if (gameboard[field + 5] == 5 && gameboard[field + 8] == 5) {
+                whoWins = 5;
                 return true;
             }
         }
         if (gameboard[field + 3] == 5) {
             if (gameboard[field + 5] == 5 && gameboard[field + 7] == 5) {
+                whoWins = 5;
                 return true;
             }
             if (gameboard[field + 4] == 5 && gameboard[field + 7] == 5) {
+                whoWins = 5;
                 return true;
             }
             if (gameboard[field + 5] == 5 && gameboard[field + 9] == 5) {
+                whoWins = 5;
                 return true;
             }
         }
         if(gameboard[field + 4] == 5 && gameboard[field + 5] == 5 && gameboard[field + 6] == 5)
         {
+            whoWins = 5;
             return true;
         }
         if(gameboard[field + 7] == 5 && gameboard[field + 8] == 5 && gameboard[field + 9] == 5)
         {
+            whoWins = 5;
             return true;
         }
         return false;

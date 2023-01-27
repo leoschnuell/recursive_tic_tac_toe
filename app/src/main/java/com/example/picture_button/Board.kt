@@ -81,10 +81,10 @@ class Board : Fragment(), View.OnClickListener {
         }
         val player1 = playerDeclaration(receivedPlayer1 as playerType)
         player1.setBoard(this)
-        player1.is_beginning(true)
+        player1.isBeginning(true)
         val player2 = playerDeclaration(receivedPlayer2 as playerType)
         player2.setBoard(this)
-        player2.is_beginning(false)
+        player2.isBeginning(false)
         updateBoardHiliting()
 
         var activePlayer = activate(player1) ?: throw NullPointerException("Sander fault: Starting game withe the first player faield")
@@ -100,11 +100,11 @@ class Board : Fragment(), View.OnClickListener {
                         endOfGame()
                         return
                     }
-                    update_kästchen(move)
-                    gameController.add_move(move, player)
+                    updateCasket(move)
+                    gameController.addMove(move, player)
 
                     if (checkWin(move)) {
-                        update_kasten((move / 10) * 10)
+                        updateCrate((move / 10) * 10)
                         return
                     }
                     updateBoardHiliting()
@@ -121,7 +121,7 @@ class Board : Fragment(), View.OnClickListener {
     }
 
 
-    fun update_kasten(i: Int) {
+    fun updateCrate(i: Int) {
         if (player) {
             idToButton[i]?.setBackgroundColor(Color.rgb(14, 14, 171))
         } else {
@@ -129,7 +129,7 @@ class Board : Fragment(), View.OnClickListener {
         }
     }
 
-    fun update_kästchen(move: Int) {
+    fun updateCasket(move: Int) {
         if (player) {
             idToButton[move]?.setBackgroundColor(Color.BLUE)
             idToButton[gameController.lastMove]?.setBackgroundColor(Color.rgb(245, 78, 78))
@@ -153,7 +153,7 @@ class Board : Fragment(), View.OnClickListener {
 
             }
             in 1..9 -> {
-                update_kasten(res * 10)
+                updateCrate(res * 10)
             }
         }
         return false;

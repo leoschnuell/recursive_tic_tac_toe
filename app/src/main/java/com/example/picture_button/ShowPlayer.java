@@ -63,7 +63,7 @@ public class ShowPlayer extends Fragment {
     {
         //listen for the inncoming messages
         ServerSocket ss;
-        Socket mysocket;
+        Socket mySocket;
         DataInputStream dis;
         String message;
         Handler handler = new Handler();
@@ -80,8 +80,8 @@ public class ShowPlayer extends Fragment {
                 });
                 while (true) //Problematisch Vielleicht
                 {
-                    mysocket= ss.accept();
-                    dis = new DataInputStream(mysocket.getInputStream());
+                    mySocket= ss.accept();
+                    dis = new DataInputStream(mySocket.getInputStream());
 
                     message = dis.readUTF();
                     handler.post(new Runnable() {
@@ -121,7 +121,7 @@ public class ShowPlayer extends Fragment {
         class MyServer implements Runnable {
             //listen for the inncoming messages
             ServerSocket ss;
-            Socket mysocket;
+            Socket mySocket;
             DataInputStream dis;
             String message;
             Handler handler = new Handler();
@@ -138,8 +138,8 @@ public class ShowPlayer extends Fragment {
                     });
                     while (true) //Problematisch Vielleicht
                     {
-                        mysocket = ss.accept();
-                        dis = new DataInputStream(mysocket.getInputStream());
+                        mySocket = ss.accept();
+                        dis = new DataInputStream(mySocket.getInputStream());
 
                         message = dis.readUTF();
                         handler.post(new Runnable() {

@@ -11,14 +11,16 @@ public class GameController {
 
 
     public static int[] gamebord = new int[100];
-    private static final Map<Integer, int[]> neighbours = new HashMap<>();
+    private static final Map<Integer, int[]> neighbors = new HashMap<>();
     private static final Map<Integer, int[]> thirdCase = new HashMap<>();
     private ArrayList<Integer> moveList = new ArrayList<>();
     private int moveCounter;
     public int lastMove;
     private static GameController gameController = new GameController();
-    private boolean first_player_turn = true;
+    private boolean firstPlayerTurn = true;
     private int move;
+
+    private Player p1; // zum übergeben wer player1 ist
 
     private static ExecutorService executor =
             Executors.newSingleThreadExecutor();
@@ -34,15 +36,15 @@ public class GameController {
     private GameController() {
         //Setting up constansts
         //TODO: make thie be actualy constans
-        neighbours.put(1, new int[]{2, 4});
-        neighbours.put(2, new int[]{1, 3, 5});
-        neighbours.put(3, new int[]{2, 6});
-        neighbours.put(4, new int[]{1, 5, 7});
-        neighbours.put(5, new int[]{2, 4, 6, 8});
-        neighbours.put(6, new int[]{3, 5, 9});
-        neighbours.put(7, new int[]{4, 8});
-        neighbours.put(8, new int[]{5, 7, 9});
-        neighbours.put(9, new int[]{6, 8});
+        neighbors.put(1, new int[]{2, 4});
+        neighbors.put(2, new int[]{1, 3, 5});
+        neighbors.put(3, new int[]{2, 6});
+        neighbors.put(4, new int[]{1, 5, 7});
+        neighbors.put(5, new int[]{2, 4, 6, 8});
+        neighbors.put(6, new int[]{3, 5, 9});
+        neighbors.put(7, new int[]{4, 8});
+        neighbors.put(8, new int[]{5, 7, 9});
+        neighbors.put(9, new int[]{6, 8});
 
         thirdCase.put(1, new int[]{3, 7});
         thirdCase.put(2, new int[]{8});
@@ -70,11 +72,11 @@ public class GameController {
         return gameController;
     }
 
-    public static Map<Integer, int[]> getNeighbours() {
-        return neighbours;
+    public static Map<Integer, int[]> getneighbors() {
+        return neighbors;
     }
 
-    public void add_move(int move, boolean player) {
+    public void addMove(int move, boolean player) {
         gamebord[move] = player ? 3 : 5;
         lastMove = move;
         moveList.add(move);
@@ -84,16 +86,16 @@ public class GameController {
 
 
     @Deprecated
-    public Player game_setup(Player p1, Player p2) {
+    public Player gameSetup(Player p1, Player p2) {
         //ini game
-        //Player p1 = new leo_alg();  //interal int = 3
+       // Player p1 = new leo_alg();  //interal int = 3
         //Player p2 = new UnitTester();  //interal int = 5
-        p1.is_beginning(true);
-        p2.is_beginning(false);
+        p1.isBeginning(true);
+        p2.isBeginning(false);
         Player win = gameController.gameLoop(p1, p2);
         System.out.println("end of game winner: " + (win == p1 ? "p1" : p2));
 
-        System.out.println(win.has_won());
+        System.out.println(win.hasWon());
 
         for (int j = 0; j < 2; j++) {
             System.out.print("\nPlayer " + (j + 1) + " moves : \n(");
@@ -111,7 +113,7 @@ public class GameController {
         // returns the winner
 
         while (true) {
-            if (first_player_turn) {
+            if (firstPlayerTurn) {
                 move = p1.move(lastMove);
                 System.out.println("S1: " + move);
             } else {
@@ -121,15 +123,15 @@ public class GameController {
             }
             if (move == 100 || !checkMove(move)) {
                 System.out.println("move:" + move + " was invalid");
-                return !first_player_turn ? p1 : p2;
+                return !firstPlayerTurn ? p1 : p2;
             }
-            gamebord[move] = first_player_turn ? 3 : 5;
+            gamebord[move] = firstPlayerTurn ? 3 : 5;
             moveList.add(move);
             moveCounter++;
             if (0 != checkWin(move))
-                return first_player_turn ? p1 : p2;
+                return firstPlayerTurn ? p1 : p2;
             lastMove = move;
-            first_player_turn = !first_player_turn;
+            firstPlayerTurn = !firstPlayerTurn;
         }
     }
 
@@ -172,43 +174,43 @@ public class GameController {
     public boolean checkMove(int playerMove) {
         if (lastMove == 1) // first move of the game
             return true;
-        int soll_kasten = (lastMove % 10);
-        int ist_kasten = playerMove / 10;
+        int shouldCrate = (lastMove % 10);
+        int isCrate = playerMove / 10;
         if (!(playerMove > 10 && playerMove < 100 && playerMove % 10 != 0))
             return false;//unmögliche zahlen ausschließen
         if (gamebord[playerMove] != 0)
             return false;// das gewählte kästchen ist belegt
-        if (gamebord[soll_kasten * 10] == 0) {// 1 fall: der gewähle kasten ist offen
-            return (soll_kasten == ist_kasten);//prüft ob der kasten gleich dem letzten kästchen ist
+        if (gamebord[shouldCrate * 10] == 0) {// 1 fall: der gewähle kasten ist offen
+            return (shouldCrate == isCrate);//prüft ob der kasten gleich dem letzten kästchen ist
 
 
         } else {//2 fall: gewählert kasten ist voll
-            boolean es_gibt_einen = false;//eine flag
-            for (int nachbar_soll : neighbours.get(soll_kasten)) {//für jeder nachbar vom letzen move
-                if (gamebord[nachbar_soll * 10] == 0) {// nachbar ist noch nicht blockirt
-                    es_gibt_einen = true;
-                    if (ist_kasten == nachbar_soll) {//gewählter kasten ist gleich einem  nachbaren
+            boolean thereIsOne = false;//eine flag
+            for (int neighborShould : neighbors.get(shouldCrate)) {//für jeder nachbar vom letzen move
+                if (gamebord[neighborShould * 10] == 0) {// nachbar ist noch nicht blockirt
+                    thereIsOne = true;
+                    if (isCrate == neighborShould) {//gewählter kasten ist gleich einem  nachbaren
                         return true;
                     }
                 }
             }
-            if (es_gibt_einen) {//keiner der nachbaren ist frei
+            if (thereIsOne) {//keiner der nachbaren ist frei
                 return false;
             } else {
                 // 3 fall: prüfe ob es einen freien axen nachbar gibt
-                for (int i : thirdCase.get(soll_kasten)) {//im third case sind nur indirekte nachbarn drinne (es wird nicht doppel geprüft )
+                for (int i : thirdCase.get(shouldCrate)) {//im third case sind nur indirekte nachbarn drinne (es wird nicht doppel geprüft )
                     if (gamebord[i * 10] == 0) {// einer der axen ist lehr
-                        es_gibt_einen = true;
-                        if (ist_kasten == i) {//spieler hat in den kasten plaziert
+                        thereIsOne = true;
+                        if (isCrate == i) {//spieler hat in den kasten plaziert
                             return true;
                         }
                     }
                 }
-                if (es_gibt_einen) {//es_git einenen freihen axen nachbarn aber er wurde nicht gewählt
+                if (thereIsOne) {//es_git einenen freihen axen nachbarn aber er wurde nicht gewählt
                     return false;
                 } else {
                     // wenn es keine freie axie gibt darf der spieler überall hingehen wo ein kasten nicht voll ist
-                    return gamebord[ist_kasten * 10] == 0;
+                    return gamebord[shouldCrate * 10] == 0;
                 }
             }
         }
@@ -220,7 +222,7 @@ public class GameController {
     // -5 second player won the game
     // 1..9 kasten was won
     public int checkWin(int playerMove) {
-        int res = checkKasten(playerMove / 10);
+        int res = checkCrate(playerMove / 10);
         if (res > 0) {
             System.out.println("kasten gewonnen:" + (playerMove / 10) * 10);
             gamebord[(playerMove / 10) * 10] = res;
@@ -258,7 +260,7 @@ public class GameController {
     357
  */
     // returns Player int if kasten is won
-    private int checkKasten(int k) {
+    private int checkCrate(int k) {
         // k =kasten welcher aktualisiert wird
         k *= 10;
         int[] result = new int[8];
@@ -284,6 +286,7 @@ public class GameController {
     private int gb(int i) {
         return gamebord[i];
     }
-
-
+   public String getP1(){
+        return "Human"; //Muss noch geschrieben werden
+   }
 }
