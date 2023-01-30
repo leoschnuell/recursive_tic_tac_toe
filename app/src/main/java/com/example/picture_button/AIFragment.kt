@@ -14,13 +14,21 @@ class AIFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
        val view = inflater.inflate(R.layout.fragment_a_i, container, false)
-       val button = view.findViewById<Button>(R.id.button2)
-       button.setOnClickListener {
+       val button1 = view.findViewById<Button>(R.id.leo_alg_btn)
+       button1.setOnClickListener {
            val bundle = Bundle()
            bundle.putSerializable("player1", Board.playerType.HUMAN)
            bundle.putSerializable("player2", Board.playerType.KI_LEO)
            findNavController().navigate(R.id.action_AIFragment_to_board,bundle)
        }
+       val button2 = view.findViewById<Button>(R.id.liz_alg_btn)
+       button2.setOnClickListener {
+           val bundle = Bundle()
+           bundle.putSerializable("player1", Board.playerType.HUMAN)
+           bundle.putSerializable("player2", Board.playerType.KI_LIZ)
+           findNavController().navigate(R.id.action_AIFragment_to_board,bundle)
+       }
+
        return view
     }
 }

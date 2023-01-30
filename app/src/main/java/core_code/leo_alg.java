@@ -74,12 +74,12 @@ public class leo_alg implements Player {
     }
 
     @Override
-    public void is_beginning(boolean b) {
+    public void isBeginning(boolean b) {
 
     }
 
     @Override
-    public String has_won() {
+    public String hasWon() {
         return null;
     }
 }

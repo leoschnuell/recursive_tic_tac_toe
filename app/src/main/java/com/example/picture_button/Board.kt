@@ -9,10 +9,11 @@ import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.os.postDelayed
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
-import core_code.*
+import core_code.GameController
+import core_code.Human
+import core_code.Player
+import core_code.leo_alg
 import java.util.concurrent.*
 
 
@@ -93,11 +94,10 @@ class Board : Fragment(), View.OnClickListener {
 
         val player1 = playerDeclaration(receivedPlayer1 as playerType)
         player1.setBoard(this)
-        player1.is_beginning(true)
+        player1.isBeginning(true)
         val player2 = playerDeclaration(receivedPlayer2 as playerType)
         player2.setBoard(this)
-        player2.is_beginning(false)
-
+        player2.isBeginning(false)
         updateBoardHiliting()
         var overlay = view?.findViewById<ConstraintLayout>(R.id.overlay)!!
         var setup: Future<Boolean>? = null
@@ -156,11 +156,11 @@ class Board : Fragment(), View.OnClickListener {
                         endOfGame()
                         return
                     }
-                    update_kästchen(move)
-                    gameController.add_move(move, player)
+                    updateCasket(move)
+                    gameController.addMove(move, player)
 
                     if (checkWin(move)) {
-                        update_kasten((move / 10) * 10)
+                        updateCrate((move / 10) * 10)
                         return
                     }
                     updateBoardHiliting()
@@ -184,7 +184,7 @@ class Board : Fragment(), View.OnClickListener {
     }
 
 
-    fun update_kasten(i: Int) {
+    fun updateCrate(i: Int) {
         activity?.runOnUiThread {
             if (player) {
                 idToButton[i]?.setBackgroundColor(Color.rgb(14, 14, 171))
@@ -194,7 +194,7 @@ class Board : Fragment(), View.OnClickListener {
         }
     }
 
-    fun update_kästchen(move: Int) {
+    fun updateCasket(move: Int) {
         activity?.runOnUiThread {
             if (player) {
                 idToButton[move]?.setBackgroundColor(Color.BLUE)
@@ -219,7 +219,7 @@ class Board : Fragment(), View.OnClickListener {
 
             }
             in 1..9 -> {
-                update_kasten(res * 10)
+                updateCrate(res * 10)
             }
         }
         return false;
@@ -281,6 +281,10 @@ class Board : Fragment(), View.OnClickListener {
                 RemoteHost()
             }
             else -> {
+            Board.playerType.KI_LIZ ->{
+                Liz_alg()
+            }
+            else->{
                 println("ist noch nicht implementiert")
                 Human()
             }

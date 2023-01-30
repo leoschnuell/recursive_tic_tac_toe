@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
 
 public class Human implements Player {
     GameController gameController;
-    boolean is_beginning = false;
+    boolean isBeginning = false;
     private Board board;
 
 
@@ -53,14 +53,12 @@ public class Human implements Player {
     }
 
     @Override
-    public void is_beginning(boolean b) {
-        is_beginning = b;
-
-
+    public void isBeginning(boolean b) {
+        isBeginning = b;
     }
 
     @Override
-    public String has_won() {
+    public String hasWon() {
         return "Gebe eine tolle sieges nachicht an";
     }
 }
