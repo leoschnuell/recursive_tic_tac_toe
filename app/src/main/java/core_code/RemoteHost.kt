@@ -55,7 +55,7 @@ class RemoteHost : Player {
         return reciver.readInt();
     }
 
-    override fun is_beginning(b: Boolean) {
+    override fun isBeginning(b: Boolean) {
         is_beginning = b;
     }
 
@@ -63,7 +63,7 @@ class RemoteHost : Player {
 
     }
 
-    override fun has_won(): String {
+    override fun hasWon(): String {
         return "null"
     }
 }
