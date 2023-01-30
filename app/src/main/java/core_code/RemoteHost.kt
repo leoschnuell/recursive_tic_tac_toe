@@ -16,41 +16,42 @@ class RemoteHost : Player {
     lateinit var socket: Socket;
     private val mainHandler = android.os.Handler(Looper.getMainLooper())
     private lateinit var reciver: DataInputStream;
-    private  lateinit var sender: DataOutputStream;
-    var done =0;
+    private lateinit var sender: DataOutputStream;
 
 
-    fun connectToServer(ip: String) {
-        // mainHandler.post {
-        socket = Socket(ip, PORT)
-        setup()
-        var sys = 0;
-        sys = 1
-        // }
-
+    fun doTheThingJoline(ip: String): Boolean {
+        if (ip == "Host") {
+            return waitForClient()
+        } else {
+            return connectToServer(ip)
+        }
     }
 
-    fun waitForClient() {
+    fun connectToServer(ip: String): Boolean {
+        socket = Socket(ip, PORT)
+        setup()
+        return true;
+    }
+
+    fun waitForClient(): Boolean {
         val serverSocket = ServerSocket(PORT)
-
-        mainHandler.post {
-            socket = serverSocket.accept()// blocking behavior
-            //add confirm dialog
-            setup()
-            UDPtesting.stopUDPBroadcasting()
-
-        }
+        socket = serverSocket.accept()// blocking behavior
+        //add confirm dialog
+        setup()
+        UDPtesting.stopUDPBroadcasting()
+        return true;
     }
 
     fun setup() {
         reciver = DataInputStream(socket.getInputStream())
         sender = DataOutputStream(socket.getOutputStream())
-        done=1
+
     }
 
 
     override fun move(lastMove: Int): Int {
-        sender.writeInt(lastMove)
+        if (lastMove != 1)
+            sender.writeInt(lastMove)
         return reciver.readInt();
     }
 

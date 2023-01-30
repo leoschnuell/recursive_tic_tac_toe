@@ -73,6 +73,7 @@ class UDPtesting : Fragment() {
             bundle.putSerializable("player2", Board.playerType.REMOTE)
             bundle.putSerializable("remoteInformation", "Host")
             findNavController().navigate(R.id.action_UDPtesting_to_board, bundle)
+
         })
 
         searchGame.setOnClickListener(
@@ -81,14 +82,11 @@ class UDPtesting : Fragment() {
                 // check if we have sean this ip before
 
                 //on click-> Sed recon request
-                println("ON CLICK")
-                println("ON CLICK")
-                println("ON CLICK")
-                println("ON CLICK")
 
                 val msgQueue: Queue<dataGroop> = LinkedList()
                 broadcastActive = true
-                var brotcaster = startHandlerThread("R3Tbrotcaster")
+                var brotcaster = startHandlerThread("R3TBroadcaster")
+
                 brotcaster.post {  //recive incoming UDP pagages and send tem to a queue
                     val socket = DatagramSocket(5005)
                     val recvBuf = ByteArray(500)
@@ -106,6 +104,8 @@ class UDPtesting : Fragment() {
                 mainHandler.post(//periodically go through msgQueue
                     object : Runnable {
                         override fun run() {
+                            if (!broadcastActive)
+                                return;
                             managedData.forEach {
                                 it.timeOut++;
                                 if (it.timeOut > 10) {
@@ -133,15 +133,12 @@ class UDPtesting : Fragment() {
                                     }
                                 }
                             }
-
                             mainHandler.postDelayed(this, 100)
                         }
                     })
 
             }
         )
-
-
         return view;
     }
 
@@ -205,8 +202,8 @@ class UDPtesting : Fragment() {
 
 
             val bundle = Bundle()
-            bundle.putSerializable("player1", Board.playerType.HUMAN)
-            bundle.putSerializable("player2", Board.playerType.REMOTE)
+            bundle.putSerializable("player1", Board.playerType.REMOTE)
+            bundle.putSerializable("player2", Board.playerType.HUMAN)
             bundle.putSerializable("remoteInformation", data.ip)
             findNavController().navigate(R.id.action_UDPtesting_to_board, bundle)
 

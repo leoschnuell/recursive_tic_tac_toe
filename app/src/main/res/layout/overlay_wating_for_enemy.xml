@@ -34,7 +34,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Cancel"
-            android:textColorLink="#000000" />
+            android:textColorLink="#000000"
+            android:onClick="cancelUDPAndBack"
+            />
 
 
     </LinearLayout>

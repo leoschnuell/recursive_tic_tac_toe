@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.postDelayed
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import core_code.*
 import java.util.concurrent.*
 
@@ -25,12 +26,13 @@ class Board : Fragment(), View.OnClickListener {
     private lateinit var executor: Executor
 
 
-    fun startHandlerThread():Handler {
+    fun startHandlerThread(): Handler {
         var mHandlerThread: HandlerThread? = null
         mHandlerThread = HandlerThread("R3TBoard")
         mHandlerThread.start()
         return Handler(mHandlerThread.looper)
     }
+
     enum class playerType {
         KI, HUMAN, REMOTE, KI_LIZ, KI_LEO, KI_SANDER
     }
@@ -97,40 +99,49 @@ class Board : Fragment(), View.OnClickListener {
         player2.is_beginning(false)
 
         updateBoardHiliting()
+        var overlay = view?.findViewById<ConstraintLayout>(R.id.overlay)!!
+        var setup: Future<Boolean>? = null
+        if (player1 is RemoteHost) {
+            //if the first player is a remote setup a cient system
+            overlay.visibility = View.VISIBLE  ///show diferent text maybe
+            setup = setupRemote(player1, extraInfo as String)
+
+            //wir sind client
 
 
-        if (player2 is RemoteHost) {
-// if the second plyer is a remote setup the remote conection
-
-            var overlay = view?.findViewById<ConstraintLayout>(R.id.overlay)!!
+        } else if (player2 is RemoteHost) {
+// if the second plyer is a remote setup the a server
             overlay.visibility = View.VISIBLE
-            var setup = setupRemote(player2, extraInfo as String)
-            mainHandler.post(object : Runnable {
-                override fun run() {
-                    if (setup!!.isDone) {
 
-                        //   if ("success" == setup.get()) {
-                            mainLoop(player1, player2) // and start the game after an conction has be esta
-                     //   }
-                    } else {
-                        mainHandler.postDelayed(this, 10)
-                    }
-                }
-            })
+
+            setup = setupRemote(player2, extraInfo as String)
+
 
         } else {
             //
             mainLoop(player1, player2)
         }
+        if (setup != null) {
+            mainHandler.post(object : Runnable {
+                override fun run() {
 
-
+                    if (setup.isDone) {
+                        mainLoop(player1, player2)
+                    } else {
+                        mainHandler.postDelayed(this, 10)
+                    }
+                }
+            })
+        }
     }
 
+
     fun mainLoop(player1: Player, player2: Player) {
+        UDPtesting.stopUDPBroadcasting()
 
         var activePlayer = activate(player1)
             ?: throw NullPointerException("Sander fault: Starting game withe the first player faield")
-        activity?.runOnUiThread{
+        activity?.runOnUiThread {
             var overlay = view?.findViewById<ConstraintLayout>(R.id.overlay)!!
             overlay.visibility = View.GONE
         }
@@ -165,52 +176,34 @@ class Board : Fragment(), View.OnClickListener {
         })
     }
 
-    fun setupRemote(player: RemoteHost, extraInfo: String): Future<String?>? {
-        return exec.submit<String>(Callable {
-            doTheSetup(
-                player,
-                extraInfo
-            ) // i don't know why but it has to be a separate function
+    fun setupRemote(player: RemoteHost, extraInfo: String): Future<Boolean>? {
+        return exec.submit<Boolean>(Callable {
+            player.doTheThingJoline(extraInfo)
+            // i don't know why but it has to be a separate function
         })
     }
 
-    fun doTheSetup(player: RemoteHost, extraInfo: String): String {
-
-        if (extraInfo == "host") {
-            player.waitForClient()
-        } else {
-            player.connectToServer(extraInfo as String)
-        }
-        while (player.done == 0)
-        {
-
-        }
-
-        return "success";
-    }
-
-    fun cancelRemoteSetup() {
-        UDPtesting.stopUDPBroadcasting()
-
-    }
 
     fun update_kasten(i: Int) {
-        if (player) {
-            idToButton[i]?.setBackgroundColor(Color.rgb(14, 14, 171))
-        } else {
-            idToButton[i]?.setBackgroundColor(Color.rgb(171, 14, 14))
+        activity?.runOnUiThread {
+            if (player) {
+                idToButton[i]?.setBackgroundColor(Color.rgb(14, 14, 171))
+            } else {
+                idToButton[i]?.setBackgroundColor(Color.rgb(171, 14, 14))
+            }
         }
     }
 
     fun update_kästchen(move: Int) {
-        if (player) {
-            idToButton[move]?.setBackgroundColor(Color.BLUE)
-            idToButton[gameController.lastMove]?.setBackgroundColor(Color.rgb(245, 78, 78))
-        } else {
-            idToButton[move]?.setBackgroundColor(Color.RED)
-            idToButton[gameController.lastMove]?.setBackgroundColor(Color.rgb(78, 98, 245))
+        activity?.runOnUiThread {
+            if (player) {
+                idToButton[move]?.setBackgroundColor(Color.BLUE)
+                idToButton[gameController.lastMove]?.setBackgroundColor(Color.rgb(245, 78, 78))
+            } else {
+                idToButton[move]?.setBackgroundColor(Color.RED)
+                idToButton[gameController.lastMove]?.setBackgroundColor(Color.rgb(78, 98, 245))
+            }
         }
-
     }
 
 
@@ -258,17 +251,22 @@ class Board : Fragment(), View.OnClickListener {
 
 
     fun endOfGame() {
-        if (player) {
-            showEndScreen("Blau gewinnt")
-        } else {
-            showEndScreen("Red gewinnt")
-        }
+
+            if (player) {
+                showEndScreen("Blau gewinnt")
+            } else {
+                showEndScreen("Red gewinnt")
+            }
+
     }
 
     fun showEndScreen(winText: String) {
-        var Winning_text_view = view?.findViewById<TextView>(R.id.text_winner)
-        Winning_text_view?.setText(winText)
-        Winning_text_view?.visibility = View.VISIBLE
+        activity?.runOnUiThread {
+
+            var Winning_text_view = view?.findViewById<TextView>(R.id.text_winner)
+            Winning_text_view?.setText(winText)
+            Winning_text_view?.visibility = View.VISIBLE
+        }
     }
 
     fun playerDeclaration(input: playerType): Player {
@@ -287,6 +285,12 @@ class Board : Fragment(), View.OnClickListener {
                 Human()
             }
         }
+    }
+
+    fun cancelUDPAndBack() {
+        UDPtesting.stopUDPBroadcasting()
+        findNavController().navigate(R.id.action_board_to_homeFragment)
+
     }
 
 

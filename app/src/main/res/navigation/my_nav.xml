@@ -40,6 +40,9 @@
         <argument
             android:name="Player2"
             app:argType="com.example.picture_button.Board$playerType" />
+        <action
+            android:id="@+id/action_board_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/player_vs_player"
