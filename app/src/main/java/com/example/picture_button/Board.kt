@@ -13,7 +13,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import core_code.*
-import java.io.File
+import java.io.*
 import java.util.concurrent.*
 
 
@@ -223,14 +223,13 @@ class Board : Fragment(), View.OnClickListener {
         cacheFile.writeText(gameController.board.contentToString())
 
         println(gameController.board.contentToString())
-        println("canwrite:" + cacheFile.canWrite())
+        cacheFile.appendText(gameController.lastMove.toString())
+
 
     }
 
     override fun onResume() {
         super.onResume()
-
-
         val files: Array<out File>? = context?.cacheDir?.listFiles()
         files?.iterator()?.forEach { y -> println(y) }
         if (files?.size == 0) return
@@ -243,14 +242,29 @@ class Board : Fragment(), View.OnClickListener {
         println(read)
         var array: IntArray = IntArray(100)
         var j = 0
-        for (i in 0..read.length - 1) {
+        var i=0
+        var lastMove =0;
+        var afterarray=false
+        while (i<read.length-1){
+            if (!afterarray){
             when (read[i].code) {
                 48 -> {array[j] = 0;j++}
                 51 -> {array[j] = 3;j++}
                 53 -> {array[j] = 5;j++}
+                93 -> afterarray=true
             }
+            }
+            else{
+                lastMove=(read[i].code-48)*10
+                lastMove+=read[i+1].code-48
+                println(lastMove)
+            }
+            i++
         }
-        var i = 0
+        gameController.lastMove = lastMove
+        println(array[lastMove])
+        player = array[lastMove]!=3
+        i=0
         array.iterator().forEach { y -> println("$i:$y");i++ }
         gameController.board = array
         cacheFile.delete()
@@ -265,6 +279,7 @@ class Board : Fragment(), View.OnClickListener {
 
             }
         }
+        updateBoardHiliting()
     }
 
 }
