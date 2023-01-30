@@ -12,11 +12,8 @@ import android.widget.GridLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
-import core_code.GameController
-import core_code.Human
-import core_code.Liz_alg
-import core_code.Player
-import core_code.leo_alg
+import core_code.*
+import java.io.File
 import java.util.concurrent.*
 
 
@@ -27,12 +24,13 @@ class Board : Fragment(), View.OnClickListener {
     val gameController = GameController.getGameControler()
     val idToButton: MutableMap<Int, View> = mutableMapOf<Int, View>()
     private lateinit var executor: Executor
-    enum class playerType{
-       KI,HUMAN,REMOTE,KI_LIZ,KI_LEO,KI_SANDER
+
+    enum class playerType {
+        KI, HUMAN, REMOTE, KI_LIZ, KI_LEO, KI_SANDER
     }
 
     private val exec = Executors.newSingleThreadExecutor()
-
+    val cachefilename = "cachedboard";
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,8 +74,8 @@ class Board : Fragment(), View.OnClickListener {
 
         val receivedPlayer1 = arguments?.getSerializable("player1")
         val receivedPlayer2 = arguments?.getSerializable("player2")
-        if (receivedPlayer1 == null || receivedPlayer2 == null){
-             throw NullPointerException("Designtime issue: Board received no Player-types")
+        if (receivedPlayer1 == null || receivedPlayer2 == null) {
+            throw NullPointerException("Designtime issue: Board received no Player-types")
         }
         val player1 = playerDeclaration(receivedPlayer1 as playerType)
         player1.setBoard(this)
@@ -87,14 +85,16 @@ class Board : Fragment(), View.OnClickListener {
         player2.is_beginning(false)
         updateBoardHiliting()
 
-        var activePlayer = activate(player1) ?: throw NullPointerException("Sander fault: Starting game withe the first player faield")
+        var activePlayer = activate(player1)
+            ?: throw NullPointerException("Sander fault: Starting game withe the first player faield")
 
         val mainHandler = Handler(Looper.getMainLooper())
 
         mainHandler.post(object : Runnable {
             override fun run() {
                 if (activePlayer.isDone) {
-                    val move = activePlayer.get()?:throw NullPointerException("Sander fault: move ist NaN")
+                    val move = activePlayer.get()
+                        ?: throw NullPointerException("Sander fault: move ist NaN")
 
                     if (!gameController.checkMove(move)) {
                         endOfGame()
@@ -199,22 +199,74 @@ class Board : Fragment(), View.OnClickListener {
     }
 
     fun playerDeclaration(playerType: playerType): Player {
-        return when(playerType){
-            Board.playerType.HUMAN ->{
+        return when (playerType) {
+            Board.playerType.HUMAN -> {
                 Human()
             }
-            Board.playerType.KI_LEO ->{
-                 leo_alg()
+            Board.playerType.KI_LEO -> {
+                leo_alg()
             }
-            Board.playerType.KI_LIZ ->{
+            Board.playerType.KI_LIZ -> {
                 Liz_alg()
             }
-            else->{
+            else -> {
                 println("ist noch nicht implementiert")
                 Human()
             }
         }
     }
+
+    override fun onStop() {
+        super.onStop()
+        val cacheFile = File.createTempFile(cachefilename, null, context?.cacheDir)
+
+        cacheFile.writeText(gameController.board.contentToString())
+
+        println(gameController.board.contentToString())
+        println("canwrite:" + cacheFile.canWrite())
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+
+        val files: Array<out File>? = context?.cacheDir?.listFiles()
+        files?.iterator()?.forEach { y -> println(y) }
+        if (files?.size == 0) return
+        val cacheFile = files?.get(0) ?: return
+        if (!cacheFile.exists()) {
+            println("File does not exist")
+            return
+        }
+        val read = cacheFile.readText()
+        println(read)
+        var array: IntArray = IntArray(100)
+        var j = 0
+        for (i in 0..read.length - 1) {
+            when (read[i].code) {
+                48 -> {array[j] = 0;j++}
+                51 -> {array[j] = 3;j++}
+                53 -> {array[j] = 5;j++}
+            }
+        }
+        var i = 0
+        array.iterator().forEach { y -> println("$i:$y");i++ }
+        gameController.board = array
+        cacheFile.delete()
+
+        for (i in 10..99) {
+            if (array[i] == 0) continue
+            if (array[i] == 3) {
+                idToButton[i]?.setBackgroundColor(Color.rgb(78, 98, 245))
+
+            } else {
+                idToButton[i]?.setBackgroundColor(Color.rgb(245, 78, 78))
+
+            }
+        }
+    }
+
 }
 
 
