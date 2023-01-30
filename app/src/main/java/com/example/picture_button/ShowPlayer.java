@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -22,11 +23,14 @@ import java.net.Socket;
 
 
 public class ShowPlayer extends Fragment {
-    EditText ip,message;
+    EditText ip, message;
     Button send_btn;
+
     public ShowPlayer() {
         // Required empty public constructor
     }
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,12 +43,10 @@ public class ShowPlayer extends Fragment {
         View view = inflater.inflate(R.layout.fragment_show_player2, container, false);
         ip = (EditText) view.findViewById(R.id.editText1);
         message = (EditText) view.findViewById(R.id.editText2);
-        send_btn = (Button) view.findViewById(R.id.button_send);
-        send_btn.setOnClickListener(new View.OnClickListener()
-        {
+        send_btn = (Button) view.findViewById(R.id.search_game);
+        send_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 System.out.println("heul");
                 BackgroundTask b = new BackgroundTask();
                 b.execute(ip.getText().toString(), message.getText().toString());
@@ -59,19 +61,19 @@ public class ShowPlayer extends Fragment {
         return view;
     }
 
-    class MyServer implements Runnable
-    {
+    class MyServer implements Runnable {
         //listen for the inncoming messages
         ServerSocket ss;
         Socket mysocket;
         DataInputStream dis;
         String message;
         Handler handler = new Handler();
+
         @Override
-        public void run(){
+        public void run() {
             try {
 
-                ss= new ServerSocket(9700);
+                ss = new ServerSocket(9700);
                 handler.post(new Runnable() { // Operationen im Ui Thread
                     @Override
                     public void run() {
@@ -80,24 +82,24 @@ public class ShowPlayer extends Fragment {
                 });
                 while (true) //Problematisch Vielleicht
                 {
-                    mysocket= ss.accept();
+                    mysocket = ss.accept();
                     dis = new DataInputStream(mysocket.getInputStream());
 
                     message = dis.readUTF();
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(getActivity(),"message received from client:"+message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "message received from client:" + message, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
-            }
-            catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
-    class BackgroundTask extends AsyncTask<String,Void,String> {
+
+    class BackgroundTask extends AsyncTask<String, Void, String> {
         Socket s;
         DataOutputStream dos;
         String ip, message;
@@ -116,43 +118,6 @@ public class ShowPlayer extends Fragment {
                 e.printStackTrace();
             }
             return null;
-        }
-
-        class MyServer implements Runnable {
-            //listen for the inncoming messages
-            ServerSocket ss;
-            Socket mysocket;
-            DataInputStream dis;
-            String message;
-            Handler handler = new Handler();
-
-            @Override
-            public void run() {
-                try {
-                    ss = new ServerSocket(9700);
-                    handler.post(new Runnable() { // Operationen im Ui Thread
-                        @Override
-                        public void run() {
-                            Toast.makeText(getActivity(), "Waiting for Client", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    while (true) //Problematisch Vielleicht
-                    {
-                        mysocket = ss.accept();
-                        dis = new DataInputStream(mysocket.getInputStream());
-
-                        message = dis.readUTF();
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(getActivity(), "message received from client:" + message, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 }

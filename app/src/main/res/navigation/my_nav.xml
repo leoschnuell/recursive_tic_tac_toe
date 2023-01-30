@@ -50,12 +50,16 @@
             android:id="@+id/action_player_vs_player_to_board"
             app:destination="@id/board" />
         <action
-            android:id="@+id/action_player_vs_player_to_showPlayer"
-            app:destination="@id/showPlayer" />
+            android:id="@+id/action_player_vs_player_to_UDPtesting"
+            app:destination="@id/UDPtesting" />
     </fragment>
     <fragment
-        android:id="@+id/showPlayer"
-        android:name="com.example.picture_button.ShowPlayer"
+        android:id="@+id/UDPtesting"
+        android:name="com.example.picture_button.UDPtesting"
         android:label="fragment_show_player2"
-        tools:layout="@layout/fragment_show_player2" />
+        tools:layout="@layout/fragment_show_player2" >
+        <action
+            android:id="@+id/action_UDPtesting_to_board"
+            app:destination="@id/board" />
+    </fragment>
 </navigation>

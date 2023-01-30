@@ -1,21 +1,17 @@
 package com.example.picture_button
 
 import android.graphics.Color
-import android.os.AsyncTask
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.opengl.Visibility
+import android.os.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.os.postDelayed
 import androidx.fragment.app.Fragment
-import core_code.GameController
-import core_code.Human
-import core_code.Player
-import core_code.leo_alg
+import core_code.*
 import java.util.concurrent.*
 
 
@@ -25,12 +21,19 @@ class Board : Fragment(), View.OnClickListener {
     lateinit var test: View;
     val gameController = GameController.getGameControler()
     val idToButton: MutableMap<Int, View> = mutableMapOf<Int, View>()
+    val mainHandler = startHandlerThread()
     private lateinit var executor: Executor
-    enum class playerType{
-       KI,HUMAN,REMOTE,KI_LIZ,KI_LEO,KI_SANDER
-    }
 
-    private val exec = Executors.newSingleThreadExecutor()
+
+    fun startHandlerThread():Handler {
+        var mHandlerThread: HandlerThread? = null
+        mHandlerThread = HandlerThread("R3TBoard")
+        mHandlerThread.start()
+        return Handler(mHandlerThread.looper)
+    }
+    enum class playerType {
+        KI, HUMAN, REMOTE, KI_LIZ, KI_LEO, KI_SANDER
+    }
 
 
     override fun onCreateView(
@@ -62,6 +65,7 @@ class Board : Fragment(), View.OnClickListener {
         return view
     }
 
+    private val exec = Executors.newSingleThreadExecutor()
     fun activate(player: Player): Future<Int?>? {
         return exec.submit<Int>(Callable {
             player.move(gameController.lastMove)
@@ -75,25 +79,67 @@ class Board : Fragment(), View.OnClickListener {
 
         val receivedPlayer1 = arguments?.getSerializable("player1")
         val receivedPlayer2 = arguments?.getSerializable("player2")
-        if (receivedPlayer1 == null || receivedPlayer2 == null){
-             throw NullPointerException("Designtime issue: Board received no Player-types")
+
+
+        if (receivedPlayer1 == null || receivedPlayer2 == null) {
+            throw NullPointerException("Designtime issue: Board received no Player-types")
         }
+        var ip: String;
+
+        var extraInfo = arguments?.getSerializable("remoteInformation")
+
+
         val player1 = playerDeclaration(receivedPlayer1 as playerType)
         player1.setBoard(this)
         player1.is_beginning(true)
         val player2 = playerDeclaration(receivedPlayer2 as playerType)
         player2.setBoard(this)
         player2.is_beginning(false)
+
         updateBoardHiliting()
 
-        var activePlayer = activate(player1) ?: throw NullPointerException("Sander fault: Starting game withe the first player faield")
 
-        val mainHandler = Handler(Looper.getMainLooper())
+        if (player2 is RemoteHost) {
+// if the second plyer is a remote setup the remote conection
 
-        mainHandler.post(object : Runnable {
+            var overlay = view?.findViewById<ConstraintLayout>(R.id.overlay)!!
+            overlay.visibility = View.VISIBLE
+            var setup = setupRemote(player2, extraInfo as String)
+            mainHandler.post(object : Runnable {
+                override fun run() {
+                    if (setup!!.isDone) {
+
+                        //   if ("success" == setup.get()) {
+                            mainLoop(player1, player2) // and start the game after an conction has be esta
+                     //   }
+                    } else {
+                        mainHandler.postDelayed(this, 10)
+                    }
+                }
+            })
+
+        } else {
+            //
+            mainLoop(player1, player2)
+        }
+
+
+    }
+
+    fun mainLoop(player1: Player, player2: Player) {
+
+        var activePlayer = activate(player1)
+            ?: throw NullPointerException("Sander fault: Starting game withe the first player faield")
+        activity?.runOnUiThread{
+            var overlay = view?.findViewById<ConstraintLayout>(R.id.overlay)!!
+            overlay.visibility = View.GONE
+        }
+        val handel = Handler(Looper.getMainLooper())
+        handel.post(object : Runnable {
             override fun run() {
                 if (activePlayer.isDone) {
-                    val move = activePlayer.get()?:throw NullPointerException("Sander fault: move ist NaN")
+                    val move = activePlayer.get()
+                        ?: throw NullPointerException("Sander fault: move ist NaN")
 
                     if (!gameController.checkMove(move)) {
                         endOfGame()
@@ -119,6 +165,34 @@ class Board : Fragment(), View.OnClickListener {
         })
     }
 
+    fun setupRemote(player: RemoteHost, extraInfo: String): Future<String?>? {
+        return exec.submit<String>(Callable {
+            doTheSetup(
+                player,
+                extraInfo
+            ) // i don't know why but it has to be a separate function
+        })
+    }
+
+    fun doTheSetup(player: RemoteHost, extraInfo: String): String {
+
+        if (extraInfo == "host") {
+            player.waitForClient()
+        } else {
+            player.connectToServer(extraInfo as String)
+        }
+        while (player.done == 0)
+        {
+
+        }
+
+        return "success";
+    }
+
+    fun cancelRemoteSetup() {
+        UDPtesting.stopUDPBroadcasting()
+
+    }
 
     fun update_kasten(i: Int) {
         if (player) {
@@ -197,21 +271,23 @@ class Board : Fragment(), View.OnClickListener {
         Winning_text_view?.visibility = View.VISIBLE
     }
 
-    fun playerDeclaration(playerType: playerType): Player {
-        return when(playerType){
-            Board.playerType.HUMAN ->{
+    fun playerDeclaration(input: playerType): Player {
+        return when (input) {
+            playerType.HUMAN -> {
                 Human()
             }
-            Board.playerType.KI_LEO ->{
-                 leo_alg()
+            playerType.KI_LEO -> {
+                leo_alg()
             }
-            else->{
+            playerType.REMOTE -> {
+                RemoteHost()
+            }
+            else -> {
                 println("ist noch nicht implementiert")
                 Human()
             }
         }
     }
+
+
 }
-
-
-

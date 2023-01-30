@@ -26,7 +26,7 @@ class player_vs_player : Fragment() {
         }
         val button2 = view.findViewById<Button>(R.id.choose_player_btn)
         button2.setOnClickListener {
-            findNavController().navigate(R.id.action_player_vs_player_to_showPlayer)
+            findNavController().navigate(R.id.action_player_vs_player_to_UDPtesting)
         }
         return view
 
