@@ -36,7 +36,7 @@ class Board : Fragment(), View.OnClickListener {
 
     enum class playerType {
         KI, HUMAN, REMOTE, KI_LIZ, KI_LEO, KI_SANDER
-
+    }
 
     val cachefilename = "cachedboard";
 
@@ -324,29 +324,34 @@ class Board : Fragment(), View.OnClickListener {
         println(read)
         var array: IntArray = IntArray(100)
         var j = 0
-        var i=0
-        var lastMove =0;
-        var afterarray=false
-        while (i<read.length-1){
-            if (!afterarray){
-            when (read[i].code) {
-                48 -> {array[j] = 0;j++}
-                51 -> {array[j] = 3;j++}
-                53 -> {array[j] = 5;j++}
-                93 -> afterarray=true
-            }
-            }
-            else{
-                lastMove=(read[i].code-48)*10
-                lastMove+=read[i+1].code-48
+        var i = 0
+        var lastMove = 0;
+        var afterarray = false
+        while (i < read.length - 1) {
+            if (!afterarray) {
+                when (read[i].code) {
+                    48 -> {
+                        array[j] = 0;j++
+                    }
+                    51 -> {
+                        array[j] = 3;j++
+                    }
+                    53 -> {
+                        array[j] = 5;j++
+                    }
+                    93 -> afterarray = true
+                }
+            } else {
+                lastMove = (read[i].code - 48) * 10
+                lastMove += read[i + 1].code - 48
                 println(lastMove)
             }
             i++
         }
         gameController.lastMove = lastMove
         println(array[lastMove])
-        player = array[lastMove]!=3
-        i=0
+        player = array[lastMove] != 3
+        i = 0
         array.iterator().forEach { y -> println("$i:$y");i++ }
         gameController.board = array
         cacheFile.delete()
@@ -367,4 +372,4 @@ class Board : Fragment(), View.OnClickListener {
 }
 
 
-}
+
