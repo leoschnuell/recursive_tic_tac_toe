@@ -186,9 +186,9 @@ class Board : Fragment(), View.OnClickListener {
 
     fun endOfGame() {
         if (player) {
-            showEndScreen("Blau gewinnt")
+            showEndScreen("Blau gibt auf")
         } else {
-            showEndScreen("Red gewinnt")
+            showEndScreen("Rot gibt auf")
         }
     }
 
@@ -231,7 +231,6 @@ class Board : Fragment(), View.OnClickListener {
     override fun onResume() {
         super.onResume()
         val files: Array<out File>? = context?.cacheDir?.listFiles()
-        files?.iterator()?.forEach { y -> println(y) }
         if (files?.size == 0) return
         val cacheFile = files?.get(0) ?: return
         if (!cacheFile.exists()) {
