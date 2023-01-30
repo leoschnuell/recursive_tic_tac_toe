@@ -139,7 +139,9 @@ public class GameController {
     public int[] getBoard() {
         return gamebord;
     }
-
+    public void setBoard(int[] gameboard) {
+         gamebord=gameboard;
+    }
     /*
     This funktions prints the game in a grid like this
     11 12 13 21 22 23 31 32 33

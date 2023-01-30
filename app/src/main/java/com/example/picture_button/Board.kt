@@ -12,6 +12,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import core_code.*
+import core_code.*
+import java.io.*
 import java.util.concurrent.*
 
 
@@ -34,8 +36,9 @@ class Board : Fragment(), View.OnClickListener {
 
     enum class playerType {
         KI, HUMAN, REMOTE, KI_LIZ, KI_LEO, KI_SANDER
-    }
 
+
+    val cachefilename = "cachedboard";
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,8 +83,6 @@ class Board : Fragment(), View.OnClickListener {
 
         val receivedPlayer1 = arguments?.getSerializable("player1")
         val receivedPlayer2 = arguments?.getSerializable("player2")
-
-
         if (receivedPlayer1 == null || receivedPlayer2 == null) {
             throw NullPointerException("Designtime issue: Board received no Player-types")
         }
@@ -294,6 +295,76 @@ class Board : Fragment(), View.OnClickListener {
         findNavController().navigate(R.id.action_board_to_homeFragment)
 
     }
+///ALLES LEOS SCHULD :::
+
+
+    override fun onStop() {
+        super.onStop()
+        val cacheFile = File.createTempFile(cachefilename, null, context?.cacheDir)
+
+        cacheFile.writeText(gameController.board.contentToString())
+
+        println(gameController.board.contentToString())
+        cacheFile.appendText(gameController.lastMove.toString())
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val files: Array<out File>? = context?.cacheDir?.listFiles()
+        files?.iterator()?.forEach { y -> println(y) }
+        if (files?.size == 0) return
+        val cacheFile = files?.get(0) ?: return
+        if (!cacheFile.exists()) {
+            println("File does not exist")
+            return
+        }
+        val read = cacheFile.readText()
+        println(read)
+        var array: IntArray = IntArray(100)
+        var j = 0
+        var i=0
+        var lastMove =0;
+        var afterarray=false
+        while (i<read.length-1){
+            if (!afterarray){
+            when (read[i].code) {
+                48 -> {array[j] = 0;j++}
+                51 -> {array[j] = 3;j++}
+                53 -> {array[j] = 5;j++}
+                93 -> afterarray=true
+            }
+            }
+            else{
+                lastMove=(read[i].code-48)*10
+                lastMove+=read[i+1].code-48
+                println(lastMove)
+            }
+            i++
+        }
+        gameController.lastMove = lastMove
+        println(array[lastMove])
+        player = array[lastMove]!=3
+        i=0
+        array.iterator().forEach { y -> println("$i:$y");i++ }
+        gameController.board = array
+        cacheFile.delete()
+
+        for (i in 10..99) {
+            if (array[i] == 0) continue
+            if (array[i] == 3) {
+                idToButton[i]?.setBackgroundColor(Color.rgb(78, 98, 245))
+
+            } else {
+                idToButton[i]?.setBackgroundColor(Color.rgb(245, 78, 78))
+
+            }
+        }
+        updateBoardHiliting()
+    }
+
+}
 
 
 }
