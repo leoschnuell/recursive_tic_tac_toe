@@ -1,7 +1,6 @@
 package com.example.picture_button
 
 import android.graphics.Color
-import android.opengl.Visibility
 import android.os.*
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,6 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import core_code.*
 import core_code.*
 import java.io.*
 import java.util.concurrent.*
@@ -24,6 +22,10 @@ class Board : Fragment(), View.OnClickListener {
     val gameController = GameController.getGameControler()
     val idToButton: MutableMap<Int, View> = mutableMapOf<Int, View>()
     val mainHandler = startHandlerThread()
+    val RED_PRIMARY = Color.rgb(245, 78, 78);
+    val RED_SECONDARY = Color.rgb(171, 14, 14);
+    val BLUE_PRIMARY = Color.rgb(78, 98, 245);
+    val BLUE_SECONDARY =     Color.rgb(14, 14, 171);
     private lateinit var executor: Executor
 
 
@@ -33,6 +35,7 @@ class Board : Fragment(), View.OnClickListener {
         mHandlerThread.start()
         return Handler(mHandlerThread.looper)
     }
+
 
     enum class playerType {
         KI, HUMAN, REMOTE, KI_LIZ, KI_LEO, KI_SANDER
@@ -97,7 +100,7 @@ class Board : Fragment(), View.OnClickListener {
         val player2 = playerDeclaration(receivedPlayer2 as playerType)
         player2.setBoard(this)
         player2.isBeginning(false)
-        updateBoardHiliting()
+        updateBoardColers()
         var overlay = view?.findViewById<ConstraintLayout>(R.id.overlay)!!
         var setup: Future<Boolean>? = null
         if (player1 is RemoteHost) {
@@ -155,14 +158,18 @@ class Board : Fragment(), View.OnClickListener {
                         endOfGame()
                         return
                     }
-                    updateCasket(move)
+                    //updateCasket(move)
                     gameController.addMove(move, player)
 
+                    gameController.display();
+
+                    updateBoardColers()
+
                     if (checkWin(move)) {
-                        updateCrate((move / 10) * 10)
+                        //updateCrate((move / 10) * 10)
+                        endOfGame()
                         return
                     }
-                    updateBoardHiliting()
                     player = !player
                     activePlayer = (if (player) {
                         activate(player1)
@@ -182,7 +189,7 @@ class Board : Fragment(), View.OnClickListener {
         })
     }
 
-
+    /*
     fun updateCrate(i: Int) {
         activity?.runOnUiThread {
             if (player) {
@@ -205,7 +212,7 @@ class Board : Fragment(), View.OnClickListener {
         }
     }
 
-
+*/
     fun checkWin(move: Int): Boolean {
         when (val res = gameController.checkWin(move)) {
             -3 -> {
@@ -218,7 +225,7 @@ class Board : Fragment(), View.OnClickListener {
 
             }
             in 1..9 -> {
-                updateCrate(res * 10)
+                //updateCrate(res * 10)
             }
         }
         return false;
@@ -231,17 +238,39 @@ class Board : Fragment(), View.OnClickListener {
         lastButId = move
     }
 
-    fun updateBoardHiliting() {
+    fun updateBoardColers() {
+
+        // at one one point i surrender
+        // this function updates EVERY button to make sure they are cooler correctly
+        // this is a less eficient aprotch i just hope it gets optimized away
         for (i in 0 until 9) {
-            for (j in 0 until 9) {
-                val id = ((i + 1) * 10 + j + 1)
-                if (GameController.gamebord[id] == 0) {
-                    if (gameController.checkMove(id)) {
+            for (j in 0 until 10) {
+                val id = ((i + 1) * 10 + j)
+                if (j == 0) { // case for Crate \ background
+                    if (GameController.gamebord[id] == 0) {
+                        idToButton[id]?.setBackgroundColor(Color.rgb(255, 255, 255))
+                    } else if (GameController.gamebord[id] == 3) {
+                        idToButton[id]?.setBackgroundColor(BLUE_SECONDARY)
+
+                    } else {
+                        idToButton[id]?.setBackgroundColor(RED_SECONDARY)
+
+                    }
+
+                } else if (GameController.gamebord[id] == 0) {// case no plyer has played here
+
+                    if (gameController.checkMove(id)) {// is it a legal move for the next player
 
                         idToButton[id]?.setBackgroundColor(Color.GRAY)
                     } else {
 
                         idToButton[id]?.setBackgroundColor(Color.BLACK)
+                    }
+                } else {// a player has played here force the colors
+                    if (GameController.gamebord[id] == 3) {
+                        idToButton[id]?.setBackgroundColor(BLUE_PRIMARY)
+                    } else {
+                        idToButton[id]?.setBackgroundColor(RED_PRIMARY)
                     }
                 }
             }
@@ -295,6 +324,7 @@ class Board : Fragment(), View.OnClickListener {
         findNavController().navigate(R.id.action_board_to_homeFragment)
 
     }
+
 ///ALLES LEOS SCHULD :::
 
 
@@ -365,10 +395,9 @@ class Board : Fragment(), View.OnClickListener {
 
             }
         }
-        updateBoardHiliting()
+        updateBoardColers()
     }
 
 }
-
 
 
