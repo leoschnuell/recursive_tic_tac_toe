@@ -2,6 +2,7 @@ package core_code;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import com.example.picture_button.Board;
 
@@ -22,7 +23,7 @@ public class Liz_alg implements Player {
     public Liz_alg() {
         gameControler = GameController.getGameControler();
         gameboard = gameControler.getBoard();
-       if(gameControler.getP1() == "Liz_alg"){
+       if(gameControler.getP1() == "Daisy"){
            isPlayer =  3;
            isNotPlayer = 5;
         }
@@ -539,353 +540,109 @@ public class Liz_alg implements Player {
     }
     boolean[] isChecked = new boolean[9];
     private void chooseField(int checkField) {
-        for(int i = 0; i <= 8; i++){ //Überprüfen ob ein Kasten zweimal eingetragen ist
-            for (int x= i; x<= 8; x++){
-               if(possiField[i] == possiField[x] && possiField[i] != 0){//Wenn das der Fall ist wird das neust eingetragende der Doppelten entfernt
-                   possiField[x]= 0;                                       //und alle  hinteren eins aufgerutscht
-                   int d = x;
-                   counter--;
-                   while(d < 8){
-                       possiField[d] = possiField[d+1];
-                       d++;
-                   }
-               }
-            }
-        }
+        Map<Integer, int[]> possible = gameControler.getneighbors(checkField);
+        int count = 0;
 
-        if(checkField == 1 && !isChecked[0]){  //Überprüfen der nächst anliegenden Kasten
-            isChecked[0] = true;
-            if(!checkWin(2) && !isChecked[1]){
-                isChecked[1] = true;
-                possiField[counter] = 2;
+        for(int i = 0; i < possible.get(checkField).length; i++) {
+            if (checkWin(possible.get(checkField)[i]) == false) {
                 counter++;
+                    possiField[counter] = possible.get(checkField)[i];
+            }
+        }
+        if(possiField[0] == 0){
 
-            }
-            else {
-                isChecked[1] = true;
-                chooseField(2);
-            }
-            if(!checkWin(3) && !isChecked[2]){
-                isChecked[2] = true;
-                possiField[counter] = 3;
-                counter++;
-            }
-            else{
-                isChecked[2] = true;
-                chooseField(3);
-            }
-        }
-        else if(checkField == 2 && !isChecked[1]){
-            isChecked[1] = true;
-            if(!checkWin(3) && !isChecked[2]){
-                isChecked[2] = true;
-                possiField[counter] = 3;
-                counter++;
-            }
-            else{
-                isChecked[2] = true;
-                chooseField(3);
-            }
-            if(!checkWin(1) && !isChecked[0]){
-                isChecked[0] = true;
-                possiField[counter] = 1;
-                counter++;
-            }
-            else{
-                isChecked[0] = true;
-                chooseField(1);
-            }
-            if(!checkWin(5) && !isChecked[4]){
-                isChecked[4] = true;
-                possiField[counter] = 5;
-                counter++;
-            }
-            else{
-                isChecked[4] = true;
-                chooseField(5);
-            }
-        }
-        else if(checkField == 3  && !isChecked[2]){
-            isChecked[2] = true;
-            if(!checkWin(2) && !isChecked[1]){
-                isChecked[1] = true;
-                possiField[counter] = 3;
-                counter++;
-            }
-            else{
-                isChecked[1] = true;
-                chooseField(2);
-            }
-            if(!checkWin(6) && !isChecked[5]){
-                isChecked[5] = true;
-                possiField[counter] = 6;
-                counter++;
-            }
-            else{
-                isChecked[5] = true;
-                chooseField(6);
-            }
-        }
-        else if(checkField == 4  && !isChecked[3]){
-            isChecked[3] = true;
-            if(!checkWin(1)){
-                isChecked[0] = true;
-                possiField[counter] = 1;
-                counter++;
-            }
-            else{
-                isChecked[0] = true;
-                chooseField(1);
-            }
-            if(!checkWin(5) && !isChecked[4]){
-                isChecked[4] = true;
-                possiField[counter] = 5;
-                counter++;
-            }
-            else{
-                isChecked[4] = true;
-                chooseField(5);
-            }
-            if(!checkWin(7) && !isChecked[6]){
-                isChecked[6] = true;
-                possiField[counter] = 7;
-                counter++;
-            }
-            else{
-                isChecked[6] = true;
-                chooseField(7);
-            }
-        }
-        else if(checkField == 5  && !isChecked[4]){
-            isChecked[4] = true;
-            if(!checkWin(2) && !isChecked[1]){
-                isChecked[1] = true;
-                possiField[counter] = 2;
-                counter++;
-            }
-            else{
-                isChecked[1] = true;
-                chooseField(2);
-            }
-            if(!checkWin(4) && !isChecked[3]){
-                isChecked[3] = true;
-                possiField[counter] = 4;
-                counter++;
-            }
-            else{
-                isChecked[3] = true;
-                chooseField(4);
-            }
-            if(!checkWin(6) && !isChecked[5]){
-                isChecked[5] = true;
-                possiField[counter] = 6;
-                counter++;
-            }
-            else{
-                isChecked[5] = true;
-                chooseField(6);
-            }
-            if(!checkWin(8) && !isChecked[8]){
-                isChecked[8] = true;
-                possiField[counter] = 8;
-                counter++;
-            }
-            else{
-                isChecked[8] = true;
-                chooseField(8);
-            }
-        }
-        else if(checkField == 6  && !isChecked[5]){
-            isChecked[5] = true;
-            if(!checkWin(3) && !isChecked[2]){
-                isChecked[2] = true;
-                possiField[counter] = 6;
-                counter++;
-            }
-            else{
-                isChecked[2] = true;
-                chooseField(3);
-            }
-            if(!checkWin(5) && !isChecked[4]){
-                isChecked[4] = true;
-                possiField[counter] = 5;
-                counter++;
-            }
-            else{
-                isChecked[4] = true;
-                chooseField(5);
-            }
-            if(!checkWin(9) && !isChecked[8]){
-                isChecked[8] = true;
-                possiField[counter] = 9;
-                counter++;
-            }
-            else{
-                isChecked[8] = true;
-                chooseField(9);
-            }
-        }
-        else if(checkField == 7  && !isChecked[6]){
-            isChecked[6] = true;
-            if(!checkWin(4) && !isChecked[3]){
-                isChecked[3] = true;
-                possiField[counter] = 4;
-                counter++;
-            }
-            else{
-                isChecked[3] = true;
-                chooseField(4);
-            }
-            if(!checkWin(8) && !isChecked[7]){
-                isChecked[7] = true;
-                possiField[counter] = 8;
-                counter++;
-            }
-            else{
-                isChecked[7] = true;
-                chooseField(8);
-            }
-        }
-        else if(checkField == 8  && !isChecked[7]){
-            isChecked[7] = true;
-            if(!checkWin(5)){
-                isChecked[4] = true;
-                possiField[counter] = 5;
-                counter++;
-            }
-            else{
-                isChecked[4] = true;
-                chooseField(5);
-            }
-            if(!checkWin(7) && !isChecked[6]) {
-                isChecked[6] = true;
-                possiField[counter] = 7;
-                counter++;
-            }
-            else{
-                isChecked[6] = true;
-                chooseField(7);
-            }
-            if(!checkWin(9) && !isChecked[8]){
-                isChecked[8] = true;
-                possiField[counter] = 9;
-                counter++;
-            }
-            else{
-                isChecked[8] = true;
-                chooseField(9);
-            }
-        }
-        else if(checkField == 9 && !isChecked[8]) {
-            isChecked[8] = true;
-            if (!checkWin(6) && !isChecked[5]) {
-                isChecked[5] = true;
-                possiField[counter] = 6;
-                counter++;
-            } else {
-                isChecked[5] = true;
-                chooseField(6);
-            }
-            if (!checkWin(8) && !isChecked[7]) {
-                isChecked[7] = true;
-                possiField[counter] = 8;
-                counter++;
-            } else {
-                isChecked[7] = true;
-                chooseField(8);
-            }
         }
     }
 
-    List<Integer>enemie_layout = new ArrayList<Integer>();
+    List<Integer>enemy_layout = new ArrayList<Integer>();
     public boolean almostThreeInARow(int enemyField, int whichPlayer){
         int x = 0;
         for(int i = 1; i < 10; i++){
             if(gameboard[enemyField*10+i] == whichPlayer){
-                enemie_layout.add(enemyField*10+i);
+                enemy_layout.add(enemyField*10+i);
                 x++;
             }
         }
-        if(enemie_layout.contains(1)){
-            if(enemie_layout.contains(2)  && gameboard[enemyField*10 + 3] == 0){
+        if(enemy_layout.contains(1)){
+            if(enemy_layout.contains(2)  && gameboard[enemyField*10 + 3] == 0){
                 return true;
             }
-            if(enemie_layout.contains(3)  && gameboard[enemyField*10 + 2] == 0){
+            if(enemy_layout.contains(3)  && gameboard[enemyField*10 + 2] == 0){
                 return true;
             }
-            if(enemie_layout.contains(5)  && gameboard[enemyField + 9] == 0){
+            if(enemy_layout.contains(5)  && gameboard[enemyField + 9] == 0){
                 return true;
             }
-            if(enemie_layout.contains(9)  && gameboard[enemyField + 5] == 0){
+            if(enemy_layout.contains(9)  && gameboard[enemyField + 5] == 0){
                 return true;
             }
-            if(enemie_layout.contains(4)  && gameboard[enemyField + 7] == 0){
+            if(enemy_layout.contains(4)  && gameboard[enemyField + 7] == 0){
                 return true;
             }
-            if(enemie_layout.contains(7)  && gameboard[enemyField + 5] == 0){
+            if(enemy_layout.contains(7)  && gameboard[enemyField + 5] == 0){
                 return true;
             }
         }
-        else if(enemie_layout.contains(2)  && gameboard[enemyField*10 + 1] == 0 && enemie_layout.contains(3) ){
+        else if(enemy_layout.contains(2)  && gameboard[enemyField*10 + 1] == 0 && enemy_layout.contains(3) ){
             return true;
         }
-        else if(enemie_layout.contains(9)  && gameboard[enemyField*10 + 1] == 0 && enemie_layout.contains(5) ){
+        else if(enemy_layout.contains(9)  && gameboard[enemyField*10 + 1] == 0 && enemy_layout.contains(5) ){
             return true;
         }
-        else if(enemie_layout.contains(4) && gameboard[enemyField*10 + 1] == 0 && enemie_layout.contains(7) ){
+        else if(enemy_layout.contains(4) && gameboard[enemyField*10 + 1] == 0 && enemy_layout.contains(7) ){
             return true;
         }
-        if(enemie_layout.contains(2) ){
-            if(enemie_layout.contains(5)  && gameboard[enemyField*10 + 8] == 0){
+        if(enemy_layout.contains(2) ){
+            if(enemy_layout.contains(5)  && gameboard[enemyField*10 + 8] == 0){
                 return true;
             }
-            if(enemie_layout.contains(8)  && gameboard[enemyField*10 + 5] == 0){
+            if(enemy_layout.contains(8)  && gameboard[enemyField*10 + 5] == 0){
                 return true;
             }
         }
-        else if(enemie_layout.contains(8)  && gameboard[enemyField*10 + 2] == 0 && enemie_layout.contains(5) ){
+        else if(enemy_layout.contains(8)  && gameboard[enemyField*10 + 2] == 0 && enemy_layout.contains(5) ){
             return true;
         }
-        if(enemie_layout.contains(3) ){
-            if(enemie_layout.contains(6)  && gameboard[enemyField*10 + 9] == 0){
+        if(enemy_layout.contains(3) ){
+            if(enemy_layout.contains(6)  && gameboard[enemyField*10 + 9] == 0){
                 return true;
             }
-            if(enemie_layout.contains(9)  && gameboard[enemyField*10 + 6] == 0){
+            if(enemy_layout.contains(9)  && gameboard[enemyField*10 + 6] == 0){
                 return true;
             }
-            if(enemie_layout.contains(5)  && gameboard[enemyField*10 + 7] == 0){
+            if(enemy_layout.contains(5)  && gameboard[enemyField*10 + 7] == 0){
                 return true;
             }
-            if(enemie_layout.contains(7)  && gameboard[enemyField*10 + 5] == 0){
+            if(enemy_layout.contains(7)  && gameboard[enemyField*10 + 5] == 0){
                 return true;
             }
         }
-        else if(enemie_layout.contains(5)  && gameboard[enemyField*10 + 3] == 0 && enemie_layout.contains(7) ){
+        else if(enemy_layout.contains(5)  && gameboard[enemyField*10 + 3] == 0 && enemy_layout.contains(7) ){
             return true;
         }
-        else if(enemie_layout.contains(9)  && gameboard[enemyField*10 + 3] == 0 && enemie_layout.contains(6) ){
+        else if(enemy_layout.contains(9)  && gameboard[enemyField*10 + 3] == 0 && enemy_layout.contains(6) ){
             return true;
         }
-        if(enemie_layout.contains(4) ){
-            if(enemie_layout.contains(5)  && gameboard[enemyField*10 + 6] == 0){
+        if(enemy_layout.contains(4) ){
+            if(enemy_layout.contains(5)  && gameboard[enemyField*10 + 6] == 0){
                 return true;
             }
-            if(enemie_layout.contains(6)  && gameboard[enemyField*10 + 5] == 0){
+            if(enemy_layout.contains(6)  && gameboard[enemyField*10 + 5] == 0){
                 return true;
             }
         }
-        else if(enemie_layout.contains(5)  && gameboard[enemyField*10 + 4] == 0 && enemie_layout.contains(6) ){
+        else if(enemy_layout.contains(5)  && gameboard[enemyField*10 + 4] == 0 && enemy_layout.contains(6) ){
             return true;
         }
-        if(enemie_layout.contains(7) ){
-            if(enemie_layout.contains(8)  && gameboard[enemyField*10 + 9] == 0){
+        if(enemy_layout.contains(7) ){
+            if(enemy_layout.contains(8)  && gameboard[enemyField*10 + 9] == 0){
                 return true;
             }
-            if(enemie_layout.contains(9)  && gameboard[enemyField*10 + 8] == 0){
+            if(enemy_layout.contains(9)  && gameboard[enemyField*10 + 8] == 0){
                 return true;
             }
         }
-        else if(enemie_layout.contains(8)  && gameboard[enemyField*10 + 7] == 0 && enemie_layout.contains(9) ){
+        else if(enemy_layout.contains(8)  && gameboard[enemyField*10 + 7] == 0 && enemy_layout.contains(9) ){
             return true;
         }
         return false;

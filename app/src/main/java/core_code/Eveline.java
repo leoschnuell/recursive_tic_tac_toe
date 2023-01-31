@@ -9,10 +9,19 @@ public class Eveline implements Player {
     private int last;
     private int[] myMove = new int[99];
     private int[] scoreboard = new int[99];
-
+    int isPlayer;
+    int isNotPlayer;
     public Eveline() {
         gameControler = GameController.getGameControler();
         gameboard = gameControler.getBoard();
+        if(gameControler.getP1() == "Eveline"){
+            isPlayer =  3;
+            isNotPlayer = 5;
+        }
+        else {
+            isNotPlayer = 3;
+            isPlayer = 5;
+        }
     }
 
     public int move(int lastMove) {
@@ -24,7 +33,7 @@ public class Eveline implements Player {
         int bestscore = 100;
         for (int i = 1; i <= 9; i++) {
             if (gameboard[field + i] == 0) {
-                gameboard[field + i] = 5;
+                gameboard[field + i] = isPlayer;
                 score = minimax(gameboard, 6, 100, -100, false);
                 gameboard[field + i] = 0;
                 if (bestscore < score) {
@@ -67,7 +76,7 @@ public class Eveline implements Player {
             for (int i = 0; i < 9; i++) {
                 int score = -100;
                 if (gameboard[field + i] == 0) {
-                    gameboard[field + i] = 5;
+                    gameboard[field + i] = isPlayer;
                     tracks[6 -depth+1] = i;
                     score = minimax(gameboard, depth-1, alpha, beta, false);
                     gameboard[field + i] = 0;
@@ -88,7 +97,7 @@ public class Eveline implements Player {
             for (int i = 0; i < 9; i++) {
                 int scor = 100;
                 if (gameboard[field + i] == 0) {
-                    gameboard[field + i] = 3;
+                    gameboard[field + i] = isNotPlayer;
                     tracks[6 -depth+1] = i;
                     scor = minimax(gameboard, depth-1, alpha, beta, true);
                     gameboard[field + i] = 0;
@@ -112,31 +121,31 @@ public class Eveline implements Player {
             if(gameboard[field + 5] ==  0){
                 scoreboard[field+5] = scoreboard[field+5]+1;
             }
-            if (gameboard[field + 1] == 3) {
+            if (gameboard[field + 1] == isPlayer) {
                 if (gameboard[field + 2] == 0) {
                     scoreboard[field + 2] = scoreboard[field + 2] + 1;
-                    if (gameboard[field + 3] == 3) {
+                    if (gameboard[field + 3] == isPlayer) {
                         scoreboard[field + 2] = scoreboard[field + 2] + 5;
                     }
                 }
                 if (gameboard[field + 4] == 0) {
                     scoreboard[field + 4] = scoreboard[field + 4] + 1;
-                    if (gameboard[field + 7] == 3) {
+                    if (gameboard[field + 7] == isPlayer) {
                         scoreboard[field + 4] = scoreboard[field + 4] + 5;
                     }
                 }
                 if (gameboard[field + 5] == 0) {
                     scoreboard[field + 5] = scoreboard[field + 5] + 1;
-                    if (gameboard[field + 9] == 3) {
+                    if (gameboard[field + 9] == isPlayer) {
                         scoreboard[field + 5] = scoreboard[field + 5] + 5;
                     }
                 }
 
             }
-            if (gameboard[field + 2] == 3) {
+            if (gameboard[field + 2] == isPlayer) {
                 if (gameboard[field + 1] == 0) {
                     scoreboard[field + 1] = scoreboard[field + 1] + 1;
-                    if (gameboard[field + 3] == 3) {
+                    if (gameboard[field + 3] == isPlayer) {
                         scoreboard[field + 1] = scoreboard[field + 1] + 5;
                     }
                 }
@@ -145,94 +154,94 @@ public class Eveline implements Player {
                 }
                 if (gameboard[field + 5] == 0) {
                     scoreboard[field + 5] = scoreboard[field + 5] + 1;
-                    if (gameboard[field + 8] == 3) {
+                    if (gameboard[field + 8] == isPlayer) {
                         scoreboard[field + 5] = scoreboard[field + 5] + 5;
                     }
                 }
             }
-            if (gameboard[field + 3] == 3) {
+            if (gameboard[field + 3] == isPlayer) {
                 if (gameboard[field + 2] == 0) {
                     scoreboard[field + 2] = scoreboard[field + 2] + 1;
                 }
                 if (gameboard[field + 6] == 0) {
                     scoreboard[field + 6] = scoreboard[field + 6] + 1;
-                    if (gameboard[field + 9] == 3) {
+                    if (gameboard[field + 9] == isPlayer) {
                         scoreboard[field + 6] = scoreboard[field + 6] + 5;
                     }
                 }
                 if (gameboard[field + 5] == 0) {
                     scoreboard[field + 5] = scoreboard[field + 5] + 1;
-                    if (gameboard[field + 7] == 3) {
+                    if (gameboard[field + 7] == isPlayer) {
                         scoreboard[field + 5] = scoreboard[field + 5] + 5;
                     }
                 }
             }
-            if (gameboard[field + 4] == 3) {
+            if (gameboard[field + 4] == isPlayer) {
                 if (gameboard[field + 1] == 0) {
                     scoreboard[field + 1] = scoreboard[field + 1] + 1;
-                    if (gameboard[field + 7] == 3) {
+                    if (gameboard[field + 7] == isPlayer) {
                         scoreboard[field + 7] = scoreboard[field + 7] + 5;
                     }
                 }
                 if (gameboard[field + 5] == 0) {
                     scoreboard[field + 5] = scoreboard[field + 5] + 1;
-                    if (gameboard[field + 6] == 3) {
+                    if (gameboard[field + 6] == isPlayer) {
                         scoreboard[field + 2] = scoreboard[field + 2] + 5;
                     }
                 }
                 if (gameboard[field + 7] == 0) {
                     scoreboard[field + 7] = scoreboard[field + 7] + 1;
-                    if (gameboard[field + 1] == 3) {
+                    if (gameboard[field + 1] == isPlayer) {
                         scoreboard[field + 7] = scoreboard[field + 7] + 5;
                     }
                 }
             }
-            if (gameboard[field + 5] == 3) {
+            if (gameboard[field + 5] == isPlayer) {
                 if (gameboard[field + 1] == 0) {
                     scoreboard[field + 1] = scoreboard[field + 1] + 1;
-                    if (gameboard[field + 9] == 3) {
+                    if (gameboard[field + 9] == isPlayer) {
                         scoreboard[field + 1] = scoreboard[field + 1] + 5;
                     }
                 }
                 if (gameboard[field + 2] == 0) {
                     scoreboard[field + 2] = scoreboard[field + 2] + 1;
-                    if (gameboard[field + 8] == 3) {
+                    if (gameboard[field + 8] == isPlayer) {
                         scoreboard[field + 2] = scoreboard[field + 2] + 5;
                     }
                 }
                 if (gameboard[field + 3] == 0) {
                     scoreboard[field + 3] = scoreboard[field + 3] + 1;
-                    if (gameboard[field + 7] == 3) {
+                    if (gameboard[field + 7] == isPlayer) {
                         scoreboard[field + 3] = scoreboard[field + 3] + 5;
                     }
                 }
                 if (gameboard[field + 4] == 0) {
                     scoreboard[field + 4] = scoreboard[field + 4] + 1;
-                    if (gameboard[field + 6] == 3) {
+                    if (gameboard[field + 6] == isPlayer) {
                         scoreboard[field + 2] = scoreboard[field + 2] + 5;
                     }
                 }
                 if (gameboard[field + 6] == 0) {
                     scoreboard[field + 6] = scoreboard[field + 6] + 1;
-                    if (gameboard[field + 4] == 3) {
+                    if (gameboard[field + 4] == isPlayer) {
                         scoreboard[field + 6] = scoreboard[field + 6] + 5;
                     }
                 }
                 if (gameboard[field + 7] == 0) {
                     scoreboard[field + 7] = scoreboard[field + 7] + 1;
-                    if (gameboard[field + 3] == 3) {
+                    if (gameboard[field + 3] == isPlayer) {
                         scoreboard[field + 7] = scoreboard[field + 7] + 5;
                     }
                 }
                 if (gameboard[field + 8] == 0) {
                     scoreboard[field + 8] = scoreboard[field + 8] + 1;
-                    if (gameboard[field + 2] == 3) {
+                    if (gameboard[field + 2] == isPlayer) {
                         scoreboard[field + 2] = scoreboard[field + 2] + 5;
                     }
                 }
                 if (gameboard[field + 9] == 0) {
                     scoreboard[field + 9] = scoreboard[field + 9] + 1;
-                    if (gameboard[field + 1] == 3) {
+                    if (gameboard[field + 1] == isPlayer) {
                         scoreboard[field + 9] = scoreboard[field + 9] + 5;
                     }
                 }
@@ -240,7 +249,7 @@ public class Eveline implements Player {
             if (gameboard[field + 6] == 3) {
                 if (gameboard[field + 3] == 0) {
                     scoreboard[field + 3] = scoreboard[field + 3] + 1;
-                    if (gameboard[field + 9] == 3) {
+                    if (gameboard[field + 9] == isPlayer) {
                         scoreboard[field + 3] = scoreboard[field + 3] + 5;
                     }
                 }
@@ -249,12 +258,12 @@ public class Eveline implements Player {
                 }
                 if (gameboard[field + 9] == 0) {
                     scoreboard[field + 9] = scoreboard[field + 9] + 1;
-                    if (gameboard[field + 3] == 3) {
+                    if (gameboard[field + 3] == isPlayer) {
                         scoreboard[field + 9] = scoreboard[field + 9] + 5;
                     }
                 }
             }
-            if (gameboard[field + 7] == 3) {
+            if (gameboard[field + 7] == isPlayer) {
                 if (gameboard[field + 4] == 0) {
                     scoreboard[field + 4] = scoreboard[field + 4] + 1;
                 }
@@ -263,15 +272,15 @@ public class Eveline implements Player {
                 }
                 if (gameboard[field + 8] == 0) {
                     scoreboard[field + 8] = scoreboard[field + 8] + 1;
-                    if (gameboard[field + 9] == 3) {
+                    if (gameboard[field + 9] == isPlayer) {
                         scoreboard[field + 8] = scoreboard[field + 8] + 5;
                     }
                 }
             }
-            if (gameboard[field + 8] == 3) {
+            if (gameboard[field + 8] == isPlayer) {
                 if (gameboard[field + 7] == 0) {
                     scoreboard[field + 7] = scoreboard[field + 7] + 1;
-                    if (gameboard[field + 9] == 3) {
+                    if (gameboard[field + 9] == isPlayer) {
                         scoreboard[field + 7] = scoreboard[field + 7] + 5;
                     }
                 }
@@ -280,12 +289,12 @@ public class Eveline implements Player {
                 }
                 if (gameboard[field + 9] == 0) {
                     scoreboard[field + 9] = scoreboard[field + 9] + 1;
-                    if (gameboard[field + 7] == 3) {
+                    if (gameboard[field + 7] == isPlayer) {
                         scoreboard[field + 9] = scoreboard[field + 9] + 5;
                     }
                 }
             }
-            if (gameboard[field + 9] == 3) {
+            if (gameboard[field + 9] == isPlayer) {
                 if (gameboard[field + 5] == 0) {
                     scoreboard[field + 5] = scoreboard[field + 5] + 1;
                 }
@@ -300,135 +309,135 @@ public class Eveline implements Player {
             //mitte zu besetzen ?
 
             //zwei blocken
-            if (gameboard[field + 1] == 5) {
+            if (gameboard[field + 1] == isNotPlayer) {
                 if (gameboard[field + 2] == 0) {
-                    if (gameboard[field + 3] == 5) {
+                    if (gameboard[field + 3] == isNotPlayer) {
                         scoreboard[field + 2] = scoreboard[field + 2] - 2;
                     }
                 }
                 if (gameboard[field + 4] == 0) {
-                    if (gameboard[field + 7] == 5) {
+                    if (gameboard[field + 7] == isNotPlayer) {
                         scoreboard[field + 4] = scoreboard[field + 4] - 2;
                     }
                 }
                 if (gameboard[field + 5] == 0) {
-                    if (gameboard[field + 9] == 5) {
+                    if (gameboard[field + 9] == isNotPlayer) {
                         scoreboard[field + 5] = scoreboard[field + 5] - 2;
                     }
                 }
 
             }
-            if (gameboard[field + 2] == 5) {
+            if (gameboard[field + 2] == isNotPlayer) {
                 if (gameboard[field + 1] == 0) {
-                    if (gameboard[field + 3] == 5) {
+                    if (gameboard[field + 3] == isNotPlayer) {
                         scoreboard[field + 1] = scoreboard[field + 1] - 2;
                     }
                 }
                 if (gameboard[field + 5] == 0) {
-                    if (gameboard[field + 8] == 5) {
+                    if (gameboard[field + 8] == isNotPlayer) {
                         scoreboard[field + 5] = scoreboard[field + 5] - 2;
                     }
                 }
             }
-            if (gameboard[field + 3] == 5) {
+            if (gameboard[field + 3] == isNotPlayer) {
                 if (gameboard[field + 6] == 0) {
-                    if (gameboard[field + 9] == 5) {
+                    if (gameboard[field + 9] == isNotPlayer) {
                         scoreboard[field + 6] = scoreboard[field + 6] - 2;
                     }
                 }
                 if (gameboard[field + 5] == 0) {
-                    if (gameboard[field + 7] == 5) {
+                    if (gameboard[field + 7] == isNotPlayer) {
                         scoreboard[field + 5] = scoreboard[field + 5] - 2;
                     }
                 }
             }
-            if (gameboard[field + 4] == 5) {
+            if (gameboard[field + 4] == isNotPlayer) {
                 if (gameboard[field + 1] == 0) {
-                    if (gameboard[field + 7] == 5) {
+                    if (gameboard[field + 7] == isNotPlayer) {
                         scoreboard[field + 7] = scoreboard[field + 7] - 2;
                     }
                 }
                 if (gameboard[field + 5] == 0) {
-                    if (gameboard[field + 6] == 5) {
+                    if (gameboard[field + 6] == isNotPlayer) {
                         scoreboard[field + 2] = scoreboard[field + 2] - 2;
                     }
                 }
                 if (gameboard[field + 7] == 0) {
-                    if (gameboard[field + 1] == 5) {
+                    if (gameboard[field + 1] == isNotPlayer) {
                         scoreboard[field + 7] = scoreboard[field + 7] - 2;
                     }
                 }
             }
-            if (gameboard[field + 5] == 5) {
+            if (gameboard[field + 5] == isNotPlayer) {
                 if (gameboard[field + 1] == 0) {
-                    if (gameboard[field + 9] == 5) {
+                    if (gameboard[field + 9] == isNotPlayer) {
                         scoreboard[field + 1] = scoreboard[field + 1] - 2;
                     }
                 }
                 if (gameboard[field + 2] == 0) {
-                    if (gameboard[field + 8] == 5) {
+                    if (gameboard[field + 8] == isNotPlayer) {
                         scoreboard[field + 2] = scoreboard[field + 2] - 2;
                     }
                 }
                 if (gameboard[field + 3] == 0) {
-                    if (gameboard[field + 7] == 5) {
+                    if (gameboard[field + 7] == isNotPlayer) {
                         scoreboard[field + 3] = scoreboard[field + 3] - 2;
                     }
                 }
                 if (gameboard[field + 4] == 0) {
-                    if (gameboard[field + 6] == 5) {
+                    if (gameboard[field + 6] == isNotPlayer) {
                         scoreboard[field + 2] = scoreboard[field + 2] - 2;
                     }
                 }
                 if (gameboard[field + 6] == 0) {
-                    if (gameboard[field + 4] == 5) {
+                    if (gameboard[field + 4] == isNotPlayer) {
                         scoreboard[field + 6] = scoreboard[field + 6] - 2;
                     }
                 }
                 if (gameboard[field + 7] == 0) {
-                    if (gameboard[field + 3] == 5) {
+                    if (gameboard[field + 3] == isNotPlayer) {
                         scoreboard[field + 7] = scoreboard[field + 7] - 2;
                     }
                 }
                 if (gameboard[field + 8] == 0) {
-                    if (gameboard[field + 2] == 5) {
+                    if (gameboard[field + 2] == isNotPlayer) {
                         scoreboard[field + 2] = scoreboard[field + 2] - 2;
                     }
                 }
                 if (gameboard[field + 9] == 0) {
-                    if (gameboard[field + 1] == 5) {
+                    if (gameboard[field + 1] == isNotPlayer) {
                         scoreboard[field + 9] = scoreboard[field + 9] - 2;
                     }
                 }
             }
-            if (gameboard[field + 6] == 5) {
+            if (gameboard[field + 6] == isNotPlayer) {
                 if (gameboard[field + 3] == 0) {
-                    if (gameboard[field + 9] == 5) {
+                    if (gameboard[field + 9] == isNotPlayer) {
                         scoreboard[field + 3] = scoreboard[field + 3] - 2;
                     }
                 }
                 if (gameboard[field + 9] == 0) {
-                    if (gameboard[field + 3] == 5) {
+                    if (gameboard[field + 3] == isNotPlayer) {
                         scoreboard[field + 9] = scoreboard[field + 9] - 2;
                     }
                 }
             }
-            if (gameboard[field + 7] == 5) {
+            if (gameboard[field + 7] == isNotPlayer) {
                 if (gameboard[field + 8] == 0) {
-                    if (gameboard[field + 9] == 5) {
+                    if (gameboard[field + 9] == isNotPlayer) {
                         scoreboard[field + 8] = scoreboard[field + 8] - 2;
                     }
                 }
             }
-            if (gameboard[field + 8] == 5) {
+            if (gameboard[field + 8] == isNotPlayer) {
                 if (gameboard[field + 7] == 0) {
-                    if (gameboard[field + 9] == 5) {
+                    if (gameboard[field + 9] == isNotPlayer) {
                         scoreboard[field + 7] = scoreboard[field + 7] - 2;
                     }
                 }
                 if (gameboard[field + 9] == 0) {
                     scoreboard[field + 9] = scoreboard[field + 9] - 2;
-                    if (gameboard[field + 7] == 5) {
+                    if (gameboard[field + 7] == isNotPlayer) {
                         scoreboard[field + 9] = scoreboard[field + 9] - 2;
                     }
                 }
@@ -442,34 +451,4 @@ public class Eveline implements Player {
         return fieldscore;
     }
 
-    public boolean check_win() {
-        int field = last%10 *10;
-        if (gameboard[field + 1] == 3) {
-            if (gameboard[field + 2] == 3 && gameboard[field + 3] == 3) {
-                return true;
-            }
-            if (gameboard[field + 4] == 3 && gameboard[field + 7] == 3) {
-                return true;
-            }
-            if (gameboard[field + 5] == 3 && gameboard[field + 9] == 3) {
-                return true;
-            }
-        } else if (gameboard[field + 2] == 3) {
-            if (gameboard[field + 5] == 3 && gameboard[field + 8] == 3) {
-                return true;
-            }
-        }
-        if (gameboard[field + 3] == 3) {
-            if (gameboard[field + 5] == 3 && gameboard[field + 7] == 3) {
-                return true;
-            }
-            if (gameboard[field + 4] == 3 && gameboard[field + 7] == 3) {
-                return true;
-            }
-            if (gameboard[field + 5] == 3 && gameboard[field + 9] == 3) {
-                return true;
-            }
-        }
-        return false;
-    }
 }
