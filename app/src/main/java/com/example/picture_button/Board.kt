@@ -12,6 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import core_code.*
+import java.io.File
 import java.util.concurrent.*
 
 
@@ -56,6 +57,14 @@ class Board : Fragment(), View.OnClickListener {
         savedInstanceState: Bundle?
     ): View? {
         println("onCreate")
+        /* Is only needed if the onresume and on stop are active
+        val files: Array<out File>? = context?.cacheDir?.listFiles()
+        println(files?.size)
+        if (files?.size != 0) {
+            var cachefile = files?.get(0)
+            if(cachefile?.name?.startsWith(cachefilename) == true)
+                cachefile.delete()
+        }*/
         val view = inflater.inflate(R.layout.grid_test_test, container, false)
         val cancel = view.findViewById<Button>(R.id.Cancel)
         cancel.setOnClickListener(){
@@ -359,12 +368,13 @@ class Board : Fragment(), View.OnClickListener {
     }
 
 
-}
+
 ///ALLES LEOS SCHULD :::
 
-/*
+/*  works in theorie but makes the App unstable
     override fun onStop() {
         super.onStop()
+        println("onStop")
         val cacheFile = File.createTempFile(cachefilename, null, context?.cacheDir)
 
         cacheFile.writeText(gameController.board.contentToString())
@@ -377,9 +387,12 @@ class Board : Fragment(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
+        println("onResume")
         val files: Array<out File>? = context?.cacheDir?.listFiles()
         if (files?.size == 0) return
         val cacheFile = files?.get(0) ?: return
+        if(cacheFile?.name?.startsWith(cachefilename) != true)
+            return
         if (!cacheFile.exists()) {
             println("File does not exist")
             return
@@ -415,8 +428,7 @@ class Board : Fragment(), View.OnClickListener {
         gameController.lastMove = lastMove
         println(array[lastMove])
         player = array[lastMove] != 3
-        i = 0
-        array.iterator().forEach { y -> println("$i:$y");i++ }
+
         gameController.board = array
         cacheFile.delete()
 
@@ -432,8 +444,8 @@ class Board : Fragment(), View.OnClickListener {
         }
         updateBoardColers()
     }
+*/
 
 }
-*/
 
 

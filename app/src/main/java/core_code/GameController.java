@@ -19,7 +19,7 @@ public class GameController {
     private static GameController gameController = new GameController();
     private boolean firstPlayerTurn = true;
     private int move;
-    private int amountCratesFull = 0;
+private int amountCratesFull = 0;
     private Player p1; // zum übergeben wer player1 ist
 
     private static ExecutorService executor =
@@ -66,8 +66,6 @@ public class GameController {
             gamebord[i] = 0;
         }
         lastMove = 1;// 1 = beginning of game
-        amountCratesFull = 0;
-
 
     }
 
@@ -87,6 +85,55 @@ public class GameController {
     }
 
 
+    @Deprecated
+    public Player gameSetup(Player p1, Player p2) {
+        //ini game
+        // Player p1 = new leo_alg();  //interal int = 3
+        //Player p2 = new UnitTester();  //interal int = 5
+
+        Player win = gameController.gameLoop(p1, p2);
+        System.out.println("end of game winner: " + (win == p1 ? "p1" : p2));
+
+
+        for (int j = 0; j < 2; j++) {
+            System.out.print("\nPlayer " + (j + 1) + " moves : \n(");
+            for (int i = 0; i < gameController.moveList.size(); i++) {
+                if (i % 2 == j)
+                    System.out.print(gameController.moveList.get(i) + ",");
+            }
+            System.out.print(")");
+        }
+        return win;
+    }
+
+    @Deprecated
+    public Player gameLoop(Player p1, Player p2) {
+        // returns the winner
+
+        while (true) {
+            if (firstPlayerTurn) {
+                move = p1.move(lastMove);
+                System.out.println("S1: " + move);
+            } else {
+                move = p2.move(lastMove);
+                System.out.println("S2: " + move);
+
+            }
+            if (move == 100 || !checkMove(move)) {
+                System.out.println("move:" + move + " was invalid");
+                return !firstPlayerTurn ? p1 : p2;
+            }
+            gamebord[move] = firstPlayerTurn ? 3 : 5;
+            moveList.add(move);
+            moveCounter++;
+            if (0 != checkWin(move))
+                return firstPlayerTurn ? p1 : p2;
+            lastMove = move;
+            firstPlayerTurn = !firstPlayerTurn;
+        }
+    }
+
+
     public int[] getBoard() {
         return gamebord;
     }
@@ -99,6 +146,31 @@ public class GameController {
     This funktions prints the game in a grid like this
     11 12 13 21 22 23 31 32 33
     */
+    @Deprecated
+    public void display() {
+        for (int j = 1; j < 4; j++) {
+            for (int i = 10; i < 40; i += 10) {
+                System.out.print((gamebord[i * j] == 0 ? "_" : gamebord[i * j] == 3 ? "X" : "O") + (i != 30 ? "|" : ""));
+            }
+            System.out.println();
+        }
+        System.out.println("=====================");
+        for (int G = 0; G < 3; G++) {
+            for (int K = 0; K < 3; K++) {
+                for (int g = 1; g < 4; g++) {
+                    for (int k = 1; k < 4; k++) {
+                        int id = (G * 3 + g) * 10 + K * 3 + k;
+                        //System.out.print( id+ "  ");
+                        System.out.print((gamebord[id] == 0 ? "_" : gamebord[id] == 3 ? "X" : "O") + " ");
+                    }
+                    System.out.print(g != 3 ? "|" : "");
+                }
+                System.out.println();
+            }
+            System.out.print(G != 2 ? "------|------|-----\n" : "\n");
+
+        }
+    }
 
 
     public boolean checkMove(int playerMove) {
@@ -146,16 +218,15 @@ public class GameController {
         }
     }
 
-    //Returns values -3,-5, -420 , 0 - 9
+    //Returns values -3,-5 , 0 - 9
     //0 = nothing was won
     // -3 first player won the game
     // -5 second player won the game
-    // -420 the game ends in a draw
     // 1..9 kasten was won
     public int checkWin(int playerMove) {
         int res = checkCrate(playerMove / 10);
         if (res > 0) {
-            amountCratesFull++;
+            amountCratesFull ++;
             System.out.println("kasten gewonnen:" + (playerMove / 10) * 10);
             gamebord[(playerMove / 10) * 10] = res;
             // check flags of other kasten
@@ -176,7 +247,8 @@ public class GameController {
                 else if (result[i] == 15)
                     return -5;
             }
-            if (amountCratesFull == 9) {//Draw
+            if (amountCratesFull==9)
+            {//Draw
                 return -420;
             }
 
@@ -185,6 +257,16 @@ public class GameController {
         return 0;
     }
 
+    /*
+    123
+    456
+    789
+    147
+    258
+    369
+    159
+    357
+ */
     // returns Player int if kasten is won
     private int checkCrate(int k) {
         // k =kasten welcher aktualisiert wird

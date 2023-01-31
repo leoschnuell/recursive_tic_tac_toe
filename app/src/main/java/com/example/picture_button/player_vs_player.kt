@@ -9,11 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import java.io.File
 
 
 class player_vs_player : Fragment() {
@@ -28,11 +26,6 @@ class player_vs_player : Fragment() {
         val view = inflater.inflate(R.layout.fragment_player_vs_player, container, false)
         val button = view.findViewById<Button>(R.id.same_mobile_btn)
         button.setOnClickListener {
-            val files: Array<out File>? = context?.cacheDir?.listFiles()
-            println(files?.size)
-            if (files?.size != 0) {
-                files?.get(0)?.delete()
-            }
             val bundle = bundleOf(
                 "player1" to Board.playerType.HUMAN, "player2" to Board.playerType.HUMAN
             )
