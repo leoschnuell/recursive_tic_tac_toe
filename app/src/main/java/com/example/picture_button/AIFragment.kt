@@ -39,6 +39,18 @@ class AIFragment : Fragment() {
            bundle.putSerializable("player2", Board.playerType.KI_LIZ)
            findNavController().navigate(R.id.action_AIFragment_to_board,bundle)
        }
+       val button3 = view.findViewById<Button>(R.id.san_alg_btn)
+       button2.setOnClickListener {
+           val files: Array<out File>? = context?.cacheDir?.listFiles()
+           println(files?.size  )
+           if (files?.size != 0){
+               files?.get(0)?.delete()
+           }
+           val bundle = Bundle()
+           bundle.putSerializable("player1", Board.playerType.HUMAN)
+           bundle.putSerializable("player2", Board.playerType.RANDOM)
+           findNavController().navigate(R.id.action_AIFragment_to_board,bundle)
+       }
 
        return view
     }

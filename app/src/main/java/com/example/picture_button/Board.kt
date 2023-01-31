@@ -37,7 +37,7 @@ class Board : Fragment(), View.OnClickListener {
 
 
     enum class playerType {
-        KI, HUMAN, REMOTE, KI_LIZ, KI_LEO, KI_SANDER
+        KI, HUMAN, REMOTE, KI_LIZ, KI_LEO,RANDOM, KI_SANDER
     }
 
     val cachefilename = "cachedboard";
@@ -295,7 +295,7 @@ class Board : Fragment(), View.OnClickListener {
         if (player) {
             showEndScreen("Blau gibt auf ")
         } else {
-            showEndScreen("Rot gribt auf")
+            showEndScreen("Rot gibt auf")
         }
 
     }
@@ -321,6 +321,9 @@ class Board : Fragment(), View.OnClickListener {
             }
             playerType.REMOTE -> {
                 RemoteHost()
+            }
+            playerType.RANDOM -> {
+                Random()
             }
             playerType.KI_LIZ -> {
                 Liz_alg()

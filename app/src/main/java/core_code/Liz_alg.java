@@ -94,7 +94,7 @@ public class Liz_alg implements Player {
             return (newField)*10 + h;
         }
 
-        while(freeField[p] != 0  && p < 812){
+        while(freeField[p] != 0  && p < 9){
                 if(!almostThreeInARow(freeField[p],isNotPlayer)) {// welche freien Felder benutzt werden könen die es dem Gegner nicht ermöglichen nim nächsten Zu eine Rheie vollzubekommen
                     enemySafe[x] = freeField[p];
                 x++;
