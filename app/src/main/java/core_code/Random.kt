@@ -9,7 +9,7 @@ class Random : Player {
     fun allPossible(): LinkedList<Int> {
         val possibleMoves = LinkedList<Int>()
         for (i in 0 until 9) {
-            for (j in 0 until 10) {
+            for (j in 0 until 9) {
                 val id = ((i + 1) * 10 + j + 1)
                 if (gameController.checkMove(id)) {
                     possibleMoves.add(id);
