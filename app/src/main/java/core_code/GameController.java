@@ -13,7 +13,7 @@ public class GameController {
     public static int[] gamebord = new int[100];
     private static final Map<Integer, int[]> neighbors = new HashMap<>();
     private static final Map<Integer, int[]> thirdCase = new HashMap<>();
-    private ArrayList<Integer> moveList = new ArrayList<>();
+     ArrayList<Integer> moveList = new ArrayList<>();
     private int moveCounter;
     public int lastMove;
     private static GameController gameController = new GameController();
@@ -65,6 +65,7 @@ public class GameController {
             gamebord[i] = 0;
         }
         lastMove = 1;// 1 = beginning of game
+        amountCratesFull =0;
 
     }
 
@@ -74,6 +75,9 @@ public class GameController {
 
     public static Map<Integer, int[]> getneighbors(int checkField) {
         return neighbors;
+    }
+    public static Map<Integer, int[]> getthirdCase(int checkField) {
+        return thirdCase;
     }
 
     // add move to the move list and apply it too the game board
