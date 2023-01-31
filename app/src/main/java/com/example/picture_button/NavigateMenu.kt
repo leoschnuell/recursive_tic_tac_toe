@@ -11,7 +11,7 @@ import androidx.navigation.fragment.NavHostFragment
 
 
 class NavigateMenu : AppCompatActivity() {
-    private lateinit var navController:NavController
+    private lateinit var navController:NavController // Initialisieren des NavControllers
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,7 +19,7 @@ class NavigateMenu : AppCompatActivity() {
         setContentView(R.layout.navigate_menu)
 
         val navHomeFragment = supportFragmentManager
-            .findFragmentById(R.id.fragment) as NavHostFragment
+            .findFragmentById(R.id.fragment) as NavHostFragment //Anzeigen des Fragments beim Starten der App
         navController =navHomeFragment.navController
 
     }

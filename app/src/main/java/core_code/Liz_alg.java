@@ -10,7 +10,7 @@ import com.example.picture_button.Board;
 
 public class Liz_alg implements Player {
 
-    GameController gameControler;
+    GameController gameController;
     private int[] gameboard;
     int whoWins = 0;
     int counter;
@@ -24,9 +24,9 @@ public class Liz_alg implements Player {
     private Board board;
 
     public Liz_alg() {
-        gameControler = GameController.getGameControler();
-        gameboard = gameControler.getBoard();
-        if (board.getP1() == Board.playerType.DAISY) {
+        gameController = GameController.getgameController();
+        gameboard = gameController.getBoard();
+        if (board.getP1() == Board.playerType.DAISY) {//Überprüft welcher Player die AI ist
             isPlayer = 3;
             isNotPlayer = 5;
         } else {
@@ -42,7 +42,7 @@ public class Liz_alg implements Player {
     @Override
     public int move(int lastMove) {
         counter = 0;
-        gameboard = gameControler.getBoard();
+        gameboard = gameController.getBoard();
         newField = lastMove % 10; //Bestimmung des nächsten Kastens
         if (checkWin(newField)) //Falls der bestimmte Kasten gewonnen ist. Rausfinden, welche Kasten als nächstes Belegt werden sollen
         {
@@ -56,7 +56,7 @@ public class Liz_alg implements Player {
 
         int x = 0;
         int p = 0;
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 9; i++) { //Setzten auf den Ausgangszustand
             freeField[i] = 0;
             enemySafe[i] = 0;
             lessTwoField[i] = 0;
@@ -71,8 +71,8 @@ public class Liz_alg implements Player {
         int y = 0;
         int b = 0;
         while (freeField[y] != 0) {
-            if (justOneOrLessEnemy(freeField[y])) {
-                lessTwoField[b] = freeField[y];
+            if (justOneOrLessEnemy(freeField[y])) { // überprüft  ob nur weniger als zwei Kästchen vom Gegner besetzt sind für den näöchsten Kasten des Gegners
+                lessTwoField[b] = freeField[y]; //Speichert diese ab
                 if (b > 8) {
                     b++;
                 }
@@ -82,50 +82,51 @@ public class Liz_alg implements Player {
             }
             y++;
         }
-        if (lessTwoField[1] == 0 && lessTwoField[0] % 10 != 5) {
+        if (lessTwoField[1] == 0 && lessTwoField[0] % 10 != 5) { // wenn nur eine Möglichkeit ist, dass der Gegner zwei oder weniger im nächsten Kasten hat ausgeben
             return (newField) * 10 + lessTwoField[0];
         } else if (lessTwoField[2] == 0 && lessTwoField[1] != 0) {
-            if (lessTwoField[0] % 10 == 5) {
-                return (newField) * 10 + lessTwoField[1];
+            if (lessTwoField[0] % 10 == 5) { // testen ob man den Gegner davon abhalten kann in dem Nächsten Schritt in die Mitte zu setzten
+                return (newField) * 10 + lessTwoField[1]; //dann die Alternative wählen
             }
-            if (lessTwoField[1] % 10 == 5) {
+            if (lessTwoField[1] % 10 == 5) {//dann die Alternative nehmen
                 return (newField) * 10 + lessTwoField[0];
             }
         } else if (lessTwoField[0] != 0 && lessTwoField[1] != 0) {
-            Random rand = new Random();
+            Random rand = new Random(); // sonst wird es random entschieden
             int h = lessTwoField[rand.nextInt(b + 1)];
             while (h == 0) {
                 h = lessTwoField[rand.nextInt(b + 1)];
             }
-            return (newField) * 10 + h;
+            return (newField) * 10 + h; //das neue Feld ausgeben
         }
 
         while (freeField[p] != 0 && p < 9) {
-            if (!almostThreeInARow(freeField[p], isNotPlayer)) {// welche freien Felder benutzt werden könen die es dem Gegner nicht ermöglichen nim nächsten Zu eine Rheie vollzubekommen
+            if (!almostThreeInARow(freeField[p], isNotPlayer)) {// welche freien Felder benutzt werden könen die es dem Gegner nicht ermöglichen im nächsten Zu eine Reihe vollzubekommen
                 enemySafe[x] = freeField[p];
                 x++;
             }
             p++;
         }
         if (enemySafe[2] == 0) {
-            if (enemySafe[0] % 10 == 5) //nochmal anschauen
+            if (enemySafe[0] % 10 == 5)  // falls man nur zwei möglichkeiten hat, und eine den Gegner in die Mitte gehen lässt, die andere Wählen
             {
                 enemySafe[0] = enemySafe[1];
                 enemySafe[1] = 0;
             }
-            if (enemySafe[1] % 10 == 5) {
+            if (enemySafe[1] % 10 == 5) {// falls man nur zwei möglichkeiten hat, und eine den Gegner in die Mitte gehen lässt, die andere Wählen
                 enemySafe[1] = 0;
             }
         }
-        if (enemySafe[1] == 0) {
+        if (enemySafe[1] == 0) {//bei nur einer Option diese Ausgeben
             return newField * 10 + enemySafe[0];
-        } else {
+        } else { //sonst random entscheiden
             Random rand = new Random();
             return newField * 10 + enemySafe[rand.nextInt(b + 1)];
         }
     }
 
     private int selectField() {
+        //neue Bestimmung des nächsten Feldes wenn das eigentliche voll oder gewonnen schon ist
         int y = 0;
         if (possiField[1] == 0) {
             return possiField[0];
@@ -535,7 +536,7 @@ public class Liz_alg implements Player {
             }
             y++;
         }
-        int x = 0;
+        int x = 0; //sonst Bestimmung durch Zufall eines möglichen Feldes
         Random rand = new Random();
         while (possiField[x] != 0) {
             x++;
@@ -546,7 +547,8 @@ public class Liz_alg implements Player {
     boolean[] isChecked = new boolean[9];
 
     private void chooseField(int checkField) {
-        Map<Integer, int[]> possible = gameControler.getneighbors(checkField);
+        //Bestimmung eines nächsten Kastens wenn das eine schon benutzt ist
+        Map<Integer, int[]> possible = gameController.getneighbors(checkField);
         int count = 0;
 
         for (int i = 0; i < possible.get(checkField).length; i++) {
@@ -562,7 +564,7 @@ public class Liz_alg implements Player {
 
     List<Integer> enemy_layout = new ArrayList<Integer>();
 
-    public boolean almostThreeInARow(int enemyField, int whichPlayer) {
+    public boolean almostThreeInARow(int enemyField, int whichPlayer) {//überprüft ob einer der Spieler im nächsten Zug  drei in einer Reihe hat
         int x = 0;
         for (int i = 1; i < 10; i++) {
             if (gameboard[enemyField * 10 + i] == whichPlayer) {
@@ -647,7 +649,7 @@ public class Liz_alg implements Player {
         return false;
     }
 
-    private boolean justOneOrLessEnemy(int inspectField) {
+    private boolean justOneOrLessEnemy(int inspectField) {//überprüft die Ob die Anzahl der Gegner weniger als eins sind in einem Kasten
         int count = 0;
         for (int i = 1; i < 10; i++) {
             if (gameboard[inspectField * 10 + i] == isNotPlayer) {
@@ -663,7 +665,7 @@ public class Liz_alg implements Player {
 
 
 
-    public boolean checkWin(int field) {
+    public boolean checkWin(int field) { // überprüft, ob ein Feld bereits gewonnen ist.
         field = field * 10;
         if (gameboard[field + 1] == 3) {
             if (gameboard[field + 2] == 3 && gameboard[field + 3] == 3) {

@@ -5,7 +5,7 @@ import static java.lang.Math.max;
 import com.example.picture_button.Board;
 
 public class Eveline implements Player {
-    GameController gameControler;
+    GameController gameController;
     private int[] gameboard;
     private int last;
     private int[] scoreboard = new int[99];
@@ -14,8 +14,8 @@ public class Eveline implements Player {
     private Board board;
 
     public Eveline() {
-        gameControler = GameController.getGameControler();
-        gameboard = gameControler.getBoard();
+        gameController = GameController.getgameController();
+        gameboard = gameController.getBoard();
         if (board.getP1() == Board.playerType.EVELINE) { //Überprüft welcher Player die AI ist
             isPlayer = 3;
             isNotPlayer = 5;
@@ -44,7 +44,7 @@ public class Eveline implements Player {
                 }
             }
         }
-        return newMove; //ausgabe des Moves
+        return newMove; //Ausgabe des Moves
     }
 
     @Override
@@ -121,6 +121,7 @@ public class Eveline implements Player {
         //JE niedriger der Wert ist, desto besser für den Gegenspieler
         for (int field = 0; field < 100; field = field + 10) {
             //zwei in einer Reihe +1
+            //der Kasten in der Mitte hat eine höhere Bewertuung
             //drei in einer Reihe +5
             //zwei des Gegners Blocken -2
             if (gameboard[field + 5] == 0) {
@@ -310,10 +311,6 @@ public class Eveline implements Player {
                     scoreboard[field + 6] = scoreboard[field + 6] + 1;
                 }
             }
-
-            //mitte zu besetzen ?
-
-            //zwei blocken
             if (gameboard[field + 1] == isNotPlayer) {
                 if (gameboard[field + 2] == 0) {
                     if (gameboard[field + 3] == isNotPlayer) {
