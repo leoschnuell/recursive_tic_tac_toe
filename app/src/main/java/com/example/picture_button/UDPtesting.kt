@@ -24,6 +24,8 @@ class UDPtesting : Fragment() {
 
     lateinit var listOfOthers: LinearLayout
     lateinit var playerName: EditText
+    lateinit var searchGame :Button
+    lateinit var hostGame :Button
 
     //  val mainHandler = Handler(Looper.getMainLooper())
     private var mainHandler: Handler = startHandlerThread("R3TNetworking")
@@ -41,6 +43,7 @@ class UDPtesting : Fragment() {
     companion object {
         var broadcastActive = false
 
+
         fun stopUDPBroadcasting() {
             broadcastActive = false
         }
@@ -48,15 +51,33 @@ class UDPtesting : Fragment() {
 
     class DataGroup(var name: String, var ip: String, var timeOut: Int = 0)
 
+   fun setBroadcastActiveTrue()
+   {
+       broadcastActive = true
+       hostGame.isEnabled = false
+       searchGame.isEnabled = false
+
+   }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.fragment_show_player2, container, false)
-        playerName = view.findViewById<EditText>(R.id.editText2)
+        playerName = view.findViewById<EditText>(R.id.hostName)
         listOfOthers = view.findViewById<LinearLayout>(R.id.foundPlayers)
-        val searchGame = view.findViewById<Button>(R.id.search_game)
-        val hostGame = view.findViewById<Button>(R.id.host_game)
+        searchGame = view.findViewById<Button>(R.id.search_game)
+        hostGame = view.findViewById<Button>(R.id.host_game)
+        val reset = view.findViewById<Button>(R.id.resetAll)
+
+        reset.setOnClickListener{
+            broadcastActive = false;
+            hostGame.isEnabled = true
+            searchGame.isEnabled = true
+            //TODO: stop all thed maybe ?
+        }
+
+
         hostGame.setOnClickListener(View.OnClickListener {
             //open a tcp server and send udp broadcasts
 
@@ -84,7 +105,7 @@ class UDPtesting : Fragment() {
             return;
         }
 
-        broadcastActive = true
+        setBroadcastActiveTrue()
         var brotcaster = startHandlerThread("R3TBroadcaster")
 
         brotcaster.post {  //recive incoming UDP pagages and send tem to a queue
@@ -98,6 +119,7 @@ class UDPtesting : Fragment() {
                 println("recived $data")
                 msgQueue.add(DataGroup(data, remoteIP))
             }
+            socket.close()
         }
     }
 
@@ -109,6 +131,10 @@ class UDPtesting : Fragment() {
         //     false -> add this ip to managedData
         //every run we up the timeout
         //if the timeout reaches 1 second we drop this ip from managedData
+
+        if (broadcastActive) {
+            return;
+        }
 
         val managedData = LinkedList<DataGroup>()
 
@@ -165,7 +191,7 @@ class UDPtesting : Fragment() {
         socket.broadcast = true
         val sendData: ByteArray = messageStr.toByteArray()
 
-        broadcastActive = true
+        setBroadcastActiveTrue()
         mainHandler.post(object : Runnable {
             override fun run() {
                 if (broadcastActive) {
@@ -174,6 +200,7 @@ class UDPtesting : Fragment() {
                         Formatter.formatIpAddress(wifiManager.connectionInfo.ipAddress)
                     wifiManager.dhcpInfo.netmask
                     localIP = localIP.replaceAfterLast(".", "255")
+
 
                     val sendPacket: DatagramPacket = DatagramPacket(
                         sendData,
