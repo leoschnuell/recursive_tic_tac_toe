@@ -5,6 +5,7 @@ import android.os.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.GridLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -57,6 +58,12 @@ class Board : Fragment(), View.OnClickListener {
     ): View? {
         println("onCreate")
         val view = inflater.inflate(R.layout.grid_test_test, container, false)
+        val cancel = view.findViewById<Button>(R.id.Cancel)
+        cancel.setOnClickListener(){
+            UDPtesting.stopUDPBroadcasting()
+            findNavController().navigate(R.id.action_board_to_homeFragment)
+        }
+
         val root = view.findViewById<GridLayout>(R.id.root)
         AsyncTask.execute {
             for (i in 0 until root.childCount) {
@@ -347,11 +354,7 @@ class Board : Fragment(), View.OnClickListener {
     }
 
 
-    fun cancelUDPAndBack() {
-        UDPtesting.stopUDPBroadcasting()
-        findNavController().navigate(R.id.action_board_to_homeFragment)
 
-    }
 }
 ///ALLES LEOS SCHULD :::
 
