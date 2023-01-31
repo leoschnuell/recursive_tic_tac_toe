@@ -11,7 +11,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import core_code.*
-import java.io.*
 import java.util.concurrent.*
 
 
@@ -155,7 +154,7 @@ class Board : Fragment(), View.OnClickListener {
                         ?: throw NullPointerException("Sander fault: move ist NaN")
 
                     if (!gameController.checkMove(move)) {
-                        endOfGame()
+                        endOfGameBySurrender()
                         return
                     }
                     //updateCasket(move)
@@ -164,7 +163,6 @@ class Board : Fragment(), View.OnClickListener {
                     if (checkWin(move)) {
                         //updateCrate((move / 10) * 10)
                         updateBoardColers()
-                        endOfGame()
                         return
                     }
                     updateBoardColers()
@@ -281,12 +279,12 @@ class Board : Fragment(), View.OnClickListener {
     }
 
 
-    fun endOfGame() {
+    fun endOfGameBySurrender() {
 
         if (player) {
-            showEndScreen("Rot gewinnt")
+            showEndScreen("Blau gibt auf ")
         } else {
-            showEndScreen("Blau Gewinnt")
+            showEndScreen("Rot gribt auf")
         }
 
     }
