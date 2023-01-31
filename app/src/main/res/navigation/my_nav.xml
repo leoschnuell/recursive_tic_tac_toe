@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_homeFragment_to_player_vs_player"
             app:destination="@id/player_vs_player" />
+        <action
+            android:id="@+id/action_homeFragment_to_aiList"
+            app:destination="@id/aiList" />
     </fragment>
     <fragment
         android:id="@+id/AIFragment"
@@ -63,6 +66,14 @@
         tools:layout="@layout/fragment_show_player2" >
         <action
             android:id="@+id/action_UDPtesting_to_board"
+            app:destination="@id/board" />
+    </fragment>
+    <fragment
+        android:id="@+id/aiList"
+        android:name="com.example.picture_button.AiList"
+        android:label="AiList" >
+        <action
+            android:id="@+id/action_aiList_to_board"
             app:destination="@id/board" />
     </fragment>
 </navigation>
