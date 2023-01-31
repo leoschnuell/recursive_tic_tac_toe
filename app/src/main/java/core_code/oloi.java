@@ -1,47 +1,59 @@
 package core_code;
 
-public class oloi extends Human {
+import com.example.picture_button.Board;
+
+public class oloi implements Player {
     int isPlayer;
     int isNotPlayer;
     GameController gameControler;
     private int[] gamebord;
+    private Board board;
+
     public oloi() {
         gameControler = GameController.getGameControler();
         gamebord = gameControler.getBoard();
-        if(gameControler.getP1() == "Oloi"){
-            isPlayer =  3;
+        if (board.getP1() == Board.playerType.OLOI) {
+            isPlayer = 3;
             isNotPlayer = 5;
-        }
-        else {
+        } else {
             isNotPlayer = 3;
             isPlayer = 5;
         }
     }
 
+    @Override
+    public void setBoard(Board board) {
+this.board = board;
+    }
+
+    @Override
     public int move(int lastMove) {
         int move = -1;
         int bestresult = -100;
-        int field = lastMove %10 *10;
-        for(int i = 1; i < 10; i++) {
-            if (gamebord[field] == 0){
-                gamebord[field+i] = 5;
-                int result = minimax(gamebord, 0, false , lastMove);
-                gamebord[field+i] = 0;
-                if(result > bestresult){
+        int field = lastMove % 10 * 10;
+        for (int i = 1; i < 10; i++) {
+            if (gamebord[field] == 0) {
+                gamebord[field + i] = 5;
+                int result = minimax(gamebord, 0, false, lastMove);
+                gamebord[field + i] = 0;
+                if (result > bestresult) {
                     bestresult = result;
-                    move = field+i;
+                    move = field + i;
                 }
             }
 
         }
         return move;
     }
-    int[] score = {-1,0,1};
+
+
+    int[] score = {-1, 0, 1};
+
     public int minimax(int[] board, int depth, boolean isMax, int lastMove) {
         int winner = 2;
-        winner = check(board ,lastMove % 10 * 10);
-        if(winner != 2){
-            return score[winner+1];
+        winner = check(board, lastMove % 10 * 10);
+        if (winner != 2) {
+            return score[winner + 1];
         }
         if (isMax) {
             int bestscore = -100;
@@ -71,16 +83,17 @@ public class oloi extends Human {
             return bestscore;
         }
     }
-    private int check(int[] gb, int field){
+
+    private int check(int[] gb, int field) {
         int[] result = new int[8];
-        result[0] = gb[field+ 1] + gb[field+2] + gb[field+3];
-        result[1] = gb[field+4] + gb[field+5] + gb[field+6];
-        result[2] = gb[field+7] + gb[field+8] + gb[field+9];
-        result[3] = gb[field+1] + gb[field+4] + gb[field+7];
-        result[4] = gb[field+2] + gb[field+5] + gb[field+8];
-        result[5] = gb[field+3] + gb[field+6] + gb[field+9];
-        result[6] = gb[field+1] + gb[field+5] + gb[field+9];
-        result[7] = gb[field+3] + gb[field+5] + gb[field+7];
+        result[0] = gb[field + 1] + gb[field + 2] + gb[field + 3];
+        result[1] = gb[field + 4] + gb[field + 5] + gb[field + 6];
+        result[2] = gb[field + 7] + gb[field + 8] + gb[field + 9];
+        result[3] = gb[field + 1] + gb[field + 4] + gb[field + 7];
+        result[4] = gb[field + 2] + gb[field + 5] + gb[field + 8];
+        result[5] = gb[field + 3] + gb[field + 6] + gb[field + 9];
+        result[6] = gb[field + 1] + gb[field + 5] + gb[field + 9];
+        result[7] = gb[field + 3] + gb[field + 5] + gb[field + 7];
 
         for (int i = 0; i < 8; i++) {
             if (isPlayer == 3) {
@@ -88,8 +101,7 @@ public class oloi extends Human {
                     return -1;
                 else if (result[i] == 15)
                     return 1;
-            }
-            else {
+            } else {
                 if (result[i] == 15)
                     return -1;
                 else if (result[i] == 9)
@@ -97,15 +109,14 @@ public class oloi extends Human {
             }
         }
         int count = 0;
-        for(int i = 1; i< 10; i++){
-            if(gb[field+i] == 0){
+        for (int i = 1; i < 10; i++) {
+            if (gb[field + i] == 0) {
                 count++;
             }
         }
-        if(count == 0){
+        if (count == 0) {
             return 0;
-        }
-        else {
+        } else {
             return 2;
         }
     }

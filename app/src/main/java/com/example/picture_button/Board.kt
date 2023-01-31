@@ -22,12 +22,11 @@ class Board : Fragment(), View.OnClickListener {
     val gameController = GameController.getGameControler()
     val idToButton: MutableMap<Int, View> = mutableMapOf<Int, View>()
     val mainHandler = startHandlerThread()
-    val RED_PRIMARY = Color.rgb(245, 78, 78);
-    val RED_SECONDARY = Color.rgb(171, 14, 14);
-    val BLUE_PRIMARY = Color.rgb(78, 98, 245);
-    val BLUE_SECONDARY = Color.rgb(14, 14, 171);
-    private lateinit var executor: Executor
-
+    private val RED_PRIMARY = Color.rgb(245, 78, 78);
+    private val RED_SECONDARY = Color.rgb(171, 14, 14);
+    private val BLUE_PRIMARY = Color.rgb(78, 98, 245);
+    private val BLUE_SECONDARY = Color.rgb(14, 14, 171);
+    private lateinit var firstPlayer: playerType;
 
     fun startHandlerThread(): Handler {
         var mHandlerThread: HandlerThread? = null
@@ -110,6 +109,7 @@ class Board : Fragment(), View.OnClickListener {
 
 
         val player1 = playerDeclaration(receivedPlayer1 as playerType)
+        firstPlayer = receivedPlayer1
         player1.setBoard(this)
         val player2 = playerDeclaration(receivedPlayer2 as playerType)
         player2.setBoard(this)
@@ -353,6 +353,10 @@ class Board : Fragment(), View.OnClickListener {
         }
     }
 
+    fun getP1():playerType
+    {
+        return firstPlayer;
+    }
 
 
 }

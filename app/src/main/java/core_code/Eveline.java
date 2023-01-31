@@ -1,4 +1,5 @@
 package core_code;
+
 import static java.lang.Math.max;
 
 import com.example.picture_button.Board;
@@ -11,14 +12,15 @@ public class Eveline implements Player {
     private int[] scoreboard = new int[99];
     int isPlayer;
     int isNotPlayer;
+    private Board board;
+
     public Eveline() {
         gameControler = GameController.getGameControler();
         gameboard = gameControler.getBoard();
-        if(gameControler.getP1() == "Eveline"){
-            isPlayer =  3;
+        if (board.getP1() == Board.playerType.EVELINE) {
+            isPlayer = 3;
             isNotPlayer = 5;
-        }
-        else {
+        } else {
             isNotPlayer = 3;
             isPlayer = 5;
         }
@@ -29,7 +31,8 @@ public class Eveline implements Player {
         last = lastMove;
         int newMove = -1;
         int score;
-        int field = lastMove%10 *10;;
+        int field = lastMove % 10 * 10;
+        ;
         int bestscore = 100;
         for (int i = 1; i <= 9; i++) {
             if (gameboard[field + i] == 0) {
@@ -47,7 +50,7 @@ public class Eveline implements Player {
 
     @Override
     public void setBoard(Board board) {
-
+        this.board = board;
     }
 
 
@@ -58,54 +61,56 @@ public class Eveline implements Player {
     public String has_won() {
         return null;
     }
+
     int tracker;
     int[] tracks = new int[7];
-    int minimax(int[] gameboard, int depth, int alpha,int beta, boolean isMax) {
-        if(depth == 6){
+
+    int minimax(int[] gameboard, int depth, int alpha, int beta, boolean isMax) {
+        if (depth == 6) {
             tracks[0] = last % 10;
         }
         if (depth == 0) { //checkt bis zu einer Tiefe (vorangehende Moves) bis 6 sonst zu viele Mögliche Sachen
-            for(int i = 0; i< 6;i++) {
+            for (int i = 0; i < 6; i++) {
                 tracks[i] = 0;
             }
             return evaluate();
         }
         if (isMax) {
-            int field = tracks[6 -depth]%10 *10;
+            int field = tracks[6 - depth] % 10 * 10;
             int bestscore = -100;
             for (int i = 0; i < 9; i++) {
                 int score = -100;
                 if (gameboard[field + i] == 0) {
                     gameboard[field + i] = isPlayer;
-                    tracks[6 -depth+1] = i;
-                    score = minimax(gameboard, depth-1, alpha, beta, false);
+                    tracks[6 - depth + 1] = i;
+                    score = minimax(gameboard, depth - 1, alpha, beta, false);
                     gameboard[field + i] = 0;
                     gameboard[i] = 0;
-                    if(score > bestscore){
+                    if (score > bestscore) {
                         bestscore = score;
                     }
                     alpha = max(score, alpha);
-                    if(alpha <= beta){
+                    if (alpha <= beta) {
                         break;
                     }
                 }
             }
             return bestscore;
         } else {
-            int field = tracks[6 -depth]%10 *10;
+            int field = tracks[6 - depth] % 10 * 10;
             int bestscore = 100;
             for (int i = 0; i < 9; i++) {
                 int scor = 100;
                 if (gameboard[field + i] == 0) {
                     gameboard[field + i] = isNotPlayer;
-                    tracks[6 -depth+1] = i;
-                    scor = minimax(gameboard, depth-1, alpha, beta, true);
+                    tracks[6 - depth + 1] = i;
+                    scor = minimax(gameboard, depth - 1, alpha, beta, true);
                     gameboard[field + i] = 0;
-                    if(scor > bestscore){
+                    if (scor > bestscore) {
                         bestscore = scor;
                     }
                     beta = Math.min(scor, beta);
-                    if(beta <= alpha){
+                    if (beta <= alpha) {
                         break;
                     }
                 }
@@ -115,11 +120,11 @@ public class Eveline implements Player {
     }
 
     private int evaluate() {
-        for(int field = 0; field < 100; field = field+10){
+        for (int field = 0; field < 100; field = field + 10) {
             //zwei in einer Reihe +2
             //drei in einer Reihe
-            if(gameboard[field + 5] ==  0){
-                scoreboard[field+5] = scoreboard[field+5]+1;
+            if (gameboard[field + 5] == 0) {
+                scoreboard[field + 5] = scoreboard[field + 5] + 1;
             }
             if (gameboard[field + 1] == isPlayer) {
                 if (gameboard[field + 2] == 0) {
