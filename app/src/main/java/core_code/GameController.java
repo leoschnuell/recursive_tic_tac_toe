@@ -76,6 +76,9 @@ private int amountCratesFull = 0;
     public static Map<Integer, int[]> getneighbors(int checkField) {
         return neighbors;
     }
+    public static Map<Integer, int[]> getthirdCase(int checkField) {
+        return thirdCase;
+    }
 
     public void addMove(int move, boolean player) {
         gameboard[move] = player ? 3 : 5;

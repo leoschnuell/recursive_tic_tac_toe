@@ -8,7 +8,7 @@ public class Eveline implements Player {
     GameController gameController;
     private int[] gameboard;
     private int last;
-    private int[] scoreboard = new int[99];
+    private int[] scoreboard = new int[100];
     int isPlayer;
     int isNotPlayer;
     private Board board;
@@ -31,7 +31,6 @@ public class Eveline implements Player {
         int newMove = -1;
         int score;
         int field = lastMove % 10 * 10;// ausrechnen desnächsten Möglichen Kastens
-        ;
         int bestscore = 100;
         for (int i = 1; i <= 9; i++) {
             if (gameboard[field + i] == 0) {
@@ -446,9 +445,9 @@ public class Eveline implements Player {
             }
         }
         int fieldscore = 0; //Zusammenzählung der Gesamtpunkte des Bretts
-        for(int x = 10; x < 100; x = x+10) {
+        for(int x = 10; x <= 90; x = x+10) {
             for (int i = 1; i <= 9; i++) {
-                fieldscore = fieldscore + scoreboard[tracks[5] + i];
+                fieldscore = fieldscore + scoreboard[x + i];
 
             }
         }
