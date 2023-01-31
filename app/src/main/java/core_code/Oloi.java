@@ -2,13 +2,18 @@ package core_code;
 
 import com.example.picture_button.Board;
 
+import java.util.Map;
+import java.util.Random;
+
 public class Oloi implements Player {
     int isPlayer;
     int isNotPlayer;
     GameController gameController;
     private int[] gameboard;
     private Board board;
-
+    boolean[] isChecked = new boolean[9];
+    int[] field = new int[9];
+    private int[] possiField = new int[9];
     public Oloi() {
         gameController = GameController.getGameControler();
         gameboard = gameController.getBoard();
@@ -32,6 +37,15 @@ public class Oloi implements Player {
         int move = -1;
         int bestResult = -100;
         int field = lastMove % 10 * 10;//Wählen des nächsten Feldes
+        if (checkWin(field)) //Falls der bestimmte Kasten gewonnen ist. Rausfinden, welche Kasten als nächstes Belegt werden sollen
+        {
+            for (int i = 0; i <= 8; i++) {//Zurücksetzen der gecheckten und möglichen Felder
+                isChecked[i] = false;
+                possiField[i] = 0;
+            }
+            possiField = chooseField(field); //rausfinden, welche Kasten in Frage für den Move kommen
+            field = selectField(); //neuen Kasten bestimmen
+        }
         for (int i = 1; i < 10; i++) {//durchgehen des Feldes
             if (gameboard[field] == 0) {//wenn ein Feld Frei ist ausführen
                 gameboard[field + i] = 5;// Setzen eines möglichen Zuges
@@ -120,5 +134,51 @@ public class Oloi implements Player {
         } else {
             return 2;
         }
+    }
+    public boolean checkWin(int field) { // überprüft, ob ein Feld bereits gewonnen ist.
+        return gameboard[field * 10] != 0;
+    }
+    private int[] chooseField(int checkField) {
+
+        //Bestimmung eines nächsten Kastens wenn das eine schon benutzt ist
+        Map<Integer, int[]> possible = gameController.getneighbors(checkField);
+        int count = 0;
+        for (int i = 0; i < possible.get(checkField).length; i++) {
+            if (!checkWin(possible.get(checkField)[i])) {
+                field[count] = possible.get(checkField)[i];
+                count++;
+            }
+        }
+
+        count = 0;
+        if (field[0] == 0) {
+            Map<Integer, int[]> thirdCase = gameController.getthirdCase(checkField);
+            for (int i = 0; i < thirdCase.get(checkField).length; i++) {
+                if (gameboard[thirdCase.get(checkField)[i] * 10] == 0) {
+                    field[count] = thirdCase.get(checkField)[i];
+                    count++;
+                }
+            }
+            count = 0;
+            if (field[0] == 0) {
+                for (int i = 1; i < 10; i++) {
+                    if (gameboard[i * 10] == 0) {
+                        field[count] = i;
+                        count++;
+                    }
+                }
+            }
+
+        }
+        return field;
+    }
+    private int selectField(){
+        int x = 0; //sonst Bestimmung durch Zufall eines möglichen Feldes
+        java.util.Random rand = new Random();
+        while (possiField[x] != 0) {
+            x++;
+        }
+
+        return possiField[rand.nextInt(x)];
     }
 }

@@ -4,11 +4,18 @@ import static java.lang.Math.max;
 
 import com.example.picture_button.Board;
 
+import java.util.Map;
+import java.util.Random;
+
 public class Eveline implements Player {
     GameController gameController;
     private int[] gameboard;
+    boolean[] isChecked = new boolean[9];
+    private int[] possiField = new int[9];
     private int last;
     private int[] scoreboard = new int[100];
+    int[] field = new int[9];
+
     int isPlayer;
     int isNotPlayer;
     private Board board;
@@ -25,6 +32,15 @@ public class Eveline implements Player {
         int newMove = -1;
         int score;
         int field = lastMove % 10 * 10;// ausrechnen desnächsten Möglichen Kastens
+        if (checkWin(field)) //Falls der bestimmte Kasten gewonnen ist. Rausfinden, welche Kasten als nächstes Belegt werden sollen
+        {
+            for (int i = 0; i <= 8; i++) {//Zurücksetzen der gecheckten und möglichen Felder
+                isChecked[i] = false;
+                possiField[i] = 0;
+            }
+            possiField = chooseField(field); //rausfinden, welche Kasten in Frage für den Move kommen
+            field = selectField(); //neuen Kasten bestimmen
+        }
         int bestscore = 100;
         for (int i = 1; i <= 9; i++) {
             if (gameboard[field + i] == 0) {
@@ -54,10 +70,9 @@ public class Eveline implements Player {
 
     }
 
-
-    public void is_beginning(boolean b) {
+    public boolean checkWin(int field) { // überprüft, ob ein Feld bereits gewonnen ist.
+        return gameboard[field * 10] != 0;
     }
-
 
     public String has_won() {
         return null;
@@ -118,7 +133,49 @@ public class Eveline implements Player {
             return bestscore; //Rückgabe des Werts des Spielfelds
         }
     }
+    private int[] chooseField(int checkField) {
 
+        //Bestimmung eines nächsten Kastens wenn das eine schon benutzt ist
+        Map<Integer, int[]> possible = gameController.getneighbors(checkField);
+        int count = 0;
+        for (int i = 0; i < possible.get(checkField).length; i++) {
+            if (!checkWin(possible.get(checkField)[i])) {
+                field[count] = possible.get(checkField)[i];
+                count++;
+            }
+        }
+
+        count = 0;
+        if (field[0] == 0) {
+            Map<Integer, int[]> thirdCase = gameController.getthirdCase(checkField);
+            for (int i = 0; i < thirdCase.get(checkField).length; i++) {
+                if (gameboard[thirdCase.get(checkField)[i] * 10] == 0) {
+                    field[count] = thirdCase.get(checkField)[i];
+                    count++;
+                }
+            }
+            count = 0;
+            if (field[0] == 0) {
+                for (int i = 1; i < 10; i++) {
+                    if (gameboard[i * 10] == 0) {
+                        field[count] = i;
+                        count++;
+                    }
+                }
+            }
+
+        }
+        return field;
+    }
+private int selectField(){
+    int x = 0; //sonst Bestimmung durch Zufall eines möglichen Feldes
+    java.util.Random rand = new Random();
+        while (possiField[x] != 0) {
+        x++;
+    }
+
+        return possiField[rand.nextInt(x)];
+}
     private int evaluate() { //bewertet ein Feld, mit positiven und negativen Werte, je weiter der Wert in die Positive Richtung fällt, desto besser ist es für die AI,
         //JE niedriger der Wert ist, desto besser für den Gegenspieler
         for (int field = 0; field < 100; field = field + 10) {
