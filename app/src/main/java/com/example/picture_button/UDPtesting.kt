@@ -13,6 +13,8 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.awaitAll
+import java.lang.Thread.sleep
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
@@ -24,11 +26,13 @@ class UDPtesting : Fragment() {
 
     lateinit var listOfOthers: LinearLayout
     lateinit var playerName: EditText
-    lateinit var searchGame :Button
-    lateinit var hostGame :Button
+    lateinit var searchGame: Button
+    lateinit var hostGame: Button
 
     //  val mainHandler = Handler(Looper.getMainLooper())
     private var mainHandler: Handler = startHandlerThread("R3TNetworking")
+    private var brotcaster: Handler = startHandlerThread("R3TBroadcaster")
+
     val msgQueue: Queue<DataGroup> = LinkedList()
 
 
@@ -43,7 +47,6 @@ class UDPtesting : Fragment() {
     companion object {
         var broadcastActive = false
 
-
         fun stopUDPBroadcasting() {
             broadcastActive = false
         }
@@ -51,30 +54,38 @@ class UDPtesting : Fragment() {
 
     class DataGroup(var name: String, var ip: String, var timeOut: Int = 0)
 
-   fun setBroadcastActiveTrue()
-   {
-       broadcastActive = true
-       hostGame.isEnabled = false
-       searchGame.isEnabled = false
+    fun setBroadcastActiveTrue() {
+        broadcastActive = true
+        hostGame.isEnabled = false
+        searchGame.isEnabled = false
 
-   }
+    }
+    fun reset()
+    {
+        mainHandler.removeCallbacksAndMessages(null)
+        brotcaster.removeCallbacksAndMessages(null)
+
+        broadcastActive = false;
+        hostGame.isEnabled = true
+        searchGame.isEnabled = true
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // super.onCreateView(inflater, container, savedInstanceState)
+
         val view = inflater.inflate(R.layout.fragment_show_player2, container, false)
         playerName = view.findViewById<EditText>(R.id.hostName)
         listOfOthers = view.findViewById<LinearLayout>(R.id.foundPlayers)
         searchGame = view.findViewById<Button>(R.id.search_game)
         hostGame = view.findViewById<Button>(R.id.host_game)
+        reset()
+
         val reset = view.findViewById<Button>(R.id.resetAll)
 
-        reset.setOnClickListener{
-            broadcastActive = false;
-            hostGame.isEnabled = true
-            searchGame.isEnabled = true
-            //TODO: stop all thed maybe ?
+        reset.setOnClickListener {
+            reset()
         }
 
 
@@ -106,7 +117,6 @@ class UDPtesting : Fragment() {
         }
 
         setBroadcastActiveTrue()
-        var brotcaster = startHandlerThread("R3TBroadcaster")
 
         brotcaster.post {  //recive incoming UDP pagages and send tem to a queue
             val socket = DatagramSocket(5005)
@@ -210,6 +220,8 @@ class UDPtesting : Fragment() {
                     )
                     socket.send(sendPacket)
                     mainHandler.postDelayed(this, 100)
+                } else {
+                    socket.close()
                 }
             }
         })

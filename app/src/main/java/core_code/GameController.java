@@ -219,8 +219,6 @@ public class GameController {
     private int gb(int i) {
         return gamebord[i];
     }
-
-
 /*
 
 
