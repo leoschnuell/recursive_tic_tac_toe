@@ -240,6 +240,7 @@ class Board : Fragment(), View.OnClickListener {
         // at one one point i surrender
         // this function updates EVERY button to make sure they are cooler correctly
         // this is a less eficient aprotch i just hope it gets optimized away
+
         for (i in 0 until 9) {
             for (j in 0 until 10) {
                 val id = ((i + 1) * 10 + j)
