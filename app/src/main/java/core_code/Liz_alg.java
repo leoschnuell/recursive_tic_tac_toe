@@ -26,6 +26,13 @@ public class Liz_alg implements Player {
     public Liz_alg() {
         gameController = GameController.getGameControler();
         gameboard = gameController.getBoard();
+
+    }
+
+    @Override
+    public void setBoard(Board board) {
+        this.board = board;
+
         if (board.getP1() == Board.playerType.DAISY) {//Überprüft welcher Player die AI ist
             isPlayer = 3;
             isNotPlayer = 5;
@@ -35,10 +42,6 @@ public class Liz_alg implements Player {
         }
     }
 
-    @Override
-    public void setBoard(Board board) {
-        this.board = board;
-    }
     @Override
     public int move(int lastMove) {
         counter = 0;
@@ -662,7 +665,6 @@ public class Liz_alg implements Player {
         return false;
 
     }
-
 
 
     public boolean checkWin(int field) { // überprüft, ob ein Feld bereits gewonnen ist.

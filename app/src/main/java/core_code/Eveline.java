@@ -16,13 +16,7 @@ public class Eveline implements Player {
     public Eveline() {
         gameController = GameController.getGameControler();
         gameboard = gameController.getBoard();
-        if (board.getP1() == Board.playerType.EVELINE) { //Überprüft welcher Player die AI ist
-            isPlayer = 3;
-            isNotPlayer = 5;
-        } else {
-            isNotPlayer = 3;
-            isPlayer = 5;
-        }
+
     }
 
     public int move(int lastMove) {
@@ -50,6 +44,15 @@ public class Eveline implements Player {
     @Override
     public void setBoard(Board board) {
         this.board = board;
+
+        if (board.getP1() == Board.playerType.EVELINE) { //Überprüft welcher Player die AI ist
+            isPlayer = 3;
+            isNotPlayer = 5;
+        } else {
+            isNotPlayer = 3;
+            isPlayer = 5;
+        }
+
     }
 
 
@@ -446,7 +449,7 @@ public class Eveline implements Player {
             }
         }
         int fieldscore = 0; //Zusammenzählung der Gesamtpunkte des Bretts
-        for(int x = 10; x < 100; x = x+10) {
+        for (int x = 10; x < 100; x = x + 10) {
             for (int i = 1; i <= 9; i++) {
                 fieldscore = fieldscore + scoreboard[tracks[5] + i];
 

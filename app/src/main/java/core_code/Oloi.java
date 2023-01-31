@@ -12,6 +12,12 @@ public class Oloi implements Player {
     public Oloi() {
         gameController = GameController.getGameControler();
         gameboard = gameController.getBoard();
+
+    }
+
+    @Override
+    public void setBoard(Board board) {
+        this.board = board;
         if (board.getP1() == Board.playerType.OLOI) {//Überprüft welcher Player die AI ist
             isPlayer = 3;
             isNotPlayer = 5;
@@ -19,11 +25,6 @@ public class Oloi implements Player {
             isNotPlayer = 3;
             isPlayer = 5;
         }
-    }
-
-    @Override
-    public void setBoard(Board board) {
-this.board = board;
     }
 
     @Override
