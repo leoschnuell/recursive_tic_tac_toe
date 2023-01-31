@@ -18,7 +18,7 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         val button = view.findViewById<Button>(R.id.button)
         button.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_AIFragment)
+            findNavController().navigate(R.id.action_homeFragment_to_aiList)
         }
         val button2 = view.findViewById<Button>(R.id.home_button_2)
         button2.setOnClickListener {

@@ -37,7 +37,16 @@ class Board : Fragment(), View.OnClickListener {
 
 
     enum class playerType {
-        KI, HUMAN, REMOTE, KI_LIZ, KI_LEO,RANDOM, KI_SANDER
+        KI,
+        HUMAN,
+        REMOTE,
+        KI_LIZ,
+        KI_LEO,
+        RANDOM,
+        KI_SANDER,
+        EVELINE,
+        OLOI,
+
     }
 
     val cachefilename = "cachedboard";
@@ -162,12 +171,9 @@ class Board : Fragment(), View.OnClickListener {
                         //updateCrate((move / 10) * 10)
                         updateBoardColers()
 
-                        if (player && player2 is RemoteHost)
-                        {
+                        if (player && player2 is RemoteHost) {
                             player2.infoEndOfGame(move);
-                        }
-                        else if (!player && player1 is RemoteHost)
-                        {
+                        } else if (!player && player1 is RemoteHost) {
                             player1.infoEndOfGame(move);
                         }
                         return
@@ -227,7 +233,7 @@ class Board : Fragment(), View.OnClickListener {
                 showEndScreen("Red won")
                 return true;
             }
-            -420->{// draw
+            -420 -> {// draw
                 showEndScreen("Unentschieden")
                 return true
             }
@@ -260,10 +266,9 @@ class Board : Fragment(), View.OnClickListener {
                     } else if (GameController.gamebord[id] == 3) {
                         idToButton[id]?.setBackgroundColor(BLUE_SECONDARY)
 
-                    } else if (GameController.gamebord[id] == 5){
+                    } else if (GameController.gamebord[id] == 5) {
                         idToButton[id]?.setBackgroundColor(RED_SECONDARY)
-                    }else
-                    {
+                    } else {
                         idToButton[id]?.setBackgroundColor(Color.YELLOW)
 
                     }
@@ -327,6 +332,12 @@ class Board : Fragment(), View.OnClickListener {
             }
             playerType.KI_LIZ -> {
                 Liz_alg()
+            }
+            playerType.EVELINE -> {
+                Eveline()
+            }
+            playerType.OLOI -> {
+                oloi()
             }
             else -> {
                 println("ist noch nicht implementiert")
