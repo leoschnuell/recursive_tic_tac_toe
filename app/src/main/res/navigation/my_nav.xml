@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_homeFragment_to_player_vs_player"
             app:destination="@id/player_vs_player" />
+        <action
+            android:id="@+id/action_homeFragment_to_aiList"
+            app:destination="@id/aiList" />
     </fragment>
     <fragment
         android:id="@+id/AIFragment"
@@ -25,12 +28,25 @@
         <action
             android:id="@+id/action_AIFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_AIFragment_to_board"
+            app:destination="@id/board" />
     </fragment>
     <fragment
         android:id="@+id/board"
         android:name="com.example.picture_button.Board"
         android:label="fragment_board"
-        tools:layout="@layout/fragment_board" />
+        tools:layout="@layout/fragment_board" >
+        <argument
+            android:name="Player1"
+            app:argType="com.example.picture_button.Board$playerType" />
+        <argument
+            android:name="Player2"
+            app:argType="com.example.picture_button.Board$playerType" />
+        <action
+            android:id="@+id/action_board_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/player_vs_player"
         android:name="com.example.picture_button.player_vs_player"
@@ -40,12 +56,24 @@
             android:id="@+id/action_player_vs_player_to_board"
             app:destination="@id/board" />
         <action
-            android:id="@+id/action_player_vs_player_to_showPlayer"
-            app:destination="@id/showPlayer" />
+            android:id="@+id/action_player_vs_player_to_UDPtesting"
+            app:destination="@id/UDPtesting" />
     </fragment>
     <fragment
-        android:id="@+id/showPlayer"
-        android:name="com.example.picture_button.ShowPlayer"
+        android:id="@+id/UDPtesting"
+        android:name="com.example.picture_button.UDPtesting"
         android:label="fragment_show_player2"
-        tools:layout="@layout/fragment_show_player2" />
+        tools:layout="@layout/fragment_show_player2" >
+        <action
+            android:id="@+id/action_UDPtesting_to_board"
+            app:destination="@id/board" />
+    </fragment>
+    <fragment
+        android:id="@+id/aiList"
+        android:name="com.example.picture_button.AiList"
+        android:label="AiList" >
+        <action
+            android:id="@+id/action_aiList_to_board"
+            app:destination="@id/board" />
+    </fragment>
 </navigation>
