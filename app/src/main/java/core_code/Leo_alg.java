@@ -15,7 +15,7 @@ public class Leo_alg implements Player {
     private Random random;
 
     public Leo_alg() {
-        gameController = GameController.getgameController();
+        gameController = GameController.getGameControler();
         gamebord = gameController.getBoard();
         random = new Random();
     }

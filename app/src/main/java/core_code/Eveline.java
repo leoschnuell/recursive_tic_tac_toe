@@ -14,7 +14,7 @@ public class Eveline implements Player {
     private Board board;
 
     public Eveline() {
-        gameController = GameController.getgameController();
+        gameController = GameController.getGameControler();
         gameboard = gameController.getBoard();
         if (board.getP1() == Board.playerType.EVELINE) { //Überprüft welcher Player die AI ist
             isPlayer = 3;

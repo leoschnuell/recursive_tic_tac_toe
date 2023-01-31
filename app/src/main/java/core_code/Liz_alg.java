@@ -24,7 +24,7 @@ public class Liz_alg implements Player {
     private Board board;
 
     public Liz_alg() {
-        gameController = GameController.getgameController();
+        gameController = GameController.getGameControler();
         gameboard = gameController.getBoard();
         if (board.getP1() == Board.playerType.DAISY) {//Überprüft welcher Player die AI ist
             isPlayer = 3;

@@ -10,7 +10,7 @@ public class Oloi implements Player {
     private Board board;
 
     public Oloi() {
-        gameController = GameController.getgameController();
+        gameController = GameController.getGameControler();
         gameboard = gameController.getBoard();
         if (board.getP1() == Board.playerType.OLOI) {//Überprüft welcher Player die AI ist
             isPlayer = 3;

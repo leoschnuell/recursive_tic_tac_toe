@@ -4,7 +4,7 @@ import com.example.picture_button.Board
 import java.util.*
 
 class Random : Player {
-    private var gameController = GameController.getgameController()
+    private var gameController = GameController.getGameControler()
 
     fun allPossible(): LinkedList<Int> {
         val possibleMoves = LinkedList<Int>()
