@@ -69,7 +69,12 @@ public class Leo_alg implements Player {
                 }
                 break;
             default:
-                int k = lastMove % 10;//kasten
+
+                return random.move(lastMove);
+/*
+
+            int k = lastMove % 10;//kasten
+
                 for (int i = 1; i < 10; i++) {
                     if (i == 3 | i == 5 | i == 7) {
                         i++;
@@ -78,6 +83,7 @@ public class Leo_alg implements Player {
                         return k * 10 + i;
                     }
                 }
+*/
 
         }
         return random.move(lastMove);

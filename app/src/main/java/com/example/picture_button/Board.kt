@@ -227,7 +227,7 @@ class Board : Fragment(), View.OnClickListener {
 
                     //check if this is a valid move
                     if (!gameController.checkMove(move)) {
-                        endOfGameBySurrender()
+                        endOfGameBySurrender(move)
                         return
                     }
                     // add move to the move list and apply it too the game board
@@ -265,12 +265,12 @@ class Board : Fragment(), View.OnClickListener {
 
     //region EndScreen Mesages
     // sets surender messages
-    fun endOfGameBySurrender() {
+    fun endOfGameBySurrender(lastMove:Int) {
 
         if (player) {
-            showEndScreen("Blau gibt auf ")
+            showEndScreen("Blau gibt auf \n LastMove:$lastMove")
         } else {
-            showEndScreen("Rot gibt auf")
+            showEndScreen("Rot gibt auf \n LastMove:$lastMove")
         }
     }
 
