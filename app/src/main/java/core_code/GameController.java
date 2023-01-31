@@ -75,6 +75,9 @@ public class GameController {
     public static Map<Integer, int[]> getneighbors(int checkField) {
         return neighbors;
     }
+    public static Map<Integer, int[]> getthirdCase(int checkField) {
+        return thirdCase;
+    }
 
     // add move to the move list and apply it too the game board
     public void addMove(int move, boolean player) {

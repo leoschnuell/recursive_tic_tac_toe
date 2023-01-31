@@ -53,7 +53,7 @@ public class Liz_alg implements Player {
                 isChecked[i] = false;
                 possiField[i] = 0;
             }
-            chooseField(newField); //rausfinden, welche Kasten in Frage für den Move kommen
+            possiField = chooseField(newField); //rausfinden, welche Kasten in Frage für den Move kommen
             newField = selectField(); //neuen Kasten bestimmen
         }
 
@@ -548,21 +548,42 @@ public class Liz_alg implements Player {
     }
 
     boolean[] isChecked = new boolean[9];
+    int[] field = new int[9];
+    private int[] chooseField(int checkField) {
 
-    private void chooseField(int checkField) {
         //Bestimmung eines nächsten Kastens wenn das eine schon benutzt ist
         Map<Integer, int[]> possible = gameController.getneighbors(checkField);
         int count = 0;
-
         for (int i = 0; i < possible.get(checkField).length; i++) {
-            if (checkWin(possible.get(checkField)[i]) == false) {
-                counter++;
-                possiField[counter] = possible.get(checkField)[i];
+            if(gameboard[possible.get(checkField)[i]] == 0)
+            {
+                field[count] = possible.get(checkField)[i];
+                count++;
             }
         }
-        if (possiField[0] == 0) {
+        count = 0;
+        if (field[0] == 0) {
+            Map<Integer, int[]> thirdCase = gameController.getthirdCase(checkField);
+            for (int i = 0; i < thirdCase.get(checkField).length; i++) {
+                if(gameboard[thirdCase.get(checkField)[i]] == 0)
+                {
+                    field[count] = thirdCase.get(checkField)[i];
+                    count++;
+                }
+            }
+            count = 0;
+            if(field[0] == 0){
+                for(int i = 10; i< 100; i = i+10)
+                {
+                    if(gameboard[i] == 0){
+                        field[count] = i;
+                        count++;
+                    }
+                }
+            }
 
         }
+        return field;
     }
 
     List<Integer> enemy_layout = new ArrayList<Integer>();
