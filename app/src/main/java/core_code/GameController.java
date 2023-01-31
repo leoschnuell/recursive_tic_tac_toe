@@ -60,6 +60,7 @@ public class GameController {
         gameController = this;
 
     }
+
     public void reset() {
         for (int i = 0; i < 100; i++) {
             gamebord[i] = 0;
@@ -84,11 +85,10 @@ public class GameController {
     }
 
 
-
     @Deprecated
     public Player gameSetup(Player p1, Player p2) {
         //ini game
-       // Player p1 = new leo_alg();  //interal int = 3
+        // Player p1 = new leo_alg();  //interal int = 3
         //Player p2 = new UnitTester();  //interal int = 5
         p1.isBeginning(true);
         p2.isBeginning(false);
@@ -139,9 +139,11 @@ public class GameController {
     public int[] getBoard() {
         return gamebord;
     }
+
     public void setBoard(int[] gameboard) {
-         gamebord=gameboard;
+        gamebord = gameboard;
     }
+
     /*
     This funktions prints the game in a grid like this
     11 12 13 21 22 23 31 32 33
@@ -246,6 +248,7 @@ public class GameController {
                 else if (result[i] == 15)
                     return -5;
             }
+
             return playerMove / 10;
         }
         return 0;
@@ -282,13 +285,21 @@ public class GameController {
                 return 5;
             }
         }
+        int count = 0;
+        for (int i = 1; i < 10; i++) {
+            count += gb(k + i) != 0 ? 1 : 0;
+        }
+        if (count == 9) {
+            return 420;
+        }
         return 0;
     }
 
     private int gb(int i) {
         return gamebord[i];
     }
-   public String getP1(){
+
+    public String getP1() {
         return "Human"; //Muss noch geschrieben werden
-   }
+    }
 }

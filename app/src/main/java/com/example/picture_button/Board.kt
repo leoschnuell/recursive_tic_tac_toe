@@ -25,7 +25,7 @@ class Board : Fragment(), View.OnClickListener {
     val RED_PRIMARY = Color.rgb(245, 78, 78);
     val RED_SECONDARY = Color.rgb(171, 14, 14);
     val BLUE_PRIMARY = Color.rgb(78, 98, 245);
-    val BLUE_SECONDARY =     Color.rgb(14, 14, 171);
+    val BLUE_SECONDARY = Color.rgb(14, 14, 171);
     private lateinit var executor: Executor
 
 
@@ -161,15 +161,14 @@ class Board : Fragment(), View.OnClickListener {
                     //updateCasket(move)
                     gameController.addMove(move, player)
 
-                    gameController.display();
-
-                    updateBoardColers()
-
                     if (checkWin(move)) {
                         //updateCrate((move / 10) * 10)
+                        updateBoardColers()
                         endOfGame()
                         return
                     }
+                    updateBoardColers()
+
                     player = !player
                     activePlayer = (if (player) {
                         activate(player1)
@@ -252,10 +251,14 @@ class Board : Fragment(), View.OnClickListener {
                     } else if (GameController.gamebord[id] == 3) {
                         idToButton[id]?.setBackgroundColor(BLUE_SECONDARY)
 
-                    } else {
+                    } else if (GameController.gamebord[id] == 5){
                         idToButton[id]?.setBackgroundColor(RED_SECONDARY)
+                    }else
+                    {
+                        idToButton[id]?.setBackgroundColor(Color.YELLOW)
 
                     }
+
 
                 } else if (GameController.gamebord[id] == 0) {// case no plyer has played here
 
@@ -281,9 +284,9 @@ class Board : Fragment(), View.OnClickListener {
     fun endOfGame() {
 
         if (player) {
-            showEndScreen("Blau gibt auf")
+            showEndScreen("Rot gewinnt")
         } else {
-            showEndScreen("Rot gibt auf")
+            showEndScreen("Blau Gewinnt")
         }
 
     }
@@ -324,10 +327,10 @@ class Board : Fragment(), View.OnClickListener {
         findNavController().navigate(R.id.action_board_to_homeFragment)
 
     }
-
+}
 ///ALLES LEOS SCHULD :::
 
-
+/*
     override fun onStop() {
         super.onStop()
         val cacheFile = File.createTempFile(cachefilename, null, context?.cacheDir)
@@ -399,5 +402,6 @@ class Board : Fragment(), View.OnClickListener {
     }
 
 }
+*/
 
 
