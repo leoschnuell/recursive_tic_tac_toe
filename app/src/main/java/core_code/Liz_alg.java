@@ -26,7 +26,7 @@ public class Liz_alg implements Player {
     public Liz_alg() {
         gameControler = GameController.getGameControler();
         gameboard = gameControler.getBoard();
-        if (board.getP1() == Board.playerType.KI_LIZ) {
+        if (board.getP1() == Board.playerType.DAISY) {
             isPlayer = 3;
             isNotPlayer = 5;
         } else {

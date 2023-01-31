@@ -21,21 +21,26 @@ import java.net.InetAddress
 import java.util.*
 
 
+// this code does the general searching and finding of other devices
+// it is a buggy mes and if you hit som buttons twice or go back and forth
+//the application will crash
+// i am guessing that this is du to me not cleaning up properly
+// or something related to thread still running when they student
+// the truth is i simply don't have the knowledge to debug this
+// reproduce exambel bug : host game -> cancel -> host game -> pres any square -> TCP ini error
 class UDPtesting : Fragment() {
-
 
     lateinit var listOfOthers: LinearLayout
     lateinit var playerName: EditText
     lateinit var searchGame: Button
     lateinit var hostGame: Button
 
-    //  val mainHandler = Handler(Looper.getMainLooper())
     private var mainHandler: Handler = startHandlerThread("R3TNetworking")
     private var brotcaster: Handler = startHandlerThread("R3TBroadcaster")
 
     val msgQueue: Queue<DataGroup> = LinkedList()
 
-
+// helper function to start ture new thread and have them run independent
     fun startHandlerThread(name: String): Handler {
         var mHandlerThread: HandlerThread? = null
         mHandlerThread = HandlerThread(name)
@@ -46,14 +51,17 @@ class UDPtesting : Fragment() {
 
     companion object {
         var broadcastActive = false
-
+        // this way i can disable the broadcasting from every where
         fun stopUDPBroadcasting() {
             broadcastActive = false
         }
     }
 
+    //simple grouping of my common data
     class DataGroup(var name: String, var ip: String, var timeOut: Int = 0)
 
+    //these 2 functions are my attempt at improving the stability
+    // they enable and disable the buttons
     fun setBroadcastActiveTrue() {
         broadcastActive = true
         hostGame.isEnabled = false
@@ -62,6 +70,7 @@ class UDPtesting : Fragment() {
     }
     fun reset()
     {
+        // i trie to stop l the running thread here
         mainHandler.removeCallbacksAndMessages(null)
         brotcaster.removeCallbacksAndMessages(null)
 
@@ -73,8 +82,8 @@ class UDPtesting : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        // super.onCreateView(inflater, container, savedInstanceState)
 
+        //first get all the buttons we may need
         val view = inflater.inflate(R.layout.fragment_show_player2, container, false)
         playerName = view.findViewById<EditText>(R.id.hostName)
         listOfOthers = view.findViewById<LinearLayout>(R.id.foundPlayers)
@@ -88,10 +97,10 @@ class UDPtesting : Fragment() {
             reset()
         }
 
-
+        // starts a UDP broadcast  server
+        // and the switches to the game immediately
+        // this is done so that the TCP server sits within the Board
         hostGame.setOnClickListener(View.OnClickListener {
-            //open a tcp server and send udp broadcasts
-
             startUDPBroadcasting();
             val bundle = Bundle()
             bundle.putSerializable("player1", Board.playerType.HUMAN)
@@ -113,6 +122,7 @@ class UDPtesting : Fragment() {
         // this thread waits for a UDP mesage to then ad it to a queue
         // this que gets worked of in the processMessages()
         if (broadcastActive) {
+            // ensure that only one broadcaster is running
             return;
         }
 
@@ -123,7 +133,7 @@ class UDPtesting : Fragment() {
             val recvBuf = ByteArray(500)
             val packet = DatagramPacket(recvBuf, recvBuf.size)
             while (broadcastActive) {
-                socket.receive(packet)
+                socket.receive(packet) // this may be the root coarse of errors
                 val remoteIP: String = packet.address.hostAddress as String
                 var data = String(packet.getData()).trim { it <= ' ' }
                 println("recived $data")
@@ -143,6 +153,7 @@ class UDPtesting : Fragment() {
         //if the timeout reaches 1 second we drop this ip from managedData
 
         if (broadcastActive) {
+            // ensure that only one broadcaster is running
             return;
         }
 
@@ -185,33 +196,34 @@ class UDPtesting : Fragment() {
     }
 
 
+
     fun startUDPBroadcasting() {
         if (broadcastActive) {
-            // wenn es bereits einen aktiven pinger gibt muss dieser geschloßen werden
-            // vl solste indiesem val die suche neugstartet werden
+            // ensure that only one broadcaster is running
             return;
         }
 
-
+        // do basic setup
         var messageStr: String = playerName.text.toString();
         val policy = ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
-
         val socket = DatagramSocket()
         socket.broadcast = true
         val sendData: ByteArray = messageStr.toByteArray()
 
+        // get the local Broadcast address
+        val wifiManager = context?.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        var localIP: String =
+            Formatter.formatIpAddress(wifiManager.connectionInfo.ipAddress)
+       // wifiManager.dhcpInfo.netmask
+        localIP = localIP.replaceAfterLast(".", "255")
+
+
+        // repeatedly send udp packages via UDP
         setBroadcastActiveTrue()
         mainHandler.post(object : Runnable {
             override fun run() {
                 if (broadcastActive) {
-                    val wifiManager = context?.getSystemService(Context.WIFI_SERVICE) as WifiManager
-                    var localIP: String =
-                        Formatter.formatIpAddress(wifiManager.connectionInfo.ipAddress)
-                    wifiManager.dhcpInfo.netmask
-                    localIP = localIP.replaceAfterLast(".", "255")
-
-
                     val sendPacket: DatagramPacket = DatagramPacket(
                         sendData,
                         sendData.size,
@@ -227,6 +239,8 @@ class UDPtesting : Fragment() {
         })
     }
 
+
+    // set up a buton and add it to the ui with the specified data
     fun addBtnToUi(data: DataGroup) {
         val btn = Button(context)
         btn.tag = data.name + data.ip

@@ -1,6 +1,5 @@
 package core_code
 
-import android.os.Looper
 import com.example.picture_button.Board
 import com.example.picture_button.UDPtesting
 import java.io.DataInputStream
@@ -17,7 +16,7 @@ class RemoteHost : Player {
     private lateinit var sender: DataOutputStream;
 
 
-    fun doTheThingJoline(ip: String): Boolean {
+    fun init(ip: String): Boolean {
         if (ip == "Host") {
             return waitForClient()
         } else {

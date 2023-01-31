@@ -12,10 +12,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import core_code.*
-import java.io.File
 import java.util.concurrent.*
 
-
+// does alot
+// in general this file is the board the user sees
 class Board : Fragment(), View.OnClickListener {
     var player = true;
     var lastButId = -1;
@@ -23,11 +23,7 @@ class Board : Fragment(), View.OnClickListener {
     val gameController = GameController.getGameControler()
     val idToButton: MutableMap<Int, View> = mutableMapOf<Int, View>()
     val mainHandler = startHandlerThread()
-    private val RED_PRIMARY = Color.rgb(245, 78, 78);
-    private val RED_SECONDARY = Color.rgb(171, 14, 14);
-    private val BLUE_PRIMARY = Color.rgb(78, 98, 245);
-    private val BLUE_SECONDARY = Color.rgb(14, 14, 171);
-    private lateinit var firstPlayer: playerType;
+
 
     fun startHandlerThread(): Handler {
         var mHandlerThread: HandlerThread? = null
@@ -36,21 +32,27 @@ class Board : Fragment(), View.OnClickListener {
         return Handler(mHandlerThread.looper)
     }
 
+    //define some colours used later
+    private val RED_PRIMARY = Color.rgb(245, 78, 78);
+    private val RED_SECONDARY = Color.rgb(171, 14, 14);
+    private val BLUE_PRIMARY = Color.rgb(78, 98, 245);
+    private val BLUE_SECONDARY = Color.rgb(14, 14, 171);
+    private lateinit var firstPlayer: playerType;
 
+    //used for comparison and
     enum class playerType {
         KI,
         HUMAN,
         REMOTE,
-        KI_LIZ,
+        DAISY,
         KI_LEO,
         RANDOM,
         KI_SANDER,
         EVELINE,
         OLOI,
-
     }
 
-    val cachefilename = "cachedboard";
+    // val cachefilename = "cachedboard";
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,7 +69,7 @@ class Board : Fragment(), View.OnClickListener {
         }*/
         val view = inflater.inflate(R.layout.grid_test_test, container, false)
         val cancel = view.findViewById<Button>(R.id.Cancel)
-        cancel.setOnClickListener(){
+        cancel.setOnClickListener() {
             UDPtesting.stopUDPBroadcasting()
             findNavController().navigate(R.id.action_board_to_homeFragment)
         }
@@ -95,6 +97,8 @@ class Board : Fragment(), View.OnClickListener {
         return view
     }
 
+    // this is a wraper funktion to ensure that a player move may take as long as they nead to
+    // without blocking the UI thread
     private val exec = Executors.newSingleThreadExecutor()
     fun activate(player: Player): Future<Int?>? {
         return exec.submit<Int>(Callable {
@@ -102,20 +106,22 @@ class Board : Fragment(), View.OnClickListener {
         })
     }
 
+    //Do general setup code and start the game
     override fun onStart() {
         super.onStart()
         val gameController = GameController.getGameControler()
         gameController.reset()
+
+        //fist grab the extea data send over
 
         val receivedPlayer1 = arguments?.getSerializable("player1")
         val receivedPlayer2 = arguments?.getSerializable("player2")
         if (receivedPlayer1 == null || receivedPlayer2 == null) {
             throw NullPointerException("Designtime issue: Board received no Player-types")
         }
-        var ip: String;
-
         var extraInfo = arguments?.getSerializable("remoteInformation")
 
+        //second create the Player objects
 
         val player1 = playerDeclaration(receivedPlayer1 as playerType)
         firstPlayer = receivedPlayer1
@@ -124,33 +130,31 @@ class Board : Fragment(), View.OnClickListener {
         player2.setBoard(this)
         updateBoardColers()
         var overlay = view?.findViewById<ConstraintLayout>(R.id.overlay)!!
+
+        // third set up TCP if needed
+
         var setup: Future<Boolean>? = null
         if (player1 is RemoteHost) {
             //if the first player is a remote setup a cient system
             overlay.visibility = View.VISIBLE  ///show diferent text maybe
             setup = setupRemote(player1, extraInfo as String)
-
-            //wir sind client
-
-
         } else if (player2 is RemoteHost) {
-// if the second plyer is a remote setup the a server
+            // if the second player is a remote setup the a server
             overlay.visibility = View.VISIBLE
-
-
             setup = setupRemote(player2, extraInfo as String)
-
-
         } else {
-            //
+            //start the game
             mainLoop(player1, player2)
         }
+
+        // forth wait until the setup is done
+
         if (setup != null) {
             mainHandler.post(object : Runnable {
                 override fun run() {
 
                     if (setup.isDone) {
-                        mainLoop(player1, player2)
+                        mainLoop(player1, player2)             //start the game
                     } else {
                         mainHandler.postDelayed(this, 10)
                     }
@@ -159,34 +163,80 @@ class Board : Fragment(), View.OnClickListener {
         }
     }
 
+    // converts the playerType enum into a new object
+    private fun playerDeclaration(input: playerType): Player {
+        return when (input) {
+            playerType.HUMAN -> {
+                Human()
+            }
+            playerType.KI_LEO -> {
+                leo_alg()
+            }
+            playerType.REMOTE -> {
+                RemoteHost()
+            }
+            playerType.RANDOM -> {
+                Random()
+            }
+            playerType.DAISY -> {
+                Liz_alg()
+            }
+            playerType.EVELINE -> {
+                Eveline()
+            }
+            playerType.OLOI -> {
+                oloi()
+            }
+            else -> {
+                println("ist noch nicht implementiert")
+                Human()
+            }
+        }
+    }
 
+    //wrapper to be non ui blocking
+    fun setupRemote(player: RemoteHost, extraInfo: String): Future<Boolean>? {
+        return exec.submit<Boolean>(Callable {
+            player.init(extraInfo)
+        })
+    }
+
+    // Run the manin part of the game by asking the players for a move
     fun mainLoop(player1: Player, player2: Player) {
+
         UDPtesting.stopUDPBroadcasting()
 
-        var activePlayer = activate(player1)
-            ?: throw NullPointerException("Sander fault: Starting game withe the first player faield")
+        // hide the waiting for client mesage
         activity?.runOnUiThread {
             var overlay = view?.findViewById<ConstraintLayout>(R.id.overlay)!!
             overlay.visibility = View.GONE
         }
+
+        //start by asking the first player to make a move
+        var activePlayer = activate(player1)
+            ?: throw NullPointerException("Sander fault: Starting game withe the first player faield")
+
+        // run this task non ui blocking
+        //this task gets called every 10 millis working effectively as while(true)
         val handel = Handler(Looper.getMainLooper())
         handel.post(object : Runnable {
             override fun run() {
-                if (activePlayer.isDone) {
+                if (activePlayer.isDone) { // wait until the player is done moving
                     val move = activePlayer.get()
                         ?: throw NullPointerException("Sander fault: move ist NaN")
 
+                    //check if this is a valid move
                     if (!gameController.checkMove(move)) {
                         endOfGameBySurrender()
                         return
                     }
-                    //updateCasket(move)
+                    // add move to the move list and apply it too the game board
                     gameController.addMove(move, player)
-
+                    // check and display win message if applies
                     if (checkWin(move)) {
-                        //updateCrate((move / 10) * 10)
                         updateBoardColers()
 
+                        //with TCP we have to send the final move
                         if (player && player2 is RemoteHost) {
                             player2.infoEndOfGame(move);
                         } else if (!player && player1 is RemoteHost) {
@@ -194,8 +244,10 @@ class Board : Fragment(), View.OnClickListener {
                         }
                         return
                     }
+
                     updateBoardColers()
 
+                    //ask the next player for a move
                     player = !player
                     activePlayer = (if (player) {
                         activate(player1)
@@ -203,42 +255,26 @@ class Board : Fragment(), View.OnClickListener {
                         activate(player2)
                     })!!
                 }
+                // repeate main loop endlessly (until game ends)
                 mainHandler.postDelayed(this, 10)
             }
         })
     }
 
-    fun setupRemote(player: RemoteHost, extraInfo: String): Future<Boolean>? {
-        return exec.submit<Boolean>(Callable {
-            player.doTheThingJoline(extraInfo)
-            // i don't know why but it has to be a separate function
-        })
-    }
 
-    /*
-    fun updateCrate(i: Int) {
-        activity?.runOnUiThread {
-            if (player) {
-                idToButton[i]?.setBackgroundColor(Color.rgb(14, 14, 171))
-            } else {
-                idToButton[i]?.setBackgroundColor(Color.rgb(171, 14, 14))
-            }
+
+    //region EndScreen Mesages
+    // sets surender messages
+    fun endOfGameBySurrender() {
+
+        if (player) {
+            showEndScreen("Blau gibt auf ")
+        } else {
+            showEndScreen("Rot gibt auf")
         }
     }
 
-    fun updateCasket(move: Int) {
-        activity?.runOnUiThread {
-            if (player) {
-                idToButton[move]?.setBackgroundColor(Color.BLUE)
-                idToButton[gameController.lastMove]?.setBackgroundColor(Color.rgb(245, 78, 78))
-            } else {
-                idToButton[move]?.setBackgroundColor(Color.RED)
-                idToButton[gameController.lastMove]?.setBackgroundColor(Color.rgb(78, 98, 245))
-            }
-        }
-    }
-
-*/
+    //calls the gameController checkWin and depending on the result shows a message
     fun checkWin(move: Int): Boolean {
         when (val res = gameController.checkWin(move)) {
             -3 -> {
@@ -260,8 +296,21 @@ class Board : Fragment(), View.OnClickListener {
         return false;
 
     }
+    fun showEndScreen(winText: String) {
 
 
+        activity?.runOnUiThread {
+
+            var Winning_text_view = view?.findViewById<TextView>(R.id.text_winner)
+            Winning_text_view?.setText(winText)
+            Winning_text_view?.visibility = View.VISIBLE
+        }
+    }
+    //endregion
+
+    // my really stupid solution to implementing the humans ability to click
+    //i simply store the last buton the human has clicked on
+    // the human.move reset this before asking
     override fun onClick(p0: View) {
         val move = p0.tag as Int
         lastButId = move
@@ -310,63 +359,10 @@ class Board : Fragment(), View.OnClickListener {
         }
     }
 
-
-    fun endOfGameBySurrender() {
-
-        if (player) {
-            showEndScreen("Blau gibt auf ")
-        } else {
-            showEndScreen("Rot gibt auf")
-        }
-
-    }
-
-    fun showEndScreen(winText: String) {
-
-
-        activity?.runOnUiThread {
-
-            var Winning_text_view = view?.findViewById<TextView>(R.id.text_winner)
-            Winning_text_view?.setText(winText)
-            Winning_text_view?.visibility = View.VISIBLE
-        }
-    }
-
-    private fun playerDeclaration(input: playerType): Player {
-        return when (input) {
-            playerType.HUMAN -> {
-                Human()
-            }
-            playerType.KI_LEO -> {
-                leo_alg()
-            }
-            playerType.REMOTE -> {
-                RemoteHost()
-            }
-            playerType.RANDOM -> {
-                Random()
-            }
-            playerType.KI_LIZ -> {
-                Liz_alg()
-            }
-            playerType.EVELINE -> {
-                Eveline()
-            }
-            playerType.OLOI -> {
-                oloi()
-            }
-            else -> {
-                println("ist noch nicht implementiert")
-                Human()
-            }
-        }
-    }
-
-    fun getP1():playerType
-    {
+    //helper function used by ais to determent weather they are the first or second player
+    fun getP1(): playerType {
         return firstPlayer;
     }
-
 
 
 ///ALLES LEOS SCHULD :::

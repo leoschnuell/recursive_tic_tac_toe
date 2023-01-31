@@ -6,10 +6,8 @@ import java.util.*
 class Random : Player {
     private var gameController = GameController.getGameControler()
 
-    override fun move(lastMove: Int): Int {
+    fun allPossible(): LinkedList<Int> {
         val possibleMoves = LinkedList<Int>()
-
-
         for (i in 0 until 9) {
             for (j in 0 until 10) {
                 val id = ((i + 1) * 10 + j + 1)
@@ -19,9 +17,15 @@ class Random : Player {
             }
 
         }
-        return possibleMoves.random()
+        return possibleMoves
     }
-        override fun setBoard(board: Board?) {
-        }
 
+    override fun move(lastMove: Int): Int {
+
+        return allPossible().random()
     }
+
+    override fun setBoard(board: Board?) {
+    }
+
+}

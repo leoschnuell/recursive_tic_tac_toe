@@ -5,22 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
 import android.widget.LinearLayout
-import androidx.core.view.iterator
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import core_code.GameController
 
+// define all buttons
 var listOfAis: List<Board.playerType> = listOf(
     Board.playerType.RANDOM,
     Board.playerType.KI_LEO,
-    Board.playerType.KI_LIZ,
+    Board.playerType.DAISY,
     Board.playerType.EVELINE,
     Board.playerType.OLOI,
 )
 
 
+//Generates a list of buttons to select an ai
 class AiList : Fragment() {
     var uiList: LinearLayout? = null;
 
@@ -42,7 +41,7 @@ class AiList : Fragment() {
     }
 
 
-    fun addBtnToUi(ai: Board.playerType) {
+    private fun addBtnToUi(ai: Board.playerType) {
         val btn = Button(context)
         btn.layoutParams =
             LinearLayout.LayoutParams(
