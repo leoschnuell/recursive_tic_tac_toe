@@ -8,7 +8,6 @@ public class Eveline implements Player {
     GameController gameControler;
     private int[] gameboard;
     private int last;
-    private int[] myMove = new int[99];
     private int[] scoreboard = new int[99];
     int isPlayer;
     int isNotPlayer;
@@ -17,7 +16,7 @@ public class Eveline implements Player {
     public Eveline() {
         gameControler = GameController.getGameControler();
         gameboard = gameControler.getBoard();
-        if (board.getP1() == Board.playerType.EVELINE) {
+        if (board.getP1() == Board.playerType.EVELINE) { //Überprüft welcher Player die AI ist
             isPlayer = 3;
             isNotPlayer = 5;
         } else {
@@ -31,21 +30,21 @@ public class Eveline implements Player {
         last = lastMove;
         int newMove = -1;
         int score;
-        int field = lastMove % 10 * 10;
+        int field = lastMove % 10 * 10;// ausrechnen desnächsten Möglichen Kastens
         ;
         int bestscore = 100;
         for (int i = 1; i <= 9; i++) {
             if (gameboard[field + i] == 0) {
                 gameboard[field + i] = isPlayer;
-                score = minimax(gameboard, 6, 100, -100, false);
+                score = minimax(gameboard, 6, 100, -100, false); //aufrufen von Minimax ausgabe ist die Punktanzahl des Boards nach 6 zügen
                 gameboard[field + i] = 0;
                 if (bestscore < score) {
                     bestscore = score;
-                    newMove = field + i;
+                    newMove = field + i;//Ersetzung des Moves mit einem mit einem besseren Score
                 }
             }
         }
-        return newMove;
+        return newMove; //ausgabe des Moves
     }
 
     @Override
@@ -73,19 +72,18 @@ public class Eveline implements Player {
             for (int i = 0; i < 6; i++) {
                 tracks[i] = 0;
             }
-            return evaluate();
+            return evaluate(); // gibt die Punktzahl des Bretts zurück
         }
-        if (isMax) {
-            int field = tracks[6 - depth] % 10 * 10;
+        if (isMax) { // es ist die ai in dem Zug dran
+            int field = tracks[6 - depth] % 10 * 10; // ausgeben des nächsten Kastens
             int bestscore = -100;
             for (int i = 0; i < 9; i++) {
                 int score = -100;
-                if (gameboard[field + i] == 0) {
-                    gameboard[field + i] = isPlayer;
-                    tracks[6 - depth + 1] = i;
-                    score = minimax(gameboard, depth - 1, alpha, beta, false);
-                    gameboard[field + i] = 0;
-                    gameboard[i] = 0;
+                if (gameboard[field + i] == 0) {// freies Feld in dem Kasten
+                    gameboard[field + i] = isPlayer; //setzt den Kästchen als ob die AI ihn gespielt hätte
+                    tracks[6 - depth + 1] = i;// speichert die nächsten Kasten ab
+                    score = minimax(gameboard, depth - 1, alpha, beta, false); //schaut in einen nächsten Zug
+                    gameboard[field + i] = 0; // setzt das Brett auf seinen Ausgangszustand zurück
                     if (score > bestscore) {
                         bestscore = score;
                     }
@@ -95,17 +93,17 @@ public class Eveline implements Player {
                     }
                 }
             }
-            return bestscore;
-        } else {
-            int field = tracks[6 - depth] % 10 * 10;
+            return bestscore;//Rückgabe des Werts des Spielfelds
+        } else {// es ist die ai in dem Zug dran
+            int field = tracks[6 - depth] % 10 * 10;// ausgeben des nächsten Kastens
             int bestscore = 100;
             for (int i = 0; i < 9; i++) {
                 int scor = 100;
-                if (gameboard[field + i] == 0) {
-                    gameboard[field + i] = isNotPlayer;
-                    tracks[6 - depth + 1] = i;
+                if (gameboard[field + i] == 0) { // freies Feld in dem Kasten
+                    gameboard[field + i] = isNotPlayer; //setzt den Kästchen als ob der Gegner ihn gespielt hätte
+                    tracks[6 - depth + 1] = i; // speichert die nächsten Kasten ab
                     scor = minimax(gameboard, depth - 1, alpha, beta, true);
-                    gameboard[field + i] = 0;
+                    gameboard[field + i] = 0;// setzt das Brett auf seinen Ausgangszustand zurück
                     if (scor > bestscore) {
                         bestscore = scor;
                     }
@@ -115,14 +113,16 @@ public class Eveline implements Player {
                     }
                 }
             }
-            return bestscore;
+            return bestscore; //Rückgabe des Werts des Spielfelds
         }
     }
 
-    private int evaluate() {
+    private int evaluate() { //bewertet ein Feld, mit positiven und negativen Werte, je weiter der Wert in die Positive Richtung fällt, desto besser ist es für die AI,
+        //JE niedriger der Wert ist, desto besser für den Gegenspieler
         for (int field = 0; field < 100; field = field + 10) {
-            //zwei in einer Reihe +2
-            //drei in einer Reihe
+            //zwei in einer Reihe +1
+            //drei in einer Reihe +5
+            //zwei des Gegners Blocken -2
             if (gameboard[field + 5] == 0) {
                 scoreboard[field + 5] = scoreboard[field + 5] + 1;
             }
@@ -448,10 +448,12 @@ public class Eveline implements Player {
                 }
             }
         }
-        int fieldscore = 0;
-        for (int i = 1; i <= 9; i++) {
-            fieldscore = fieldscore + scoreboard[tracks[5] + i];
+        int fieldscore = 0; //Zusammenzählung der Gesamtpunkte des Bretts
+        for(int x = 10; x < 100; x = x+10) {
+            for (int i = 1; i <= 9; i++) {
+                fieldscore = fieldscore + scoreboard[tracks[5] + i];
 
+            }
         }
         return fieldscore;
     }

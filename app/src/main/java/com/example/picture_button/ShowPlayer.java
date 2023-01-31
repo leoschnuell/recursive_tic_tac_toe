@@ -47,7 +47,6 @@ public class ShowPlayer extends Fragment {
         send_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("heul");
                 BackgroundTask b = new BackgroundTask();
                 b.execute(ip.getText().toString(), message.getText().toString());
                 Bundle bundle = new Bundle();
