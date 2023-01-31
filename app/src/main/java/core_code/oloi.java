@@ -1,11 +1,21 @@
 package core_code;
 
 public class oloi extends Human {
+    int isPlayer;
+    int isNotPlayer;
     GameController gameControler;
     private int[] gamebord;
     public oloi() {
         gameControler = GameController.getGameControler();
         gamebord = gameControler.getBoard();
+        if(gameControler.getP1() == "Oloi"){
+            isPlayer =  3;
+            isNotPlayer = 5;
+        }
+        else {
+            isNotPlayer = 3;
+            isPlayer = 5;
+        }
     }
 
     public int move(int lastMove) {
@@ -37,7 +47,7 @@ public class oloi extends Human {
             int bestscore = -100;
             for (int i = 1; i < 10; i++) {
                 if (board[lastMove % 10 * 10 + i] == 0) {
-                    board[lastMove % 10 * 10 + i] = 5;
+                    board[lastMove % 10 * 10 + i] = isPlayer;
                     int score = minimax(board, depth, false, lastMove);
                     board[lastMove % 10 * 10 + i] = 0;
                     if (score > bestscore) {
@@ -50,7 +60,7 @@ public class oloi extends Human {
             int bestscore = 100;
             for (int i = 1; i < 10; i++) {
                 if (board[lastMove % 10 * 10 + i] == 0) {
-                    board[lastMove % 10 * 10 + i] = 3;
+                    board[lastMove % 10 * 10 + i] = isNotPlayer;
                     int score = minimax(board, depth, true, lastMove);
                     board[lastMove % 10 * 10 + i] = 0;
                     if (score < bestscore) {
@@ -73,10 +83,18 @@ public class oloi extends Human {
         result[7] = gb[field+3] + gb[field+5] + gb[field+7];
 
         for (int i = 0; i < 8; i++) {
-            if (result[i] == 9)
-                return -1;
-            else if (result[i] == 15)
-                return 1;
+            if (isPlayer == 3) {
+                if (result[i] == 9)
+                    return -1;
+                else if (result[i] == 15)
+                    return 1;
+            }
+            else {
+                if (result[i] == 15)
+                    return -1;
+                else if (result[i] == 9)
+                    return 1;
+            }
         }
         int count = 0;
         for(int i = 1; i< 10; i++){

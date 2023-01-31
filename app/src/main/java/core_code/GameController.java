@@ -73,7 +73,7 @@ private int amountCratesFull =0;
         return gameController;
     }
 
-    public static Map<Integer, int[]> getneighbors() {
+    public static Map<Integer, int[]> getneighbors(int checkField) {
         return neighbors;
     }
 
