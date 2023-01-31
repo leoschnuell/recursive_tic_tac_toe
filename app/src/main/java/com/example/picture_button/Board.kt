@@ -20,7 +20,7 @@ class Board : Fragment(), View.OnClickListener {
     var player = true;
     var lastButId = -1;
     lateinit var test: View;
-    val gameController = GameController.getGameControler()
+    val gameController = GameController.getgameController()
     val idToButton: MutableMap<Int, View> = mutableMapOf<Int, View>()
     val mainHandler = startHandlerThread()
     private val RED_PRIMARY = Color.rgb(245, 78, 78);
@@ -104,7 +104,7 @@ class Board : Fragment(), View.OnClickListener {
 
     override fun onStart() {
         super.onStart()
-        val gameController = GameController.getGameControler()
+        val gameController = GameController.getgameController()
         gameController.reset()
 
         val receivedPlayer1 = arguments?.getSerializable("player1")
@@ -277,12 +277,12 @@ class Board : Fragment(), View.OnClickListener {
             for (j in 0 until 10) {
                 val id = ((i + 1) * 10 + j)
                 if (j == 0) { // case for Crate \ background
-                    if (GameController.gamebord[id] == 0) {
+                    if (GameController.gameboard[id] == 0) {
                         idToButton[id]?.setBackgroundColor(Color.rgb(255, 255, 255))
-                    } else if (GameController.gamebord[id] == 3) {
+                    } else if (GameController.gameboard[id] == 3) {
                         idToButton[id]?.setBackgroundColor(BLUE_SECONDARY)
 
-                    } else if (GameController.gamebord[id] == 5) {
+                    } else if (GameController.gameboard[id] == 5) {
                         idToButton[id]?.setBackgroundColor(RED_SECONDARY)
                     } else {
                         idToButton[id]?.setBackgroundColor(Color.YELLOW)
@@ -290,7 +290,7 @@ class Board : Fragment(), View.OnClickListener {
                     }
 
 
-                } else if (GameController.gamebord[id] == 0) {// case no plyer has played here
+                } else if (GameController.gameboard[id] == 0) {// case no plyer has played here
 
                     if (gameController.checkMove(id)) {// is it a legal move for the next player
 
@@ -300,7 +300,7 @@ class Board : Fragment(), View.OnClickListener {
                         idToButton[id]?.setBackgroundColor(Color.BLACK)
                     }
                 } else {// a player has played here force the colors
-                    if (GameController.gamebord[id] == 3) {
+                    if (GameController.gameboard[id] == 3) {
                         idToButton[id]?.setBackgroundColor(BLUE_PRIMARY)
                     } else {
                         idToButton[id]?.setBackgroundColor(RED_PRIMARY)
@@ -338,7 +338,7 @@ class Board : Fragment(), View.OnClickListener {
                 Human()
             }
             playerType.KI_LEO -> {
-                leo_alg()
+                Leo_alg()
             }
             playerType.REMOTE -> {
                 RemoteHost()
@@ -353,7 +353,7 @@ class Board : Fragment(), View.OnClickListener {
                 Eveline()
             }
             playerType.OLOI -> {
-                oloi()
+                Oloi()
             }
             else -> {
                 println("ist noch nicht implementiert")

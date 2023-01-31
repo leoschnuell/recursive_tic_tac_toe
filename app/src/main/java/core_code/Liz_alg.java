@@ -10,7 +10,7 @@ import com.example.picture_button.Board;
 
 public class Liz_alg implements Player {
 
-    GameController gameControler;
+    GameController gameController;
     private int[] gameboard;
     int whoWins = 0;
     int counter;
@@ -24,8 +24,8 @@ public class Liz_alg implements Player {
     private Board board;
 
     public Liz_alg() {
-        gameControler = GameController.getGameControler();
-        gameboard = gameControler.getBoard();
+        gameController = GameController.getgameController();
+        gameboard = gameController.getBoard();
         if (board.getP1() == Board.playerType.KI_LIZ) {//Überprüft welcher Player die AI ist
             isPlayer = 3;
             isNotPlayer = 5;
@@ -42,7 +42,7 @@ public class Liz_alg implements Player {
     @Override
     public int move(int lastMove) {
         counter = 0;
-        gameboard = gameControler.getBoard();
+        gameboard = gameController.getBoard();
         newField = lastMove % 10; //Bestimmung des nächsten Kastens
         if (checkWin(newField)) //Falls der bestimmte Kasten gewonnen ist. Rausfinden, welche Kasten als nächstes Belegt werden sollen
         {
@@ -126,7 +126,7 @@ public class Liz_alg implements Player {
     }
 
     private int selectField() {
-        //neu Bestmmung des nächsten Feldes wenn das eigentliche Voll oder gewonnen schon ist
+        //neue Bestimmung des nächsten Feldes wenn das eigentliche voll oder gewonnen schon ist
         int y = 0;
         if (possiField[1] == 0) {
             return possiField[0];
@@ -536,7 +536,7 @@ public class Liz_alg implements Player {
             }
             y++;
         }
-        int x = 0; //sonst bestimmung durch zufall eines möglichen Feldes
+        int x = 0; //sonst Bestimmung durch Zufall eines möglichen Feldes
         Random rand = new Random();
         while (possiField[x] != 0) {
             x++;
@@ -548,7 +548,7 @@ public class Liz_alg implements Player {
 
     private void chooseField(int checkField) {
         //Bestimmung eines nächsten Kastens wenn das eine schon benutzt ist
-        Map<Integer, int[]> possible = gameControler.getneighbors(checkField);
+        Map<Integer, int[]> possible = gameController.getneighbors(checkField);
         int count = 0;
 
         for (int i = 0; i < possible.get(checkField).length; i++) {

@@ -10,7 +10,7 @@ import java.util.concurrent.Future;
 public class GameController {
 
 
-    public static int[] gamebord = new int[100];
+    public static int[] gameboard = new int[100];
     private static final Map<Integer, int[]> neighbors = new HashMap<>();
     private static final Map<Integer, int[]> thirdCase = new HashMap<>();
     private ArrayList<Integer> moveList = new ArrayList<>();
@@ -63,13 +63,13 @@ private int amountCratesFull = 0;
 
     public void reset() {
         for (int i = 0; i < 100; i++) {
-            gamebord[i] = 0;
+            gameboard[i] = 0;
         }
         lastMove = 1;// 1 = beginning of game
 
     }
 
-    public static GameController getGameControler() {
+    public static GameController getgameController() {
         return gameController;
     }
 
@@ -78,7 +78,7 @@ private int amountCratesFull = 0;
     }
 
     public void addMove(int move, boolean player) {
-        gamebord[move] = player ? 3 : 5;
+        gameboard[move] = player ? 3 : 5;
         lastMove = move;
         moveList.add(move);
         moveCounter++;
@@ -123,7 +123,7 @@ private int amountCratesFull = 0;
                 System.out.println("move:" + move + " was invalid");
                 return !firstPlayerTurn ? p1 : p2;
             }
-            gamebord[move] = firstPlayerTurn ? 3 : 5;
+            gameboard[move] = firstPlayerTurn ? 3 : 5;
             moveList.add(move);
             moveCounter++;
             if (0 != checkWin(move))
@@ -135,11 +135,11 @@ private int amountCratesFull = 0;
 
 
     public int[] getBoard() {
-        return gamebord;
+        return gameboard;
     }
 
     public void setBoard(int[] gameboard) {
-        gamebord = gameboard;
+        gameboard = gameboard;
     }
 
     /*
@@ -150,7 +150,7 @@ private int amountCratesFull = 0;
     public void display() {
         for (int j = 1; j < 4; j++) {
             for (int i = 10; i < 40; i += 10) {
-                System.out.print((gamebord[i * j] == 0 ? "_" : gamebord[i * j] == 3 ? "X" : "O") + (i != 30 ? "|" : ""));
+                System.out.print((gameboard[i * j] == 0 ? "_" : gameboard[i * j] == 3 ? "X" : "O") + (i != 30 ? "|" : ""));
             }
             System.out.println();
         }
@@ -161,7 +161,7 @@ private int amountCratesFull = 0;
                     for (int k = 1; k < 4; k++) {
                         int id = (G * 3 + g) * 10 + K * 3 + k;
                         //System.out.print( id+ "  ");
-                        System.out.print((gamebord[id] == 0 ? "_" : gamebord[id] == 3 ? "X" : "O") + " ");
+                        System.out.print((gameboard[id] == 0 ? "_" : gameboard[id] == 3 ? "X" : "O") + " ");
                     }
                     System.out.print(g != 3 ? "|" : "");
                 }
@@ -180,16 +180,16 @@ private int amountCratesFull = 0;
         int isCrate = playerMove / 10;
         if (!(playerMove > 10 && playerMove < 100 && playerMove % 10 != 0))
             return false;//unmögliche zahlen ausschließen
-        if (gamebord[playerMove] != 0)
+        if (gameboard[playerMove] != 0)
             return false;// das gewählte kästchen ist belegt
-        if (gamebord[shouldCrate * 10] == 0) {// 1 fall: der gewähle kasten ist offen
+        if (gameboard[shouldCrate * 10] == 0) {// 1 fall: der gewähle kasten ist offen
             return (shouldCrate == isCrate);//prüft ob der kasten gleich dem letzten kästchen ist
 
 
         } else {//2 fall: gewählert kasten ist voll
             boolean thereIsOne = false;//eine flag
             for (int neighborShould : neighbors.get(shouldCrate)) {//für jeder nachbar vom letzen move
-                if (gamebord[neighborShould * 10] == 0) {// nachbar ist noch nicht blockirt
+                if (gameboard[neighborShould * 10] == 0) {// nachbar ist noch nicht blockirt
                     thereIsOne = true;
                     if (isCrate == neighborShould) {//gewählter kasten ist gleich einem  nachbaren
                         return true;
@@ -201,7 +201,7 @@ private int amountCratesFull = 0;
             } else {
                 // 3 fall: prüfe ob es einen freien axen nachbar gibt
                 for (int i : thirdCase.get(shouldCrate)) {//im third case sind nur indirekte nachbarn drinne (es wird nicht doppel geprüft )
-                    if (gamebord[i * 10] == 0) {// einer der axen ist lehr
+                    if (gameboard[i * 10] == 0) {// einer der axen ist lehr
                         thereIsOne = true;
                         if (isCrate == i) {//spieler hat in den kasten plaziert
                             return true;
@@ -212,7 +212,7 @@ private int amountCratesFull = 0;
                     return false;
                 } else {
                     // wenn es keine freie axie gibt darf der spieler überall hingehen wo ein kasten nicht voll ist
-                    return gamebord[shouldCrate * 10] == 0;
+                    return gameboard[shouldCrate * 10] == 0;
                 }
             }
         }
@@ -228,7 +228,7 @@ private int amountCratesFull = 0;
         if (res > 0) {
             amountCratesFull ++;
             System.out.println("kasten gewonnen:" + (playerMove / 10) * 10);
-            gamebord[(playerMove / 10) * 10] = res;
+            gameboard[(playerMove / 10) * 10] = res;
             // check flags of other kasten
             int[] result = new int[8];
             // code can be reduced is doppelt
@@ -272,7 +272,7 @@ private int amountCratesFull = 0;
         // k =kasten welcher aktualisiert wird
         k *= 10;
         int[] result = new int[8];
-        //gb(id) -> gamebord[id]
+        //gb(id) -> gameboard[id]
         result[0] = gb(k + 1) + gb(k + 2) + gb(k + 3);
         result[1] = gb(k + 4) + gb(k + 5) + gb(k + 6);
         result[2] = gb(k + 7) + gb(k + 8) + gb(k + 9);
@@ -299,7 +299,7 @@ private int amountCratesFull = 0;
     }
 
     private int gb(int i) {
-        return gamebord[i];
+        return gameboard[i];
     }
 /*
 
@@ -342,7 +342,7 @@ private int amountCratesFull = 0;
                 System.out.println("move:" + move + " was invalid");
                 return !firstPlayerTurn ? p1 : p2;
             }
-            gamebord[move] = firstPlayerTurn ? 3 : 5;
+            gameboard[move] = firstPlayerTurn ? 3 : 5;
             moveList.add(move);
             moveCounter++;
             if (0 != checkWin(move))
@@ -359,7 +359,7 @@ private int amountCratesFull = 0;
 public void display() {
     for (int j = 1; j < 4; j++) {
         for (int i = 10; i < 40; i += 10) {
-            System.out.print((gamebord[i * j] == 0 ? "_" : gamebord[i * j] == 3 ? "X" : "O") + (i != 30 ? "|" : ""));
+            System.out.print((gameboard[i * j] == 0 ? "_" : gameboard[i * j] == 3 ? "X" : "O") + (i != 30 ? "|" : ""));
         }
         System.out.println();
     }
@@ -370,7 +370,7 @@ public void display() {
                 for (int k = 1; k < 4; k++) {
                     int id = (G * 3 + g) * 10 + K * 3 + k;
                     //System.out.print( id+ "  ");
-                    System.out.print((gamebord[id] == 0 ? "_" : gamebord[id] == 3 ? "X" : "O") + " ");
+                    System.out.print((gameboard[id] == 0 ? "_" : gameboard[id] == 3 ? "X" : "O") + " ");
                 }
                 System.out.print(g != 3 ? "|" : "");
             }

@@ -12,7 +12,7 @@ public class Human implements Player {
 
 
     public Human() {
-        gameController = GameController.getGameControler();
+        gameController = GameController.getgameController();
     }
 
     public void setBoard(Board board) {

@@ -2,16 +2,16 @@ package core_code;
 
 import com.example.picture_button.Board;
 
-public class oloi implements Player {
+public class Oloi implements Player {
     int isPlayer;
     int isNotPlayer;
-    GameController gameControler;
-    private int[] gamebord;
+    GameController gameController;
+    private int[] gameboard;
     private Board board;
 
-    public oloi() {
-        gameControler = GameController.getGameControler();
-        gamebord = gameControler.getBoard();
+    public Oloi() {
+        gameController = GameController.getgameController();
+        gameboard = gameController.getBoard();
         if (board.getP1() == Board.playerType.OLOI) {//Überprüft welcher Player die AI ist
             isPlayer = 3;
             isNotPlayer = 5;
@@ -29,15 +29,15 @@ this.board = board;
     @Override
     public int move(int lastMove) {
         int move = -1;
-        int bestresult = -100;
+        int bestResult = -100;
         int field = lastMove % 10 * 10;//Wählen des nächsten Feldes
         for (int i = 1; i < 10; i++) {//durchgehen des Feldes
-            if (gamebord[field] == 0) {//wenn ein Feld Frei ist ausführen
-                gamebord[field + i] = 5;// Setzen eines möglichen Zuges
-                int result = minimax(gamebord, 0, false, lastMove);
-                gamebord[field + i] = 0;// Rurücksetzen eines möglichen Zuges
-                if (result > bestresult) {//erneuerung des besten Zuges
-                    bestresult = result;
+            if (gameboard[field] == 0) {//wenn ein Feld Frei ist ausführen
+                gameboard[field + i] = 5;// Setzen eines möglichen Zuges
+                int result = minimax(gameboard, 0, false, lastMove);
+                gameboard[field + i] = 0;// Rurücksetzen eines möglichen Zuges
+                if (result > bestResult) {//erneuerung des besten Zuges
+                    bestResult = result;
                     move = field + i;
                 }
             }
@@ -47,7 +47,7 @@ this.board = board;
     }
 
 
-    int[] score = {-1, 0, 1};
+    int[] score = {-1, 0, 1}; //speicherung der möglichen Ausgänge -1 gegner gewinnt, 0 unentschieden, 1 Ai gewinnt
 
     public int minimax(int[] board, int depth, boolean isMax, int lastMove) {
         int winner = 2;

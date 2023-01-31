@@ -5,7 +5,7 @@ import static java.lang.Math.max;
 import com.example.picture_button.Board;
 
 public class Eveline implements Player {
-    GameController gameControler;
+    GameController gameController;
     private int[] gameboard;
     private int last;
     private int[] scoreboard = new int[99];
@@ -14,8 +14,8 @@ public class Eveline implements Player {
     private Board board;
 
     public Eveline() {
-        gameControler = GameController.getGameControler();
-        gameboard = gameControler.getBoard();
+        gameController = GameController.getgameController();
+        gameboard = gameController.getBoard();
         if (board.getP1() == Board.playerType.EVELINE) { //Überprüft welcher Player die AI ist
             isPlayer = 3;
             isNotPlayer = 5;
@@ -44,7 +44,7 @@ public class Eveline implements Player {
                 }
             }
         }
-        return newMove; //ausgabe des Moves
+        return newMove; //Ausgabe des Moves
     }
 
     @Override
