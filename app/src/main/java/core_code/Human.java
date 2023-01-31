@@ -1,30 +1,13 @@
 package core_code;
 
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Looper;
-
-import androidx.arch.core.executor.TaskExecutor;
-
 import com.example.picture_button.Board;
 
 
-import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
 import java.util.Scanner;
-import java.util.Stack;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 public class Human implements Player {
     GameController gameController;
-    boolean isBeginning = false;
     private Board board;
 
 
@@ -52,13 +35,4 @@ public class Human implements Player {
         return board.getLastButId();
     }
 
-    @Override
-    public void isBeginning(boolean b) {
-        isBeginning = b;
-    }
-
-    @Override
-    public String hasWon() {
-        return "Gebe eine tolle sieges nachicht an";
-    }
 }

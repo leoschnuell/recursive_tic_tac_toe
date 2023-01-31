@@ -904,19 +904,12 @@ public class Liz_alg implements Player {
         return false;
 
     }
-    @Override
-    public void isBeginning(boolean b) {
-    }
 
     @Override
     public void setBoard(Board board) {
 
     }
 
-    @Override
-    public String hasWon() {
-        return null;
-    }
     public boolean checkWin(int field) {
         field = field *10;
         if (gameboard[field + 1] == 3) {

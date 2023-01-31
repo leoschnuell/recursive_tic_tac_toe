@@ -73,13 +73,4 @@ public class leo_alg implements Player {
         System.out.println("Unvorhergesehener case"); return 100;
     }
 
-    @Override
-    public void isBeginning(boolean b) {
-
-    }
-
-    @Override
-    public String hasWon() {
-        return null;
-    }
 }

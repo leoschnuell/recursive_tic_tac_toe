@@ -35,15 +35,4 @@ public class UnitTester implements Player {
         }
     }
 
-    @Override
-    public void isBeginning(boolean b) {
-
-    }
-
-    @Override
-    public String hasWon() {
-        double per = (double) (counter + 1) / (double) testlist.length * 100;
-        GameController.getGameControler().display();
-        return per + "% der moves waren erfolgleich \n ";
-    }
 }

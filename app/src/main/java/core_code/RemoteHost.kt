@@ -12,9 +12,7 @@ const val PORT = 9700;
 
 class RemoteHost : Player {
 
-    var is_beginning: Boolean = true;
     lateinit var socket: Socket;
-    private val mainHandler = android.os.Handler(Looper.getMainLooper())
     private lateinit var reciver: DataInputStream;
     private lateinit var sender: DataOutputStream;
 
@@ -55,15 +53,14 @@ class RemoteHost : Player {
         return reciver.readInt();
     }
 
-    override fun isBeginning(b: Boolean) {
-        is_beginning = b;
+    fun infoEndOfGame(lastMove: Int)
+    {
+        sender.writeInt(lastMove)
     }
+
 
     override fun setBoard(board: Board?) {
 
     }
 
-    override fun hasWon(): String {
-        return "null"
-    }
 }

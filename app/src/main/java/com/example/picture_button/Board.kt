@@ -95,10 +95,8 @@ class Board : Fragment(), View.OnClickListener {
 
         val player1 = playerDeclaration(receivedPlayer1 as playerType)
         player1.setBoard(this)
-        player1.isBeginning(true)
         val player2 = playerDeclaration(receivedPlayer2 as playerType)
         player2.setBoard(this)
-        player2.isBeginning(false)
         updateBoardColers()
         var overlay = view?.findViewById<ConstraintLayout>(R.id.overlay)!!
         var setup: Future<Boolean>? = null
@@ -163,6 +161,15 @@ class Board : Fragment(), View.OnClickListener {
                     if (checkWin(move)) {
                         //updateCrate((move / 10) * 10)
                         updateBoardColers()
+
+                        if (player && player2 is RemoteHost)
+                        {
+                            player2.infoEndOfGame(move);
+                        }
+                        else if (!player && player1 is RemoteHost)
+                        {
+                            player1.infoEndOfGame(move);
+                        }
                         return
                     }
                     updateBoardColers()
@@ -294,6 +301,8 @@ class Board : Fragment(), View.OnClickListener {
     }
 
     fun showEndScreen(winText: String) {
+
+
         activity?.runOnUiThread {
 
             var Winning_text_view = view?.findViewById<TextView>(R.id.text_winner)
@@ -302,7 +311,7 @@ class Board : Fragment(), View.OnClickListener {
         }
     }
 
-    fun playerDeclaration(input: playerType): Player {
+    private fun playerDeclaration(input: playerType): Player {
         return when (input) {
             playerType.HUMAN -> {
                 Human()

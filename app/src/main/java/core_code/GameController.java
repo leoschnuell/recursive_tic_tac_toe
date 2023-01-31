@@ -90,12 +90,10 @@ private int amountCratesFull =0;
         //ini game
         // Player p1 = new leo_alg();  //interal int = 3
         //Player p2 = new UnitTester();  //interal int = 5
-        p1.isBeginning(true);
-        p2.isBeginning(false);
+
         Player win = gameController.gameLoop(p1, p2);
         System.out.println("end of game winner: " + (win == p1 ? "p1" : p2));
 
-        System.out.println(win.hasWon());
 
         for (int j = 0; j < 2; j++) {
             System.out.print("\nPlayer " + (j + 1) + " moves : \n(");
