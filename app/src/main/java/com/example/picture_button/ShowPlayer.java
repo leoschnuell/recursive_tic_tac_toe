@@ -41,8 +41,8 @@ public class ShowPlayer extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_show_player2, container, false);
-        ip = (EditText) view.findViewById(R.id.editText1);
-        message = (EditText) view.findViewById(R.id.editText2);
+        ip = (EditText) view.findViewById(R.id.hostName);
+        message = (EditText) view.findViewById(R.id.hostName);
         send_btn = (Button) view.findViewById(R.id.search_game);
         send_btn.setOnClickListener(new View.OnClickListener() {
             @Override
