@@ -4,7 +4,7 @@ import com.example.picture_button.Board;
 
 import java.util.ArrayList;
 
-public class leo_alg implements Player {
+public class Leo_alg implements Player {
     @Override
     public void setBoard(Board board) {
 
@@ -14,8 +14,8 @@ public class leo_alg implements Player {
     private int[] gamebord;
     private Random random;
 
-    public leo_alg() {
-        gameController = GameController.getGameControler();
+    public Leo_alg() {
+        gameController = GameController.getgameController();
         gamebord = gameController.getBoard();
         random = new Random();
     }
