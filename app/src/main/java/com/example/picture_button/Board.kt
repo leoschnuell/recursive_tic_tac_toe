@@ -219,7 +219,10 @@ class Board : Fragment(), View.OnClickListener {
             -5 -> {
                 showEndScreen("Red won")
                 return true;
-
+            }
+            -420->{// draw
+                showEndScreen("Unentschieden")
+                return true
             }
             in 1..9 -> {
                 //updateCrate(res * 10)

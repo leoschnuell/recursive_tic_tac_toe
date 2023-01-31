@@ -19,7 +19,7 @@ public class GameController {
     private static GameController gameController = new GameController();
     private boolean firstPlayerTurn = true;
     private int move;
-
+private int amountCratesFull =0;
     private Player p1; // zum übergeben wer player1 ist
 
     private static ExecutorService executor =
@@ -228,6 +228,7 @@ public class GameController {
     public int checkWin(int playerMove) {
         int res = checkCrate(playerMove / 10);
         if (res > 0) {
+            amountCratesFull ++;
             System.out.println("kasten gewonnen:" + (playerMove / 10) * 10);
             gamebord[(playerMove / 10) * 10] = res;
             // check flags of other kasten
@@ -247,6 +248,10 @@ public class GameController {
                     return -3;
                 else if (result[i] == 15)
                     return -5;
+            }
+            if (amountCratesFull==9)
+            {//Draw
+                return -420;
             }
 
             return playerMove / 10;
