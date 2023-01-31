@@ -1,7 +1,10 @@
 package com.example.picture_button
 
+import android.content.Context
+import android.net.wifi.WifiManager
 import android.os.*
 import android.os.StrictMode.ThreadPolicy
+import android.text.format.Formatter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -77,6 +80,9 @@ class UDPtesting : Fragment() {
     private fun getUDPBroadcastMessages() {
         // this thread waits for a UDP mesage to then ad it to a queue
         // this que gets worked of in the processMessages()
+        if (broadcastActive) {
+            return;
+        }
 
         broadcastActive = true
         var brotcaster = startHandlerThread("R3TBroadcaster")
@@ -163,10 +169,16 @@ class UDPtesting : Fragment() {
         mainHandler.post(object : Runnable {
             override fun run() {
                 if (broadcastActive) {
+                    val wifiManager = context?.getSystemService(Context.WIFI_SERVICE) as WifiManager
+                    var localIP: String =
+                        Formatter.formatIpAddress(wifiManager.connectionInfo.ipAddress)
+                    wifiManager.dhcpInfo.netmask
+                    localIP = localIP.replaceAfterLast(".", "255")
+
                     val sendPacket: DatagramPacket = DatagramPacket(
                         sendData,
                         sendData.size,
-                        InetAddress.getByName("192.168.188.255"),
+                        InetAddress.getByName(localIP),
                         5005
                     )
                     socket.send(sendPacket)
